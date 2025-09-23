@@ -4,9 +4,12 @@ Projeto com o foco de desenvolver um jogo Shoot em Up realizado no curso de Jogo
 ## Integrantes e seus cargos
 
 Igor Rodrigo Costa - Diretor Geral (Programação dos inimigos e level design)
+
 Gustavo de Carvalho Pinheiro das Neves - Auxiliar de programação (Programação do Player e suas mecânicas)
+
 Érika Parreira Salles - Diretora de Arte (Modeladora dos inimigos, player entre outros)
-Huan Pablo da Silva dos Santos - Auxiliar de Arte (Modelador de Assets para cenário, itens como power ups etc.)
+
+Huan Pablo da Silva dos Santos - Auxiliar de Arte (Modelador de Assets para cenário, itens como power ups etc.);
 
 ## Sobre o que se trata esse jogo?
 Será um Shoot em up misturado com Bullet Hell, que bebe de algumas fontes como Ikaruga e Enter the Gungeon, com o foco em um sistema desafiador de waves, sobreviva à tudo isso, destrua seus inimigos, experimente novas armas, mas o mais importante, tenha diversão :) 
@@ -20,8 +23,11 @@ A project focused on developing a Shoot 'em Up game, created for the Digital Gam
 ## Team Members and Their Roles
 
 Igor Rodrigo Costa - General Director (Enemy programming and level design)
+
 Gustavo de Carvalho Pinheiro das Neves - Programming Assistant (Player programming and mechanics)
+
 Érika Parreira Salles - Art Director (Modeler of enemies, player, and other elements)
+
 Huan Pablo da Silva dos Santos - Art Assistant (Modeler of environment assets, items such as power-ups, etc.)
 
 ## What is this game about?
