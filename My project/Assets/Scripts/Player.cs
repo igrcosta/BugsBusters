@@ -4,9 +4,6 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [SerializeField] float speed;
-    private float gravity = -9.81f;
-    private float jumpHeight = 1.5f;
-    //depois fazer player pulando e sistema de gravidade
 
     private CharacterController cc;
     // criamos uma variável do tipo CharacterController chamada cc
