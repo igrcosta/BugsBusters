@@ -18,7 +18,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: verde
-    second: {fileID: 2100000, guid: 5b81b489360edd342b5f6ca0d3638b82, type: 2}
+    second: {fileID: 2100000, guid: 6cf6bf938ffc193469a73167da3db23f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
