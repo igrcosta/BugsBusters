@@ -39,6 +39,10 @@ public class Enemy1 : MonoBehaviour
     [SerializeField] int shotsPerBurst = 3;
     [SerializeField] float cooldownTime = 2f;
 
+    //variáveis para comportamento das cores da bala
+    private int ShooterTypeCounter = 0;
+    private AffinityColorENUM currentColor = AffinityColorENUM.X;
+
 
     void Start()
     {
@@ -95,7 +99,7 @@ public class Enemy1 : MonoBehaviour
             //depois de encontrarmos o vetor da direção, precisamos normalizar, pra ele andar em
             //velocidade constante e não ficar em velocidades absurdas em um único frame
 
-            rb.linearVelocity = new Vector3(direction.x * enemySpeed, rb.linearVelocity.y, direction.z * enemySpeed);
+            rb.velocity = new Vector3(direction.x * enemySpeed, rb.velocity.y, direction.z * enemySpeed);
             // para definir a velocidade do inimigo, vamos usar o x e o z da direção que calculamos
             // junto da velocidade linear do eixo Y do rigidbody, assim, ele vai procurar o player,
             //sem sair voando por aí, já que a única força aplicada verticalmente é a do rigidbody
@@ -113,20 +117,6 @@ public class Enemy1 : MonoBehaviour
     void HandleStopping()
     {
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-    }
-
-    void Shoot()
-    {
-        //cria uma bala
-        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        //configurar a bala para usar nosso BulletController
-        BulletController bulletScript = newBullet.GetComponent<BulletController>();
-        if (bulletScript != null)
-        {
-            bulletScript.isFiredByPlayer = false;
-            //lógica da cor da bala aqui
-        }
     }
 
     IEnumerator AttackRoutine()
@@ -147,5 +137,42 @@ public class Enemy1 : MonoBehaviour
 
         //Estado 3 -> Chasing (FIM)
         currentState = EnemyState.Chasing;
+    }
+
+    void Shoot()
+    {
+        //cria uma bala
+        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        //pegamos o script da nova bala instaciada e jogamos na variável BulletScript, do tipo BulletController
+        BulletController bulletScript = newBullet.GetComponent<BulletController>();
+
+        if (bulletScript != null)
+        {
+            bulletScript.isFiredByPlayer = false;
+
+            ShooterTypeCounter++;
+
+            if (ShooterTypeCounter % 2 == 0)
+            {
+            //se o ShooterTypeCounter estiver em um número par
+
+            currentColor = AffinityColorENUM.X;
+            //a cor do tiro que o inimigo soltar, vai estar definida como X, e a sua própria cor TAMBÉM
+
+            bulletScript.bulletColor = currentColor;
+            //o BulletController recebe essa informação e guarda com ele
+            }
+            else {
+                //se o ShooterTypeCounter estiver em um número ímpar
+
+                currentColor = AffinityColorENUM.Y;
+                //a cor do tiro que o inimigo soltar, vai estar definida como X, e a sua própria cor TAMBÉM
+
+                bulletScript.bulletColor = currentColor;
+                //o BulletController recebe essa informação e guarda com ele
+            }
+            //lógica da cor da bala aqui
+        }
     }
 }

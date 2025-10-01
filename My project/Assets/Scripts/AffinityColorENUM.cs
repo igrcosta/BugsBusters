@@ -6,8 +6,8 @@ using UnityEngine;
 
 public enum AffinityColorENUM
 {
-    X,
-    Y
+    X, //cor número 1
+    Y //cor número 2
 }
 
 // de forma mais técnica, é como se tivéssemos criado um array global de cores que qualquer objeto

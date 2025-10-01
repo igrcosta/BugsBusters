@@ -10,7 +10,8 @@ public class BulletController : MonoBehaviour
     public bool isFiredByPlayer = true;
     //esse bool vai verificar à quem pertence a bala atirada, Player atirou, true, inimigo atirou, false
 
-    //adicionar depois a cor de afinidade aqui
+    public AffinityColorENUM bulletColor;
+    //cor atual do tiro em questão, seja tanto do inimigo quanto do player
 
     void Start()
     {
@@ -44,14 +45,13 @@ public class BulletController : MonoBehaviour
 
         if (!isFiredByPlayer && hitTag == "Player")
         {
-            //lógica de cores deve ser aplicada aqui
-            Debug.Log("Player tomou dano");
+            Debug.Log("Player tomou dano de bala " + bulletColor);
         }
 
         else if (isFiredByPlayer && hitTag == "Enemy")
         {
             //lógica de cores deve ser aplicada aqui
-            Debug.Log("ENEMY tomou dano");
+            Debug.Log("ENEMY tomou dano de bala " + bulletColor);
         }
 
         //se encostou, bala destruída
