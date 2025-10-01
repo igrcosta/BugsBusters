@@ -1,4 +1,10 @@
 using UnityEngine;
+using System.Collections;
+//utilizei para o AttackRoutine()
+
+// criamos uma lista de comportamentos que o inimigo terá
+//chamamos isso de estados da State Machine do inimigo
+public enum EnemyState {Chasing, Attacking, CoolingDown }
 
 public class Enemy1 : MonoBehaviour
 {
@@ -22,7 +28,18 @@ public class Enemy1 : MonoBehaviour
     //vetores e vars utilizados no método Chasing,
     //declarei elas aqui para poupar performance do computador
 
-    
+    //estamos escolhendo para o inimigo começar perseguindo o player
+    private EnemyState currentState = EnemyState.Chasing;
+
+    //variáveis para usar o prefab da bala
+    [Header("Ataque")]
+    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] Transform firePoint;
+    [SerializeField] float fireRate = 0.3f;
+    [SerializeField] int shotsPerBurst = 3;
+    [SerializeField] float cooldownTime = 2f;
+
+
     void Start()
     {
         playerTarget = GameObject.FindGameObjectWithTag("Player");
@@ -35,11 +52,29 @@ public class Enemy1 : MonoBehaviour
     
     void FixedUpdate()
     {
-        Chasing();
+        switch (currentState)
+        {
+            case EnemyState.Chasing:
+            HandleChasing(); //chamamos o método de perseguição
+            break;
+
+            case EnemyState.Attacking:
+            case EnemyState.CoolingDown:
+            HandleStopping(); //chama método para parar o movimento
+            break;
+
+            // esse dois pontos demonstra o que vai ser feito quando chegar naquele case,
+            //no de chasing, vai ativar a função de de chasing,
+            //no de attacking e de cooling down, eles vão chamar a função de parada
+
+            //toda a sequência de ataque, cooldown e mudança de estado foi feita pelo AttackRoutine
+
+            //FixedUpdate focado no Movimento, CoRoutines para tempo de intervalos e transições de estados
+        }
     }
 
     //método para realizar o comportamento de perseguição do player 
-    void Chasing()
+    void HandleChasing()
     {
         //obter posição do alvo (Player)
         playerPosition = playerTarget.transform.position;
@@ -68,7 +103,49 @@ public class Enemy1 : MonoBehaviour
             transform.LookAt(playerPosition);
         }
         else {
-            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            //inicia o estado de ataque 
+            currentState = EnemyState.Attacking;
+
+            StartCoroutine(AttackRoutine()); //começa ciclo de Tiro e cooldown
         }
+    }
+
+    void HandleStopping()
+    {
+        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+    }
+
+    void Shoot()
+    {
+        //cria uma bala
+        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        //configurar a bala para usar nosso BulletController
+        BulletController bulletScript = newBullet.GetComponent<BulletController>();
+        if (bulletScript != null)
+        {
+            bulletScript.isFiredByPlayer = false;
+            //lógica da cor da bala aqui
+        }
+    }
+
+    IEnumerator AttackRoutine()
+    {
+        //mirou no player
+        transform.LookAt(playerPosition);
+
+        //Estado 1 -> ATAQUE
+        for (int i = 0; i < shotsPerBurst; i++)
+        {
+            Shoot();
+            yield return new WaitForSeconds(fireRate); //pausa entre tiros
+        }
+
+        //Estado 2 -> CoolDown
+        currentState = EnemyState.CoolingDown;
+        yield return new WaitForSeconds(cooldownTime); //pausa de cooldown
+
+        //Estado 3 -> Chasing (FIM)
+        currentState = EnemyState.Chasing;
     }
 }
