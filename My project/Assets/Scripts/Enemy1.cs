@@ -99,7 +99,7 @@ public class Enemy1 : MonoBehaviour
             //depois de encontrarmos o vetor da direção, precisamos normalizar, pra ele andar em
             //velocidade constante e não ficar em velocidades absurdas em um único frame
 
-            rb.velocity = new Vector3(direction.x * enemySpeed, rb.velocity.y, direction.z * enemySpeed);
+            rb.linearVelocity = new Vector3(direction.x * enemySpeed, rb.linearVelocity.y, direction.z * enemySpeed);
             // para definir a velocidade do inimigo, vamos usar o x e o z da direção que calculamos
             // junto da velocidade linear do eixo Y do rigidbody, assim, ele vai procurar o player,
             //sem sair voando por aí, já que a única força aplicada verticalmente é a do rigidbody
