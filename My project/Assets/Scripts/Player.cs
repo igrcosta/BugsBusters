@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
         //quando apertar botões como A ou D, gerar um valor float * time.deltatime * speed
 
         //Esses valores são inseridos à um vector 3, cada float em seu devido eixo
-        Vector3 value = new Vector3(HorizMove, 0, VertMove);
+        Vector3 value = new Vector3(HorizMove, -10f, VertMove);
 
         //depois disso, vamos colocar o charactercontroller para se movimentar por meio
         //vetor que criamos
