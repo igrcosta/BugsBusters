@@ -31,8 +31,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 11.73, y: 14.5, z: 28.98}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2387417315619850805}
   m_Father: {fileID: 0}
@@ -123,8 +123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a39323c63933a141a28c409a13437dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpeed: 0.7
-  stoppingDistance: 1
+  enemySpeed: 5
+  stoppingDistance: 7.5
   bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
   firePoint: {fileID: 2387417315619850805}
   fireRate: 0.7
