@@ -55,8 +55,8 @@ public class GameControllerScript : MonoBehaviour
       //gerenciar as waves, o que engloba:
         //Controlar o Timer
         //Gerenciar os spawns de inimigos 
-        //trazer as condições de vitória e derrota
+        //trazer as condições de vitória e derrota (quando o tempo acaba, derrota aparece, falta verificar se o player matou todos os inimigos, que aí, vai ter a de vitória)
         //gerenciar quando começa ondas e termina outras
-      //trocar entre cenas
+      //trocar entre cenas (Parcialmente)
       //garantir "pauses" na gameplay (FEITO)
 }
