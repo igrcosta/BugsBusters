@@ -126,6 +126,7 @@ MonoBehaviour:
   lifetime: 3
   isFiredByPlayer: 1
   bulletColor: 0
+  damageAmout: 10
 --- !u!54 &2559818959485414610
 Rigidbody:
   m_ObjectHideFlags: 0
