@@ -13,6 +13,8 @@ public class BulletController : MonoBehaviour
     public AffinityColorENUM bulletColor;
     //cor atual do tiro em questão, seja tanto do inimigo quanto do player
 
+    public int damageAmout = 10;
+
     void Start()
     {
         Destroy(gameObject, lifetime);
@@ -31,6 +33,16 @@ public class BulletController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Player"))
+        {
+            //se o objeto que entrou em contato com a bala for o player, aplicar dano
+            Player player = other.GetComponent<Player>();
+            if (player != null)
+            {
+                player.ReceiveDamage(damageAmout);
+            }
+            Destroy(gameObject);
+        }
         //string que vai detectar qual foi a tag do objeto que recebeu o hit
         string hitTag = other.tag;
 
@@ -57,4 +69,5 @@ public class BulletController : MonoBehaviour
         //se encostou, bala destruída
         Destroy(gameObject);
     }
+    
 }

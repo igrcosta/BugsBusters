@@ -1,8 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+
+    [SerializeField] private int maxHealth = 100;
+    private int currentHealth;
+    public int CurrentHealth => currentHealth;
     [SerializeField] float speed;
 
     [Header("Gravidade")]
@@ -17,6 +22,8 @@ public class Player : MonoBehaviour
     {
         cc = GetComponent<CharacterController>();
         //pegamos o CharacterController do player e jogamos na variável chamada cc
+        currentHealth = maxHealth;
+        Debug.Log("Player Health: " + currentHealth);
     }
 
     void Update()
@@ -55,4 +62,21 @@ public class Player : MonoBehaviour
         //vetor que criamos
         cc.Move(value);
     }
+    public void ReceiveDamage(int damageAmount)
+    {
+        currentHealth -= damageAmount;
+        Debug.Log("Player recebeu " + damageAmount + "de dano. Vida restante:  " + currentHealth);
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+    private void Die()
+    {
+        Debug.Log("Player morreu!");
+        //Adicionar futuramente uma animação de morte, reiniciar a fase, etc
+        SceneManager.LoadScene(1);
+        Destroy(gameObject);
+    }
+
 }

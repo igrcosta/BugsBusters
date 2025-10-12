@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Threading.Tasks;
 //utilizei para o AttackRoutine()
 
 // criamos uma lista de comportamentos que o inimigo terá
@@ -43,6 +44,8 @@ public class Enemy1 : MonoBehaviour
     private int ShooterTypeCounter = 0;
     private AffinityColorENUM currentColor = AffinityColorENUM.X;
 
+    
+
 
     void Start()
     {
@@ -79,7 +82,12 @@ public class Enemy1 : MonoBehaviour
 
     //método para realizar o comportamento de perseguição do player 
     void HandleChasing()
-    {
+    {   //se o player não existir, não faz nada
+        if (playerTarget == null) 
+        {
+            return;
+        }
+
         //obter posição do alvo (Player)
         playerPosition = playerTarget.transform.position;
 
@@ -171,8 +179,11 @@ public class Enemy1 : MonoBehaviour
 
                 bulletScript.bulletColor = currentColor;
                 //o BulletController recebe essa informação e guarda com ele
+                //lógica da cor da bala aqui
             }
-            //lógica da cor da bala aqui
-        }
+
     }
+    }
+
+    
 }
