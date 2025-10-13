@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class HealthBarUI : MonoBehaviour
 {
+    internal static int value;
     [SerializeField] private Image healthBarFillImage;
     [SerializeField] private Player player;
     [SerializeField]

@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class Player : MonoBehaviour
     private int currentHealth;
     public int CurrentHealth => currentHealth;
     [SerializeField] float speed;
+    [SerializeField] Slider HealthBarUI;
 
     [Header("Gravidade")]
     [SerializeField] float gravity = -9.81f;
@@ -79,4 +82,16 @@ public class Player : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void Curar(float quantidade)
+    {
+       currentHealth += (int)quantidade;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+
+        
+
+        Debug.Log("Player curado! Vida atual: " + currentHealth);
+    }
 }
