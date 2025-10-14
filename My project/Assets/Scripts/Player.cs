@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     private int currentHealth;
     public int CurrentHealth => currentHealth;
     [SerializeField] float speed;
-    [SerializeField] Slider HealthBarUI;
+    private Slider HealthBarUI;
 
     [Header("Gravidade")]
     [SerializeField] float gravity = -9.81f;
@@ -21,12 +21,17 @@ public class Player : MonoBehaviour
 
     private Vector3 verticalVelocity;
 
+    [SerializeField] PlayerInput InputsComponent;
+    public bool DummyMode = true;
+
     void Start()
     {
         cc = GetComponent<CharacterController>();
         //pegamos o CharacterController do player e jogamos na variável chamada cc
         currentHealth = maxHealth;
         Debug.Log("Player Health: " + currentHealth);
+
+        HealthBarUI = FindFirstObjectByType<Slider>();
     }
 
     void Update()
@@ -49,22 +54,30 @@ public class Player : MonoBehaviour
     
     public void Movement()
     {
-        float VertMove = Input.GetAxis("Vertical") * Time.deltaTime * speed;
-        //quando apertar botões como W ou S, gerar um valor float * time.deltatime * speed
+        if(!DummyMode)
+        {
+            float VertMove = Input.GetAxis("Vertical") * Time.deltaTime * speed;
+            //quando apertar botões como W ou S, gerar um valor float * time.deltatime * speed
 
-        float HorizMove = Input.GetAxis("Horizontal") * Time.deltaTime * speed; 
-        //quando apertar botões como A ou D, gerar um valor float * time.deltatime * speed
+            float HorizMove = Input.GetAxis("Horizontal") * Time.deltaTime * speed; 
+            //quando apertar botões como A ou D, gerar um valor float * time.deltatime * speed
 
-        //Esses valores são inseridos à um vector 3, cada float em seu devido eixo
-        Vector3 value = new Vector3(HorizMove, 0, VertMove);
+            //Esses valores são inseridos à um vector 3, cada float em seu devido eixo
+            Vector3 value = new Vector3(HorizMove, 0, VertMove);
 
-        //limitar mov diagonal para não ficar mais rápido
-        value = Vector3.ClampMagnitude(value, speed);
+            //limitar mov diagonal para não ficar mais rápido
+            value = Vector3.ClampMagnitude(value, speed);
 
-        //depois disso, vamos colocar o charactercontroller para se movimentar por meio
-        //vetor que criamos
-        cc.Move(value);
+            //depois disso, vamos colocar o charactercontroller para se movimentar por meio
+            //vetor que criamos
+            cc.Move(value);
+        }
+        else
+        {
+            //fazer nada
+        }
     }
+
     public void ReceiveDamage(int damageAmount)
     {
         currentHealth -= damageAmount;
@@ -78,7 +91,7 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Player morreu!");
         //Adicionar futuramente uma animação de morte, reiniciar a fase, etc
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
         Destroy(gameObject);
     }
 
@@ -89,9 +102,18 @@ public class Player : MonoBehaviour
         {
             currentHealth = maxHealth;
         }
-
-        
-
         Debug.Log("Player curado! Vida atual: " + currentHealth);
+    }
+
+    public void DisableInputs()
+    {
+        InputsComponent.DeactivateInput();
+        DummyMode = true;
+    }
+
+    public void EnableInputs()
+    {
+        InputsComponent.ActivateInput();
+        DummyMode = false;
     }
 }

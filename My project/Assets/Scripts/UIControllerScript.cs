@@ -5,6 +5,6 @@ public class UIControllerScript : MonoBehaviour
 {
     public void Retry()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 }

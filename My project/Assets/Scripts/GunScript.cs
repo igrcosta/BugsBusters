@@ -9,9 +9,13 @@ public class GunScript : MonoBehaviour
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform firePoint;
 
+    private Player Player;
+
     private void Update() 
     {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        if(Player.DummyMode == false)
+        {
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         
         // 1. A Lógica de Mira e Rotação só acontece se o Raycast acertar algo
         if (Physics.Raycast(ray, out RaycastHit raycastHit)) 
@@ -40,6 +44,11 @@ public class GunScript : MonoBehaviour
         {
             Atirar();
         }
+        }
+        else
+        {
+            //fazer nada
+        }
     }
 
     void Atirar()
@@ -47,5 +56,10 @@ public class GunScript : MonoBehaviour
         // Instancia a bala na posição e rotação do FirePoint.
         // O FirePoint herda a rotação Y do Player_ROOT.
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+    }
+
+    void Start()
+    {
+        Player = GetComponent<Player>();
     }
 }

@@ -3,19 +3,36 @@ using TMPro;
 
 public class TimerScript : MonoBehaviour
 {
-
     [SerializeField] TextMeshProUGUI timerText;
     [Header("Inserir o tempo em segundos")]
     [SerializeField] float remainingTime;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private bool isRunning = false;
+
+    public void StartTimer()
     {
-        
+        isRunning = true;
     }
 
-    // Update is called once per frame
+    public void StopTimer()
+    {
+        isRunning = false;
+    }
+
     void Update()
+    {
+        if (isRunning)
+        {
+            //se for true, roda isso
+            Countdown();
+        }
+        else
+        {
+            //se for false, roda isso
+        }
+    }
+
+    private void Countdown()
     {
         if(remainingTime > 0)
         {
@@ -32,5 +49,10 @@ public class TimerScript : MonoBehaviour
         int minutes = Mathf.FloorToInt(remainingTime / 60);
         int seconds = Mathf.FloorToInt(remainingTime % 60);
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    private void ResetTimer ()
+    {
+
     }
 }

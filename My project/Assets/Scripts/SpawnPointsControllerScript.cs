@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnPointsControllerScripts : MonoBehaviour
 {
@@ -7,18 +8,28 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
     private GameObject SpawnerSelected;
 
-    void Awake()
+    void Start()
+    {        
+        if (GameControllerScript.controller != null)
+        {
+            GameControllerScript.controller.RegisterSpawnManager(this);
+            }
+            else
+            {
+                Debug.LogError("GameController não encontrado na cena!");
+                }
+    }
+
+    public void ResetSpawners()
     {
         for(int u = 0; u < Spawners.Length-1;u++)
         {
             GameObject actualSpawner = Spawners[u];
             actualSpawner.SetActive(false);
         }
-
-        Activation();
     }
 
-    private void Activation()
+    public void Activation()
     {
         for(int i = 0; i < 2; i++)
         {

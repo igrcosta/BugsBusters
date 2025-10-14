@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 2754584903435332781}
   - component: {fileID: 3480075249502923052}
   - component: {fileID: 222243694361552115}
+  - component: {fileID: 5978445011670640882}
   m_Layer: 0
   m_Name: Player_ROOT
   m_TagString: Player
@@ -112,7 +113,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66a48f9aebc5fd34f8e0b0f685959864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
   speed: 1.2
+  HealthBarUI: {fileID: 0}
   gravity: -9.81
 --- !u!143 &3480075249502923052
 CharacterController:
@@ -154,6 +157,36 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
   firePoint: {fileID: 2892335219438912703}
+--- !u!114 &5978445011670640882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452374320407527060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: 
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &4183098329389274604
 GameObject:
   m_ObjectHideFlags: 0
