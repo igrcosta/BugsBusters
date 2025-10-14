@@ -46,6 +46,15 @@ public class BulletController : MonoBehaviour
         //string que vai detectar qual foi a tag do objeto que recebeu o hit
         string hitTag = other.tag;
 
+        if (isFiredByPlayer && hitTag == "Enemy")
+        {
+            Enemy1 Enemy = other.GetComponent<Enemy1>();
+            if (Enemy != null)
+            {
+                Enemy.TakingDamage(damageAmout);
+            }
+        }
+
         if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy")) 
         {
             //se o mesmo gameobject que atirou, foi o mesmo que recebeu hit

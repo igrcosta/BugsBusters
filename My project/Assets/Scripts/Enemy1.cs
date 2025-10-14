@@ -9,6 +9,7 @@ public enum EnemyState {Chasing, Attacking, CoolingDown }
 
 public class Enemy1 : MonoBehaviour
 {
+    [SerializeField] int Hp = 20;
     [SerializeField] float enemySpeed = 5f;
     [SerializeField] float stoppingDistance = 1.5f;
     //Esse vai ser o raio de distância para o inimigo parar e encarar o player
@@ -185,5 +186,16 @@ public class Enemy1 : MonoBehaviour
     }
     }
 
-    
+    public void TakingDamage(int bulletDamage)
+    {
+        //se a cor do inimigo é diferente da cor da bala
+        Hp -= bulletDamage;
+        Debug.Log("Inimigo recebeu " + bulletDamage + "de dano. Vida restante:  " + Hp);
+
+        if (Hp <= 0)
+        {
+            //animação de morte e depois...
+            Destroy(gameObject);
+        }
+    }
 }
