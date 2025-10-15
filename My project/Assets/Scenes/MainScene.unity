@@ -5886,7 +5886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96189d3bed90e1b44950a9c8d1eb803f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShrinkSpeed: 1.8
+  ShrinkSpeed: 1.6
 --- !u!4 &1923431948 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9622424c18c29a543926e3d35d08b6d3, type: 3}
