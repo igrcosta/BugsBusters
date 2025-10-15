@@ -18,6 +18,8 @@ public class GameControllerScript : MonoBehaviour
 
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
 
+    public SafeZoneScript SafeZone;
+
     public PlayerInput PlayerInputs;
 
     public static GameControllerScript controller;
@@ -68,13 +70,14 @@ public class GameControllerScript : MonoBehaviour
         // Limpa referências que só existem no jogo (opcional, mas bom)
         Player = null;
         Timer = null;
+        SafeZone = null;
         // O Spawner se auto-registra.
     }
     }
 
     private void InitializeGameSceneObjects()
     {
-        //Procura pelo Player, Timer e Spawn Manager APENAS QUANDO A CENA DO JOGO CARREGA.
+        //Procura pelo Player, Timer, Spawn Manager e SafeZone APENAS QUANDO A CENA DO JOGO CARREGA.
     if (Player == null)
     {
         Player = FindFirstObjectByType<Player>();
@@ -91,6 +94,12 @@ public class GameControllerScript : MonoBehaviour
     {
         EnemySpawnManagerScriptRef = FindFirstObjectByType<SpawnPointsControllerScripts>();
         if (EnemySpawnManagerScriptRef == null) Debug.LogError("SpawnerManager não encontrado na cena!");
+    }
+
+    if (SafeZone == null)
+    {
+        SafeZone = FindFirstObjectByType<SafeZoneScript>();
+        if(SafeZone == null) Debug.LogError("Não achei a SafeZone");
     }
 
     // Só inicia a primeira wave SE estiver na cena do jogo e a wave ainda não tiver começado.
@@ -140,7 +149,7 @@ public class GameControllerScript : MonoBehaviour
 
     IEnumerator FirstWaveRoutine()
     {
-        while (Player == null || Timer == null || EnemySpawnManagerScriptRef == null)
+        while (Player == null || Timer == null || EnemySpawnManagerScriptRef == null || SafeZone == null)
         {
             yield return null;
         }
@@ -149,6 +158,8 @@ public class GameControllerScript : MonoBehaviour
 
     EnemySpawnManagerScriptRef.ResetSpawners();
 
+    SafeZone.ResetSize();
+
     yield return new WaitForSeconds(3f);
 
     EnemySpawnManagerScriptRef.Activation();
@@ -156,6 +167,8 @@ public class GameControllerScript : MonoBehaviour
     Timer.StartTimer();
 
     Player.EnableInputs();
+
+    SafeZone.BeginShrinking();
     }
 
     public void Pause()
