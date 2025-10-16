@@ -25,7 +25,11 @@ public class GameControllerScript : MonoBehaviour
     public static GameControllerScript controller;
 
     private Coroutine ActualCoroutine;
+
+    private int EnemiesNumber;
+
     private bool HasWaveStarted = false;
+    private bool WinCondition = false;
 
 
     public void RegisterSpawnManager(SpawnPointsControllerScripts manager)
@@ -117,10 +121,19 @@ public class GameControllerScript : MonoBehaviour
         if(ActualSceneIndex == 1)
         {
             Pause();
+            CountingEnemies();
 
-            if (!HasWaveStarted)
+            if (WinCondition)
             {
-                HasWaveStarted = true;
+                if(ActualCoroutine != null)
+                {
+                    StopCoroutine(ActualCoroutine);
+                }
+
+                Timer.StopTimer();
+
+                GameOver();
+                WinCondition = false;
             }
             //lógica das waves aqui
 
@@ -147,7 +160,7 @@ public class GameControllerScript : MonoBehaviour
 
     }
 
-    IEnumerator FirstWaveRoutine()
+        IEnumerator FirstWaveRoutine()
     {
         while (Player == null || Timer == null || EnemySpawnManagerScriptRef == null || SafeZone == null)
         {
@@ -198,11 +211,15 @@ public class GameControllerScript : MonoBehaviour
         SceneManager.LoadScene(2);
     }
 
-    //gamecontroller gerenciar os spawns
-
-    private void HandleSpawning()
+    private void CountingEnemies()
     {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        EnemiesNumber = enemies.Length;
 
+        if(EnemiesNumber == 0)
+        {
+            WinCondition = true;
+        }
     }
 
     //GameController vai servir para o seguinte:
