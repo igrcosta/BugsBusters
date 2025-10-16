@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    [Header("Cor")]
+    //public int currentColor = GameControllerScript.controller.ColorLogic[0];
+    public int currentColor;
 
     [SerializeField] private int maxHealth = 100;
     private int currentHealth;
@@ -32,6 +35,8 @@ public class Player : MonoBehaviour
         Debug.Log("Player Health: " + currentHealth);
 
         HealthBarUI = FindFirstObjectByType<Slider>();
+
+        currentColor = GameControllerScript.controller.ColorLogic[0];
     }
 
     void Update()

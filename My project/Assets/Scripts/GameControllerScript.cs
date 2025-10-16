@@ -31,6 +31,9 @@ public class GameControllerScript : MonoBehaviour
     private bool HasWaveStarted = false;
     private bool WinCondition = false;
 
+    public int[] ColorLogic = {1,2};
+    //agora, o game controller vai se responsabilizar pela lógica de cores durante o jogo, X é uma cor, Y é outra
+
 
     public void RegisterSpawnManager(SpawnPointsControllerScripts manager)
     {

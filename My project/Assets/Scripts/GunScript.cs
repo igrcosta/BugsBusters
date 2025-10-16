@@ -11,8 +11,14 @@ public class GunScript : MonoBehaviour
 
     private Player Player;
 
-    private void Update() 
+    private Enemy1 Enemy;
+
+    private int PlayerShootColor;
+
+    private void Update()
     {
+        Player.currentColor = PlayerShootColor;
+
         if(Player.DummyMode == false)
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -61,5 +67,7 @@ public class GunScript : MonoBehaviour
     void Start()
     {
         Player = GetComponent<Player>();
+
+        Enemy = GetComponent<Enemy1>();
     }
 }

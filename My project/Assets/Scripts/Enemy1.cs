@@ -43,9 +43,7 @@ public class Enemy1 : MonoBehaviour
 
     //variáveis para comportamento das cores da bala
     private int ShooterTypeCounter = 0;
-    private AffinityColorENUM currentColor = AffinityColorENUM.X;
-
-    
+    public int currentColor;
 
 
     void Start()
@@ -55,6 +53,8 @@ public class Enemy1 : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         //só tô pegando o próprio RigidBody do inimigo e jogando na variável rb
+
+        currentColor = GameControllerScript.controller.ColorLogic[0];
     }
 
     
@@ -164,9 +164,9 @@ public class Enemy1 : MonoBehaviour
 
             if (ShooterTypeCounter % 2 == 0)
             {
-            //se o ShooterTypeCounter estiver em um número par
+                //se o ShooterTypeCounter estiver em um número par
 
-            currentColor = AffinityColorENUM.X;
+                currentColor = 1;
             //a cor do tiro que o inimigo soltar, vai estar definida como X, e a sua própria cor TAMBÉM
 
             bulletScript.bulletColor = currentColor;
@@ -175,7 +175,7 @@ public class Enemy1 : MonoBehaviour
             else {
                 //se o ShooterTypeCounter estiver em um número ímpar
 
-                currentColor = AffinityColorENUM.Y;
+                currentColor = 0;
                 //a cor do tiro que o inimigo soltar, vai estar definida como X, e a sua própria cor TAMBÉM
 
                 bulletScript.bulletColor = currentColor;

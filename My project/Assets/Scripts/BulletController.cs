@@ -7,11 +7,9 @@ public class BulletController : MonoBehaviour
     [SerializeField] private float bulletSpeed = 20f;
     [SerializeField] private float lifetime = 3f;
 
+    public int bulletColor;
     public bool isFiredByPlayer = true;
     //esse bool vai verificar à quem pertence a bala atirada, Player atirou, true, inimigo atirou, false
-
-    public AffinityColorENUM bulletColor;
-    //cor atual do tiro em questão, seja tanto do inimigo quanto do player
 
     public int damageAmout = 10;
 
@@ -19,6 +17,9 @@ public class BulletController : MonoBehaviour
     {
         Destroy(gameObject, lifetime);
         //depois do tempo de lifetime, a bala que possui esse script será destruída
+
+        bulletColor = GameControllerScript.controller.ColorLogic[0];
+        //cor atual do tiro em questão, seja tanto do inimigo quanto do player
     }
 
     void Update()
@@ -33,25 +34,22 @@ public class BulletController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            //se o objeto que entrou em contato com a bala for o player, aplicar dano
-            Player player = other.GetComponent<Player>();
-            if (player != null)
-            {
-                player.ReceiveDamage(damageAmout);
-            }
-            Destroy(gameObject);
-        }
-        //string que vai detectar qual foi a tag do objeto que recebeu o hit
         string hitTag = other.tag;
 
         if (isFiredByPlayer && hitTag == "Enemy")
         {
             Enemy1 Enemy = other.GetComponent<Enemy1>();
-            if (Enemy != null)
+
+            //se o inimgo tomou tiro e SUA COR é a mesma da bala
+            if (Enemy != null && Enemy.currentColor == bulletColor)
             {
-                Enemy.TakingDamage(damageAmout);
+                //fazer bosta nenhuma
+                Debug.Log("Dano anulado, Enemy mesma cor da bala");
+            }
+            else if (Enemy != null && Enemy.currentColor != bulletColor)
+            {
+                //diminuir vida do enemy
+                Debug.Log("TOMEI DANO, Enemy cor diferente da bala");
             }
         }
 
@@ -66,13 +64,17 @@ public class BulletController : MonoBehaviour
 
         if (!isFiredByPlayer && hitTag == "Player")
         {
-            Debug.Log("Player tomou dano de bala " + bulletColor);
-        }
-
-        else if (isFiredByPlayer && hitTag == "Enemy")
-        {
-            //lógica de cores deve ser aplicada aqui
-            Debug.Log("ENEMY tomou dano de bala " + bulletColor);
+            Player player = other.GetComponent<Player>();
+            if (player != null && player.currentColor == bulletColor)
+            {
+                //fazer bosta nenhuma
+                Debug.Log("Dano anulado, Player mesma cor da bala");
+            }
+            else if (player != null && player.currentColor != bulletColor)
+            {
+                //causar dano player
+                Debug.Log("TOMEI DANO, Player cor diferente da bala");
+            }
         }
 
         //se encostou, bala destruída
