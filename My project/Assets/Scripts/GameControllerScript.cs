@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class GameControllerScript : MonoBehaviour
 {
 
-    private Player Player;
+    public Player Player;
     //acessar o gameObject do tipo Player
 
     private bool IsPaused = false;

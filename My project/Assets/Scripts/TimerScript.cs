@@ -8,6 +8,7 @@ public class TimerScript : MonoBehaviour
     [SerializeField] float remainingTime;
 
     private bool isRunning = false;
+    private bool PlayerSafeZoneHit = false;
 
     public void StartTimer()
     {
@@ -17,6 +18,11 @@ public class TimerScript : MonoBehaviour
     public void StopTimer()
     {
         isRunning = false;
+    }
+
+    public void Lose10Seconds()
+    {
+        PlayerSafeZoneHit = true;
     }
 
     void Update()
@@ -29,6 +35,15 @@ public class TimerScript : MonoBehaviour
         else
         {
             //se for false, roda isso
+        }
+
+        if (PlayerSafeZoneHit)
+        {
+            Reducing10Seconds();
+        }
+        else
+        {
+            //NADA
         }
     }
 
@@ -51,8 +66,9 @@ public class TimerScript : MonoBehaviour
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    private void ResetTimer ()
+    private void Reducing10Seconds()
     {
-
+        remainingTime-=10f;
+        PlayerSafeZoneHit = false;
     }
 }

@@ -12,6 +12,8 @@ public class SafeZoneScript : MonoBehaviour
 
     [SerializeField] private float ShrinkSpeed = 1f;
 
+    public float knockbackForce = 10.0f;
+
     void Update()
     {
         if (IsBigger)
@@ -28,7 +30,14 @@ public class SafeZoneScript : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("O Player tá colidindo com a safezone!");
+            KnockbackController playerKnockback = other.GetComponent<KnockbackController>();
+
+            Vector3 knockbackDirection = (transform.position - other.transform.position) .normalized;
+            knockbackDirection.Normalize();
+
+            playerKnockback.AddImpact(knockbackDirection, knockbackForce);
+
+            GameControllerScript.controller.Timer.Lose10Seconds();
         }
     }
 
