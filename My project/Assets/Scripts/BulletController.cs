@@ -11,7 +11,8 @@ public class BulletController : MonoBehaviour
     public bool isFiredByPlayer = true;
     //esse bool vai verificar à quem pertence a bala atirada, Player atirou, true, inimigo atirou, false
 
-    public int damageAmout = 10;
+    public int PLayerDamage = 10;
+    public int EnemyDamage  = 5;
 
     void Start()
     {
@@ -48,7 +49,7 @@ public class BulletController : MonoBehaviour
             }
             else if (Enemy != null && Enemy.currentColor != bulletColor)
             {
-                //diminuir vida do enemy
+                Enemy.TakingDamage(PLayerDamage);
                 Debug.Log("TOMEI DANO, Enemy cor diferente da bala");
             }
         }
@@ -72,7 +73,7 @@ public class BulletController : MonoBehaviour
             }
             else if (player != null && player.currentColor != bulletColor)
             {
-                //causar dano player
+                player.ReceiveDamage(EnemyDamage);
                 Debug.Log("TOMEI DANO, Player cor diferente da bala");
             }
         }
