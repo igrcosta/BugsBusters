@@ -29,6 +29,9 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        GameControllerScript.controller.Player = this;
+        //Use essa forma para pegar referência de objetos via código
+
         cc = GetComponent<CharacterController>();
         //pegamos o CharacterController do player e jogamos na variável chamada cc
         currentHealth = maxHealth;

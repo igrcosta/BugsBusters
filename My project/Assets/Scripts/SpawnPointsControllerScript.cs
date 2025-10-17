@@ -3,13 +3,18 @@ using UnityEngine.SceneManagement;
 
 public class SpawnPointsControllerScripts : MonoBehaviour
 {
-    [SerializeField] GameObject[] Spawners;
+    GameObject[] SpawnPoints;
     //criamos um array com os spawners, ele vai ser responsável por aleatorizar quais spawners vão estar ativos
 
     private GameObject SpawnerSelected;
 
     void Start()
-    {        
+    {
+        SpawnPoints = new GameObject[transform.childCount];
+        for (int i=0;i<transform.childCount;i++)
+        {
+            SpawnPoints[i] = transform.GetChild(i).gameObject;
+        }
         if (GameControllerScript.controller != null)
         {
             GameControllerScript.controller.RegisterSpawnManager(this);
@@ -22,9 +27,9 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
     public void ResetSpawners()
     {
-        for(int u = 0; u < Spawners.Length-1;u++)
+        for(int u = 0; u < SpawnPoints.Length;u++)
         {
-            GameObject actualSpawner = Spawners[u];
+            GameObject actualSpawner = SpawnPoints[u];
             actualSpawner.SetActive(false);
         }
     }
@@ -33,10 +38,10 @@ public class SpawnPointsControllerScripts : MonoBehaviour
     {
         for(int i = 0; i < 2; i++)
         {
-            int SpawnerSelected = Random.Range(0,(Spawners.Length));
-            if(!Spawners[SpawnerSelected].activeInHierarchy)
+            int SpawnerSelected = Random.Range(0,(SpawnPoints.Length));
+            if(!SpawnPoints[SpawnerSelected].activeInHierarchy)
             {
-                Spawners[SpawnerSelected].gameObject.SetActive(true);
+                SpawnPoints[SpawnerSelected].gameObject.SetActive(true);
                 //se o spawner aleatório selecionado não estiver ativo na Hierarquia,
                 //ative ele, se não, só pula
             }

@@ -12,9 +12,7 @@ public class GameControllerScript : MonoBehaviour
 
     [Header("Materiais de cor do Player")]
 
-    public Material PlayerMatFirst;
-
-    public Material PlayerMatSecond;
+    public Material PlayerMatFirst, PlayerMatSecond;
 
     private bool IsPaused = false;
 
@@ -61,6 +59,9 @@ public class GameControllerScript : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+        {
+            
+        }
     }
 
     void OnDisable()
@@ -93,8 +94,10 @@ public class GameControllerScript : MonoBehaviour
         //Procura pelo Player, Timer, Spawn Manager e SafeZone APENAS QUANDO A CENA DO JOGO CARREGA.
     if (Player == null)
     {
-        Player = FindFirstObjectByType<Player>();
-        if (Player == null) Debug.LogError("Player não encontrado na cena!");
+        //Player = FindFirstObjectByType<Player>();
+            if (Player == null) Debug.LogError("Player não encontrado na cena!");
+        
+        //EVITAR FIND!!!
     }
     
     if (Timer == null)
@@ -178,11 +181,11 @@ public class GameControllerScript : MonoBehaviour
     
     Player.DisableInputs();
 
-    EnemySpawnManagerScriptRef.ResetSpawners();
 
     SafeZone.ResetSize();
 
     yield return new WaitForSeconds(3f);
+    EnemySpawnManagerScriptRef.ResetSpawners();
 
     EnemySpawnManagerScriptRef.Activation();
 

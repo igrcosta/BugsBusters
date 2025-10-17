@@ -51,6 +51,7 @@ public class Enemy1 : MonoBehaviour
 
     void Start()
     {
+        Player meuPlayer = GameControllerScript.controller.Player;
         playerTarget = GameObject.FindGameObjectWithTag("Player");
         //encontramos o primeiro objeto na cena com a tag "Player" e guardamos na var playerTarget
 
@@ -63,7 +64,7 @@ public class Enemy1 : MonoBehaviour
     }
 
     
-    void FixedUpdate()
+    void Update()
     {
         switch (currentState)
         {
