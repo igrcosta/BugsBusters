@@ -209,6 +209,7 @@ public class Enemy1 : MonoBehaviour
 
         if (Hp <= 0)
         {
+            GameControllerScript.controller.AumentarNumerodeInimigosMortos();
             //animação de morte e depois...
             Destroy(gameObject);
         }
