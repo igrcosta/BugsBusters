@@ -17,7 +17,7 @@ public class GunScript : MonoBehaviour
 
     private void Update()
     {
-        Player.currentColor = PlayerShootColor;
+        PlayerShootColor = Player.currentColor;
 
         if(Player.DummyMode == false)
         {
@@ -59,9 +59,32 @@ public class GunScript : MonoBehaviour
 
     void Atirar()
     {
+
         // Instancia a bala na posição e rotação do FirePoint.
         // O FirePoint herda a rotação Y do Player_ROOT.
-        Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        
+        //pegamos o script da nova bala instaciada e jogamos na variável BulletScript, do tipo BulletController
+        BulletController bulletScript = newBullet.GetComponent<BulletController>();
+
+        Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
+        //pegamos o randerizador da bala instanciada
+
+        //variável de material vazia para podermos colocar o material do player nas balas
+        Material targetMaterial = null;
+
+        bulletScript.isFiredByPlayer = true;
+
+        if (Player.currentColor == 1)
+        {
+            targetMaterial = GameControllerScript.controller.PlayerMatFirst;
+        }
+        else
+        {
+            targetMaterial = GameControllerScript.controller.PlayerMatSecond;
+        }
+
+        bulletRenderer.material = targetMaterial;
     }
 
     void Start()

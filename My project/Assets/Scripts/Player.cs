@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     [Header("Cor")]
-    //public int currentColor = GameControllerScript.controller.ColorLogic[0];
     public int currentColor;
+    private Renderer myRenderer;
 
     [SerializeField] private int maxHealth = 100;
     private int currentHealth;
@@ -37,12 +37,19 @@ public class Player : MonoBehaviour
         HealthBarUI = FindFirstObjectByType<Slider>();
 
         currentColor = GameControllerScript.controller.ColorLogic[0];
+        
+        //acessamos o PlayerModel pra mudar seu material
+        Transform playerModelTransform = transform.Find("PlayerModel");
+
+        myRenderer = playerModelTransform.GetComponent<Renderer>();
     }
 
     void Update()
     {
         ApplyGravity();
         Movement();
+        ColorLogic();
+        HandleColorSwitchInput();
     }
 
     void ApplyGravity()
@@ -80,6 +87,27 @@ public class Player : MonoBehaviour
         else
         {
             //fazer nada
+        }
+    }
+
+    void ColorLogic()
+    {
+        if(currentColor == 1)
+        {
+            myRenderer.material = GameControllerScript.controller.PlayerMatFirst;
+        }
+        else if (currentColor == 0)
+        {
+            myRenderer.material = GameControllerScript.controller.PlayerMatSecond;
+        }
+    }
+
+    void HandleColorSwitchInput()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            // Alterna entre 0 e 1: Se for 1, vira 0. Se for 0, vira 1.
+            currentColor = (currentColor == 1) ? 0 : 1;
         }
     }
 

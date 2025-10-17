@@ -10,6 +10,12 @@ public class GameControllerScript : MonoBehaviour
     public Player Player;
     //acessar o gameObject do tipo Player
 
+    [Header("Materiais de cor do Player")]
+
+    public Material PlayerMatFirst;
+
+    public Material PlayerMatSecond;
+
     private bool IsPaused = false;
 
     private int ActualSceneIndex;

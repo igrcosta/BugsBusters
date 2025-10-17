@@ -1615,6 +1615,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 3366836956181993224}
+  PlayerMatFirst: {fileID: 2100000, guid: e3d24fa617fb0064a9671236306a7ed3, type: 2}
+  PlayerMatSecond: {fileID: 2100000, guid: 3c51358d3517ad14f8dc9e8614eda2b5, type: 2}
   Timer: {fileID: 1229945368}
   EnemySpawnManagerScriptRef: {fileID: 263482192}
   SafeZone: {fileID: 1862078191}

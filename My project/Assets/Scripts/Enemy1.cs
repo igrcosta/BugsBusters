@@ -182,8 +182,7 @@ public class Enemy1 : MonoBehaviour
                 //o BulletController recebe essa informação e guarda com ele
                 //lógica da cor da bala aqui
             }
-
-    }
+        }
     }
 
     public void TakingDamage(int bulletDamage)

@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: e3d24fa617fb0064a9671236306a7ed3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -124,9 +124,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletSpeed: 3
   lifetime: 3
-  isFiredByPlayer: 1
   bulletColor: 0
-  damageAmout: 10
+  isFiredByPlayer: 1
+  PLayerDamage: 10
+  EnemyDamage: 5
 --- !u!54 &2559818959485414610
 Rigidbody:
   m_ObjectHideFlags: 0
