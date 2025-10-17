@@ -18,9 +18,6 @@ public class BulletController : MonoBehaviour
     {
         Destroy(gameObject, lifetime);
         //depois do tempo de lifetime, a bala que possui esse script será destruída
-
-        bulletColor = GameControllerScript.controller.ColorLogic[0];
-        //cor atual do tiro em questão, seja tanto do inimigo quanto do player
     }
 
     void Update()
@@ -60,8 +57,6 @@ public class BulletController : MonoBehaviour
             return;
             //ignora o resto do código e a bala continua (se for um Trigger)
         }
-
-        //lógica de dano abaixo (colocar esquema de cores depois)
 
         if (!isFiredByPlayer && hitTag == "Player")
         {

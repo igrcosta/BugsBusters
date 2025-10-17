@@ -85,6 +85,8 @@ public class GunScript : MonoBehaviour
         }
 
         bulletRenderer.material = targetMaterial;
+
+        bulletScript.bulletColor = Player.currentColor;
     }
 
     void Start()

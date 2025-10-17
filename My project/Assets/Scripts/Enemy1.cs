@@ -9,6 +9,9 @@ public enum EnemyState {Chasing, Attacking, CoolingDown }
 
 public class Enemy1 : MonoBehaviour
 {
+    private Renderer myRenderer;
+    //randerizador da cor do inimigo
+
     [SerializeField] int Hp = 20;
     [SerializeField] float enemySpeed = 5f;
     [SerializeField] float stoppingDistance = 1.5f;
@@ -55,6 +58,8 @@ public class Enemy1 : MonoBehaviour
         //só tô pegando o próprio RigidBody do inimigo e jogando na variável rb
 
         currentColor = GameControllerScript.controller.ColorLogic[0];
+
+        myRenderer = GetComponent<Renderer>();
     }
 
     
@@ -130,6 +135,18 @@ public class Enemy1 : MonoBehaviour
 
     IEnumerator AttackRoutine()
     {
+        //Alterna a cor e prepara o inimigo para o novo ciclo de ataque
+        ShooterTypeCounter++; 
+
+        // Alterna a cor do inimigo (e, consequentemente, das balas deste burst)
+        currentColor = (ShooterTypeCounter % 2 == 0) ? 1 : 0;
+
+        Material targetMaterial = (currentColor == 1) ?
+        GameControllerScript.controller.PlayerMatFirst :
+        GameControllerScript.controller.PlayerMatSecond;
+
+        myRenderer.material = targetMaterial;
+
         //mirou no player
         transform.LookAt(playerPosition);
 
@@ -156,32 +173,30 @@ public class Enemy1 : MonoBehaviour
         //pegamos o script da nova bala instaciada e jogamos na variável BulletScript, do tipo BulletController
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
 
+        Renderer BulletRenderer = newBullet.GetComponent<Renderer>();
+
+        //variável de material vazia para podermos colocar o material do inimigo nas balas
+        Material targetMaterial = null;
+
         if (bulletScript != null)
         {
             bulletScript.isFiredByPlayer = false;
 
-            ShooterTypeCounter++;
-
-            if (ShooterTypeCounter % 2 == 0)
+            if (currentColor == 1)
             {
-                //se o ShooterTypeCounter estiver em um número par
+                targetMaterial = GameControllerScript.controller.PlayerMatFirst;
+            }
+            else
+            {
+                targetMaterial = GameControllerScript.controller.PlayerMatSecond;
+            }
 
-                currentColor = 1;
-            //a cor do tiro que o inimigo soltar, vai estar definida como X, e a sua própria cor TAMBÉM
-
+            if (BulletRenderer != null)
+            {
+                BulletRenderer.material = targetMaterial;
+            }
+            
             bulletScript.bulletColor = currentColor;
-            //o BulletController recebe essa informação e guarda com ele
-            }
-            else {
-                //se o ShooterTypeCounter estiver em um número ímpar
-
-                currentColor = 0;
-                //a cor do tiro que o inimigo soltar, vai estar definida como X, e a sua própria cor TAMBÉM
-
-                bulletScript.bulletColor = currentColor;
-                //o BulletController recebe essa informação e guarda com ele
-                //lógica da cor da bala aqui
-            }
         }
     }
 
