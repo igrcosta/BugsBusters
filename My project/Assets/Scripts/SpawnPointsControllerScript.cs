@@ -8,7 +8,8 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
     private GameObject SpawnerSelected;
 
-    void Start()
+    //tive que colocar no Awake ao invés do Start, para o sistema de waves já ter referência de forma antecipada
+    void Awake()
     {
         SpawnPoints = new GameObject[transform.childCount];
         for (int i=0;i<transform.childCount;i++)
@@ -36,19 +37,33 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
     public void Activation()
     {
-        for(int i = 0; i < 2; i++)
+        int currentWaveTotalEnemies = 0;
+        //int para contar o total de inimigos que vão spawnar, assim o player só ganha se matar esse número
+
+        for(int i = 0; i < 3; i++)
         {
             int SpawnerSelected = Random.Range(0,(SpawnPoints.Length));
             if(!SpawnPoints[SpawnerSelected].activeInHierarchy)
             {
-                SpawnPoints[SpawnerSelected].gameObject.SetActive(true);
+                GameObject selectedSpawner = SpawnPoints[SpawnerSelected];
+
+                selectedSpawner.gameObject.SetActive(true);
                 //se o spawner aleatório selecionado não estiver ativo na Hierarquia,
                 //ative ele, se não, só pula
+
+                Spawner SpawnerScript = selectedSpawner.GetComponent<Spawner>();
+
+                currentWaveTotalEnemies += SpawnerScript.Enemycounter;
+
+                SpawnerScript.StartSpawning();
             }
             else
             {
                 
             }
         }
+
+        //depois de já ativar todos os spawners...
+        GameControllerScript.controller.SetTotalEnemiesToKill(currentWaveTotalEnemies);
     }
 }

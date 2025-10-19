@@ -9,6 +9,7 @@ TagManager:
   - Spawner
   - HUD
   - SafeZone
+  - UIController
   layers:
   - Default
   - TransparentFX

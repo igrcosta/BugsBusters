@@ -24,27 +24,43 @@ public class Player : MonoBehaviour
 
     private Vector3 verticalVelocity;
 
-    [SerializeField] PlayerInput InputsComponent;
     public bool DummyMode = true;
 
-    void Start()
+    public void Initializing()
     {
-        GameControllerScript.controller.Player = this;
-        //Use essa forma para pegar referência de objetos via código
-
+        if (GameControllerScript.controller != null)
+        {
+            GameControllerScript.controller.Player = this;
+        }
+        
         cc = GetComponent<CharacterController>();
-        //pegamos o CharacterController do player e jogamos na variável chamada cc
         currentHealth = maxHealth;
         Debug.Log("Player Health: " + currentHealth);
 
         HealthBarUI = FindFirstObjectByType<Slider>();
 
-        currentColor = GameControllerScript.controller.ColorLogic[0];
-        
-        //acessamos o PlayerModel pra mudar seu material
+        // Checagem de Renderer (Pode falhar se o filho não existir)
         Transform playerModelTransform = transform.Find("PlayerModel");
+        if (playerModelTransform != null)
+        {
+            myRenderer = playerModelTransform.GetComponent<Renderer>();
+        }
+        else
+        {
+            Debug.LogError("PlayerModel não encontrado. As cores não serão aplicadas.");
+        }
+        
+        // Lógica de Cores depende do GameController (agora seguro pelo while)
+        if (GameControllerScript.controller != null)
+        {
+            currentColor = GameControllerScript.controller.ColorLogic[0];
+        }
+    }
 
-        myRenderer = playerModelTransform.GetComponent<Renderer>();
+    //tive que colocar no Awake ao invés do Start, para o sistema de waves já ter referência de forma antecipada
+    void Awake()
+    {
+        Initializing();
     }
 
     void Update()
@@ -71,21 +87,24 @@ public class Player : MonoBehaviour
     {
         if(!DummyMode)
         {
-            float VertMove = Input.GetAxis("Vertical") * Time.deltaTime * speed;
-            //quando apertar botões como W ou S, gerar um valor float * time.deltatime * speed
+            float VertMove = Input.GetAxis("Vertical");
+            //quando apertar botões como W ou S, gerar um valor float
 
-            float HorizMove = Input.GetAxis("Horizontal") * Time.deltaTime * speed; 
-            //quando apertar botões como A ou D, gerar um valor float * time.deltatime * speed
+            float HorizMove = Input.GetAxis("Horizontal");
+            //quando apertar botões como A ou D, gerar um valor float 
 
             //Esses valores são inseridos à um vector 3, cada float em seu devido eixo
-            Vector3 value = new Vector3(HorizMove, 0, VertMove);
+            Vector3 direction = new Vector3(HorizMove, 0, VertMove);
 
             //limitar mov diagonal para não ficar mais rápido
-            value = Vector3.ClampMagnitude(value, speed);
+            direction = Vector3.ClampMagnitude(direction, 1f);
+
+            //agora com uma boa direção em vetor, vamos multiplicar por speed e Time.deltaTime
+            Vector3 finalMovement = direction * speed * Time.deltaTime;
 
             //depois disso, vamos colocar o charactercontroller para se movimentar por meio
             //vetor que criamos
-            cc.Move(value);
+            cc.Move(finalMovement);
         }
         else
         {
@@ -95,13 +114,17 @@ public class Player : MonoBehaviour
 
     void ColorLogic()
     {
-        if(currentColor == 1)
+        // CORREÇÃO: Checar myRenderer e GameController antes de tentar acessar
+        if (myRenderer != null && GameControllerScript.controller != null)
         {
-            myRenderer.material = GameControllerScript.controller.PlayerMatFirst;
-        }
-        else if (currentColor == 0)
-        {
-            myRenderer.material = GameControllerScript.controller.PlayerMatSecond;
+            if(currentColor == 1)
+            {
+                myRenderer.material = GameControllerScript.controller.PlayerMatFirst;
+            }
+            else if (currentColor == 0)
+            {
+                myRenderer.material = GameControllerScript.controller.PlayerMatSecond;
+            }
         }
     }
 
@@ -143,13 +166,11 @@ public class Player : MonoBehaviour
 
     public void DisableInputs()
     {
-        InputsComponent.DeactivateInput();
         DummyMode = true;
     }
 
     public void EnableInputs()
     {
-        InputsComponent.ActivateInput();
         DummyMode = false;
     }
 }

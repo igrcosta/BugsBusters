@@ -6,19 +6,16 @@ using UnityEngine.InputSystem;
 
 public class GameControllerScript : MonoBehaviour
 {
+    [Header("Tudo sobre o Player")]
 
     public Player Player;
     //acessar o gameObject do tipo Player
 
-    [Header("Materiais de cor do Player")]
-
-    public UIControllerScript UIController;
+    [Header("Materiais que Inimigos/Player usam")]
 
     public Material PlayerMatFirst, PlayerMatSecond;
 
-    private bool IsPaused = false;
-
-    private int ActualSceneIndex;
+    [Header ("Elementos dentro da MainScene")]
 
     public TimerScript Timer;
 
@@ -26,7 +23,11 @@ public class GameControllerScript : MonoBehaviour
 
     public SafeZoneScript SafeZone;
 
-    public PlayerInput PlayerInputs;
+    public GameUI GameUI;
+
+    private bool IsPaused = false;
+    private int ActualSceneIndex;
+
 
     public static GameControllerScript controller;
 
@@ -36,31 +37,54 @@ public class GameControllerScript : MonoBehaviour
 
     private int pontos;
 
+    private int totalEnemiesToKill;
+
     int inimigosMortos;
 
     private bool HasWaveStarted = false;
     private bool WinCondition = false;
+    private bool IsGameActive = false;
 
     public int[] ColorLogic = { 1, 2 };
     //agora, o game controller vai se responsabilizar pela lógica de cores durante o jogo, X é uma cor, Y é outra
 
-    public void AumentarNumerodeInimigosMortos()
+    private void OnEnable()
     {
-        inimigosMortos++;
-        UIController.AlterarInimigosMortosnaHUD(inimigosMortos);
-
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
-    public void RegisterSpawnManager(SpawnPointsControllerScripts manager)
+
+    private void OnDisable()
     {
-        EnemySpawnManagerScriptRef = manager;
-        Debug.Log("Spawner registrado no GameController.");
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Só faz a checagem se estiver na MainScene (índice 1)
+        if (scene.buildIndex == 1) 
+        {
+            // O Player, Timer, SafeZone, etc., no Awake/Start, se conectam aqui.
+            // Garantimos que a wave só tenta começar uma vez.
+            if (!HasWaveStarted)
+            {
+                HasWaveStarted = true;
+                ActualCoroutine = StartCoroutine(FirstWaveRoutine());
+            }
+        }
+        else
+        {
+            // Quando em HomeScene ou DeathScene, reseta
+            HasWaveStarted = false;
+        }
     }
 
     private void Awake()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        Singleton();
+    }
 
-
+    private void Singleton()
+    {
         if (controller == null)
         {
             controller = this;
@@ -72,68 +96,6 @@ public class GameControllerScript : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        // Verifica se a cena carregada é a cena do jogo (Index 1)
-        if (scene.buildIndex == 1)
-        {
-            InitializeGameSceneObjects();
-        }
-        else // Para outras cenas (Home, GameOver), garante que o estado é limpo
-        {
-            // Garante que a Coroutine da wave não comece
-            HasWaveStarted = false;
-
-            // Limpa referências que só existem no jogo (opcional, mas bom)
-            Player = null;
-            Timer = null;
-            SafeZone = null;
-            // O Spawner se auto-registra.
-        }
-    }
-
-    private void InitializeGameSceneObjects()
-    {
-        //Procura pelo Player, Timer, Spawn Manager e SafeZone APENAS QUANDO A CENA DO JOGO CARREGA.
-        if (Player == null)
-        {
-            //Player = FindFirstObjectByType<Player>();
-            if (Player == null) Debug.LogError("Player não encontrado na cena!");
-
-            //EVITAR FIND!!!
-        }
-
-        if (Timer == null)
-        {
-            Timer = FindFirstObjectByType<TimerScript>();
-            if (Timer == null) Debug.LogError("Timer não encontrado na cena!");
-        }
-
-        if (EnemySpawnManagerScriptRef == null)
-        {
-            EnemySpawnManagerScriptRef = FindFirstObjectByType<SpawnPointsControllerScripts>();
-            if (EnemySpawnManagerScriptRef == null) Debug.LogError("SpawnerManager não encontrado na cena!");
-        }
-
-        if (SafeZone == null)
-        {
-            SafeZone = FindFirstObjectByType<SafeZoneScript>();
-            if (SafeZone == null) Debug.LogError("Não achei a SafeZone");
-        }
-
-        // Só inicia a primeira wave SE estiver na cena do jogo e a wave ainda não tiver começado.
-        if (!HasWaveStarted)
-        {
-            ActualCoroutine = StartCoroutine(FirstWaveRoutine());
-        }
-
-    }
-
     void Update()
     {
         FindingActualScene();
@@ -141,20 +103,25 @@ public class GameControllerScript : MonoBehaviour
         if (ActualSceneIndex == 1)
         {
             Pause();
-            CountingEnemies();
 
-            if (WinCondition)
+            if (IsGameActive)
             {
-                if (ActualCoroutine != null)
+                CountingEnemies();
+
+                if (WinCondition)
                 {
+                    if (ActualCoroutine != null)
+                  {
                     StopCoroutine(ActualCoroutine);
+                    Timer.StopTimer();
+
+                    GameOver();
+                    WinCondition = false;
+                    IsGameActive = false;
+                  }
                 }
-
-                Timer.StopTimer();
-
-                GameOver();
-                WinCondition = false;
             }
+
             //lógica das waves aqui
 
             //esperar 3 segundos depois que a cena carregar, mostrando uma contagem regressiva na tela 
@@ -172,36 +139,37 @@ public class GameControllerScript : MonoBehaviour
             //Player vence, FICANDO SEM PODER INTERAGIR DENOVO. enquanto outra onda vai se iniciar
             //a ideia é que no futuro ele possa roletar entre as trocas de waves para novos tipos de armas
             //NÃO ESQUECER DISSO NO FUTURO
-        }
-        else
-        {
 
         }
-
     }
 
     IEnumerator FirstWaveRoutine()
     {
-        while (Player == null || Timer == null || EnemySpawnManagerScriptRef == null || SafeZone == null)
+        while (Player == null || Timer == null || SafeZone == null || GameUI == null || EnemySpawnManagerScriptRef == null)
         {
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
+        EnemySpawnManagerScriptRef.ResetSpawners();
 
         Player.DisableInputs();
-
 
         SafeZone.ResetSize();
 
         yield return new WaitForSeconds(3f);
-        EnemySpawnManagerScriptRef.ResetSpawners();
-
+        
         EnemySpawnManagerScriptRef.Activation();
+
+        yield return null;
+        //espera um frame pro jogo poder começar já com inimigos spawnados
 
         Timer.StartTimer();
 
         Player.EnableInputs();
 
         SafeZone.BeginShrinking();
+
+        IsGameActive = true;
+        //essa booleana serve pro jogo não perceber que tem 0 inimigos no início e já dar gameOver
     }
 
     public void Pause()
@@ -228,18 +196,56 @@ public class GameControllerScript : MonoBehaviour
 
     public void GameOver()
     {
+        CleanUpGame();
         SceneManager.LoadScene(2);
     }
+
+    public void CleanUpGame()
+{
+    //vou resetar todas as referências do gameController pra ele achar tudo denovo quando der retry
+    controller = null;
+    
+    // Zera todas as variáveis de estado
+    HasWaveStarted = false;
+    WinCondition = false;
+    IsGameActive = false;
+    inimigosMortos = 0;
+
+    //Destroy(gameObject);
+    //tava dando erro de um retry pro outro, então vamo deixar o GameController se recriar
+}
 
     private void CountingEnemies()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         EnemiesNumber = enemies.Length;
 
-        if (EnemiesNumber == 0)
+        if (totalEnemiesToKill > 0 && inimigosMortos >= totalEnemiesToKill)
         {
             WinCondition = true;
         }
+        else
+        {
+            WinCondition = false;
+        }
+    }
+
+    public void AumentarNumerodeInimigosMortos()
+    {
+        inimigosMortos++;
+        GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
+
+    }
+    public void RegisterSpawnManager(SpawnPointsControllerScripts manager)
+    {
+        EnemySpawnManagerScriptRef = manager;
+        Debug.Log("Spawner registrado no GameController.");
+    }
+
+    public void SetTotalEnemiesToKill(int total)
+    {
+        totalEnemiesToKill = total;
+        Debug.Log("Meta de inimigos para matar nesta wave: " + totalEnemiesToKill);
     }
 
    

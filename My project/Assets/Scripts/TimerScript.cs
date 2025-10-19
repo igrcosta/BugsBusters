@@ -10,6 +10,13 @@ public class TimerScript : MonoBehaviour
     private bool isRunning = false;
     private bool PlayerSafeZoneHit = false;
 
+    //tive que colocar no Awake ao invés do Start, para o sistema de waves já ter referência de forma antecipada
+    void Awake()
+    {
+        GameControllerScript.controller.Timer = this;
+        //o timer ao dar start na cena, vai se inserir dentro do GameController
+    }
+
     public void StartTimer()
     {
         isRunning = true;

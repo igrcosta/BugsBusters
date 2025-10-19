@@ -14,6 +14,13 @@ public class SafeZoneScript : MonoBehaviour
 
     public float knockbackForce = 10.0f;
 
+    //tive que colocar no Awake ao invés do Start, para o sistema de waves já ter referência de forma antecipada
+    void Awake()
+    {
+        GameControllerScript.controller.SafeZone = this;
+        //SafeZone se insere dentro do GameController (referência encontrada)
+    }
+
     void Update()
     {
         if (IsBigger)

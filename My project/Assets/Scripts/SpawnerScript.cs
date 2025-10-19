@@ -7,8 +7,8 @@ public class Spawner : MonoBehaviour
     [SerializeField] GameObject EnemyPrefab;
     //prefab que vai pegar o inimigo para instaciar
 
-    [SerializeField] int Enemycounter;
-    //só um contador básico pro spawner ter um limite de vezes que vai spawnar o inimigo
+    public int Enemycounter;
+    //quantos inimigos vão spawnar, deixei público para o SpawnPointsControllerScript acessar e ajudar na WinCondition
 
     [SerializeField] float SpawnCoolDown;
     //variável que vai servir para marcar o intervalo de um spawn para outro
@@ -16,10 +16,13 @@ public class Spawner : MonoBehaviour
     Coroutine SpawningCycleVar;
     //variável para armazenar no cache
 
-
-    void Start()
+    
+    public void StartSpawning()
     {
-        SpawningCycleVar = StartCoroutine(SpawningCycle());
+        if (SpawningCycleVar == null)
+        {
+            SpawningCycleVar = StartCoroutine(SpawningCycle());
+        }
     }
 
     //esse item tem que instanciar de tempos em tempos o gameObject do inimigo
