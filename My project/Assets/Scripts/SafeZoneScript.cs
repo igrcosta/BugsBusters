@@ -4,15 +4,13 @@ public class SafeZoneScript : MonoBehaviour
 {
     private bool IsBigger = true;
 
-    private Vector3 BiggerScale = new Vector3(100f,100f,100f);
+    private Vector3 BiggerScale = new Vector3(50f,50f,50f);
 
-    private Vector3 SmallerScale = new Vector3(10f,10f,10f);
+    private Vector3 SmallerScale = new Vector3(15f,15f,15f);
 
     private Vector3 ActualScale = new Vector3(0f,0f,0f);
 
     [SerializeField] private float ShrinkSpeed = 1f;
-
-    public float knockbackForce = 10.0f;
 
     //tive que colocar no Awake ao invés do Start, para o sistema de waves já ter referência de forma antecipada
     void Awake()
@@ -30,21 +28,6 @@ public class SafeZoneScript : MonoBehaviour
         else
         {
             ResetScale();
-        }
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            KnockbackController playerKnockback = other.GetComponent<KnockbackController>();
-
-            Vector3 knockbackDirection = (transform.position - other.transform.position) .normalized;
-            knockbackDirection.Normalize();
-
-            playerKnockback.AddImpact(knockbackDirection, knockbackForce);
-
-            GameControllerScript.controller.Timer.Lose10Seconds();
         }
     }
 

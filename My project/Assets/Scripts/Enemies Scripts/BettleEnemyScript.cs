@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 //chamamos isso de estados da State Machine do inimigo
 public enum EnemyState {Chasing, Attacking, CoolingDown }
 
-public class Enemy1 : MonoBehaviour
+public class BettleEnemyScript : MonoBehaviour
 {
     private Renderer myRenderer;
     //randerizador da cor do inimigo
 
-    [SerializeField] int Hp = 20;
-    [SerializeField] float enemySpeed = 5f;
-    [SerializeField] float stoppingDistance = 1.5f;
+    [SerializeField] int Hp = 40;
+    [SerializeField] float enemySpeed = 2.5f;
+    [SerializeField] float stoppingDistance = 3f;
     //Esse vai ser o raio de distância para o inimigo parar e encarar o player
 
     private GameObject playerTarget;
