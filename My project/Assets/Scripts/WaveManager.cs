@@ -50,4 +50,9 @@ public class WaveManager : MonoBehaviour
             GameControllerScript.controller.WaveFinished();
         }
     }
+
+    private void Start()
+    {
+        GameControllerScript.controller.WaveManagerRef = this;
+    }
 }
