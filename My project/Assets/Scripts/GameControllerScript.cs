@@ -45,6 +45,8 @@ public class GameControllerScript : MonoBehaviour
     private bool WinCondition = false;
     private bool IsGameActive = false;
 
+    public WaveManager WaveManagerRef;
+
     public int[] ColorLogic = { 1, 2 };
     //agora, o game controller vai se responsabilizar pela lógica de cores durante o jogo, X é uma cor, Y é outra
 
@@ -145,7 +147,7 @@ public class GameControllerScript : MonoBehaviour
 
     IEnumerator FirstWaveRoutine()
     {
-        while (Player == null || Timer == null || SafeZone == null || GameUI == null || EnemySpawnManagerScriptRef == null)
+        while (Player == null || Timer == null || SafeZone == null || GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
         {
             yield return new WaitForEndOfFrame();
         }
@@ -156,8 +158,8 @@ public class GameControllerScript : MonoBehaviour
         SafeZone.ResetSize();
 
         yield return new WaitForSeconds(3f);
-        
-        EnemySpawnManagerScriptRef.Activation();
+
+        WaveManagerRef.StartNextWave();
 
         yield return null;
         //espera um frame pro jogo poder começar já com inimigos spawnados
@@ -170,6 +172,22 @@ public class GameControllerScript : MonoBehaviour
 
         IsGameActive = true;
         //essa booleana serve pro jogo não perceber que tem 0 inimigos no início e já dar gameOver
+    }
+
+    IEnumerator NextWaveTransitionRoutine()
+    {
+        Debug.Log("Wave Finalizada! preparando para a próxima");
+
+        yield return new WaitForSeconds(5f);
+
+        EnemySpawnManagerScriptRef.ResetSpawners();
+        SafeZone.ResetSize();
+
+        WaveManagerRef.StartNextWave();
+
+        Timer.StartTimer();
+        SafeZone.BeginShrinking();
+        IsGameActive = true;
     }
 
     public void Pause()
@@ -214,19 +232,27 @@ public class GameControllerScript : MonoBehaviour
     //Destroy(gameObject);
     //tava dando erro de um retry pro outro, então vamo deixar o GameController se recriar
 }
+    public void WaveFinished()
+    {
+        if (ActualCoroutine != null)
+        {
+            StopCoroutine(ActualCoroutine);
+            Timer.StopTimer();
+
+            WinCondition = false;
+            IsGameActive = false;
+
+            ActualCoroutine = StartCoroutine(NextWaveTransitionRoutine());
+        }
+    }
 
     private void CountingEnemies()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        EnemiesNumber = enemies.Length;
-
-        if (totalEnemiesToKill > 0 && inimigosMortos >= totalEnemiesToKill)
+    // Se o jogo está ativo e a contagem total foi definida...
+    if (IsGameActive && totalEnemiesToKill > 0)
         {
-            WinCondition = true;
-        }
-        else
-        {
-            WinCondition = false;
+        // ...checa se a wave acabou.
+        WaveManagerRef.CheckWinCondition(inimigosMortos, totalEnemiesToKill);
         }
     }
 

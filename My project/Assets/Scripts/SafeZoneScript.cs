@@ -4,9 +4,9 @@ public class SafeZoneScript : MonoBehaviour
 {
     private bool IsBigger = true;
 
-    private Vector3 BiggerScale = new Vector3(50f,50f,50f);
+    private Vector3 BiggerScale = new Vector3(150f,150f,150f);
 
-    private Vector3 SmallerScale = new Vector3(15f,15f,15f);
+    private Vector3 SmallerScale = new Vector3(50f,50f,50f);
 
     private Vector3 ActualScale = new Vector3(0f,0f,0f);
 

@@ -298,30 +298,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BettleEnemy
       objectReference: {fileID: 0}
-    - target: {fileID: 2387417315619850805, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2387417315619850805, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 2387417315619850805, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3206952382252099719, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      propertyPath: enemySpeed
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 3206952382252099719, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      propertyPath: bulletPrefab
-      value: 
-      objectReference: {fileID: 8422060013284516898, guid: 5a8f6e84789729b46bb405017d84007f, type: 3}
-    - target: {fileID: 3206952382252099719, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      propertyPath: stopAndShootDistance
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 3232388830897908060, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.528
