@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 // criamos uma lista de comportamentos que o inimigo terá
 //chamamos isso de estados da State Machine do inimigo
-public enum BettleState {Chasing, Attacking, CoolingDown }
+public enum EnemyState {Chasing, Attacking, CoolingDown }
 
 public class Enemy1 : MonoBehaviour
 {
@@ -34,7 +34,7 @@ public class Enemy1 : MonoBehaviour
     //declarei elas aqui para poupar performance do computador
 
     //estamos escolhendo para o inimigo começar perseguindo o player
-    private BettleState currentState = BettleState.Chasing;
+    private EnemyState currentState = EnemyState.Chasing;
 
     //variáveis para usar o prefab da bala
     [Header("Ataque")]
@@ -68,12 +68,12 @@ public class Enemy1 : MonoBehaviour
     {
         switch (currentState)
         {
-            case BettleState.Chasing:
+            case EnemyState.Chasing:
             HandleChasing(); //chamamos o método de perseguição
             break;
 
-            case BettleState.Attacking:
-            case BettleState.CoolingDown:
+            case EnemyState.Attacking:
+            case EnemyState.CoolingDown:
             HandleStopping(); //chama método para parar o movimento
             break;
 
@@ -123,7 +123,7 @@ public class Enemy1 : MonoBehaviour
         }
         else {
             //inicia o estado de ataque 
-            currentState = BettleState.Attacking;
+            currentState = EnemyState.Attacking;
 
             StartCoroutine(AttackRoutine()); //começa ciclo de Tiro e cooldown
         }
@@ -159,11 +159,11 @@ public class Enemy1 : MonoBehaviour
         }
 
         //Estado 2 -> CoolDown
-        currentState = BettleState.CoolingDown;
+        currentState = EnemyState.CoolingDown;
         yield return new WaitForSeconds(cooldownTime); //pausa de cooldown
 
         //Estado 3 -> Chasing (FIM)
-        currentState = BettleState.Chasing;
+        currentState = EnemyState.Chasing;
     }
 
     void Shoot()

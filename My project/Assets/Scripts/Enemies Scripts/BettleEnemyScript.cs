@@ -1,217 +1,250 @@
 using UnityEngine;
 using System.Collections;
 using System.Threading.Tasks;
-//utilizei para o AttackRoutine()
 
-// criamos uma lista de comportamentos que o inimigo terá
-//chamamos isso de estados da State Machine do inimigo
-public enum EnemyState {Chasing, Attacking, CoolingDown }
+public enum BettleState { Chasing, PreparingAttack, CoolingDown }
 
 public class BettleEnemyScript : MonoBehaviour
 {
-    private Renderer myRenderer;
-    //randerizador da cor do inimigo
-
+    [Header("Configurações Base")]
     [SerializeField] int Hp = 40;
     [SerializeField] float enemySpeed = 2.5f;
-    [SerializeField] float stoppingDistance = 3f;
-    //Esse vai ser o raio de distância para o inimigo parar e encarar o player
-
-    private GameObject playerTarget;
-    //precisamos jogar o player em uma variável, para que seja possível acessar seus dados
-    // e realizar o comportamento desejado do inimigo
-
-    private Rigidbody rb;
-    //vamos usar essa variável para movimentar o inimigo por meio do seu rigidbody
-
-    private Vector3 direction;
-    //Direção que o inimigo vai seguir para achar o player
-
-    private float distance;
-    private Vector3 playerPosition;
-    private Vector3 enemyPosition;
-    //vetores e vars utilizados no método Chasing,
-    //declarei elas aqui para poupar performance do computador
-
-    //estamos escolhendo para o inimigo começar perseguindo o player
-    private EnemyState currentState = EnemyState.Chasing;
-
-    //variáveis para usar o prefab da bala
-    [Header("Ataque")]
-    [SerializeField] GameObject bulletPrefab;
+    
+    [Header("Lógica de Perseguição")]
+    [SerializeField] float stopAndShootDistance = 12f; // Distância para parar e atacar
+    
+    [Header("Ataque Rolabosta")]
+    [SerializeField] GameObject bulletPrefab; // Projétil grande
     [SerializeField] Transform firePoint;
-    [SerializeField] float fireRate = 0.3f;
-    [SerializeField] int shotsPerBurst = 3;
-    [SerializeField] float cooldownTime = 2f;
+    [SerializeField] float prepTime = 1.5f; // Tempo para "montar" a bosta antes de atirar
+    [SerializeField] float cooldownTime = 10f; // Longo cooldown
 
-    //variáveis para comportamento das cores da bala
-    private int ShooterTypeCounter = 0;
-    public int currentColor;
+    [Header("Cor e Referências")]
+    public int currentColor; // Cor atual (0 ou 1)
+    private Renderer myRenderer;
+    private Rigidbody rb;
 
-
+    // --- REFERÊNCIAS FLEXÍVEIS (Híbridas) ---
+    // Usamos 'object' ou 'MonoBehaviour' para armazenar a referência dinâmica e fazer a conversão no uso.
+    private MonoBehaviour playerReference; 
+    private MonoBehaviour gameControllerReference;
+    // ----------------------------------------
+    
+    private BettleState currentState = BettleState.Chasing;
+    private Coroutine attackRoutineInstance;
+    
     void Start()
     {
-        Player meuPlayer = GameControllerScript.controller.Player;
-        playerTarget = GameObject.FindGameObjectWithTag("Player");
-        //encontramos o primeiro objeto na cena com a tag "Player" e guardamos na var playerTarget
-
+        // --- 1. Obter Componentes Essenciais ---
         rb = GetComponent<Rigidbody>();
-        //só tô pegando o próprio RigidBody do inimigo e jogando na variável rb
-
-        currentColor = GameControllerScript.controller.ColorLogic[0];
-
         myRenderer = GetComponent<Renderer>();
+        if (rb == null) Debug.LogError("Rigidbody faltando no Besouro!");
+
+        // --- 2. CONEXÃO HÍBRIDA (Player e Controller) ---
+        
+        // Tenta encontrar o Controller de TESTE (prioridade)
+        if (TESTGameController.controller != null)
+        {
+            gameControllerReference = TESTGameController.controller;
+            playerReference = FindFirstObjectByType<TESTPlayer>();
+            Debug.Log("Besouro: Conectado ao TESTGameController.");
+        }
+        // Tenta encontrar o Controller PADRÃO
+        else 
+        {
+            // Nota: Se seu GameController PADRÃO é um Singleton (como o TEST), use a referência estática.
+            // gameControllerReference = GameControllerScript.controller; 
+            playerReference = GameObject.FindGameObjectWithTag("Player")?.GetComponent<MonoBehaviour>();
+            Debug.Log("Besouro: Tentando usar referências Padrão.");
+        }
+        
+        // --- 3. Inicialização de Estado ---
+        if (playerReference != null)
+        {
+            currentState = BettleState.Chasing;
+            InitializeColor();
+        }
+        else
+        {
+            currentState = BettleState.PreparingAttack; // Fica parado se não achar o Player
+            Debug.LogError("Player (TESTPlayer ou Padrão) não encontrado na cena!");
+        }
+    }
+    
+    void InitializeColor()
+    {
+        // Escolhe a cor aleatoriamente (0 ou 1) para o resto da vida do inimigo
+        currentColor = Random.Range(0, 2); 
+        
+        var testController = gameControllerReference as TESTGameController;
+        // var standardController = gameControllerReference as GameControllerScript;
+        
+        if (testController != null)
+        {
+            SetEnemyColor(testController);
+        }
     }
 
-    
+    // --- Métodos de Update e Estados ---
+
     void Update()
     {
+        if (playerReference == null) return;
+        
         switch (currentState)
         {
-            case EnemyState.Chasing:
-            HandleChasing(); //chamamos o método de perseguição
-            break;
-
-            case EnemyState.Attacking:
-            case EnemyState.CoolingDown:
-            HandleStopping(); //chama método para parar o movimento
-            break;
-
-            // esse dois pontos demonstra o que vai ser feito quando chegar naquele case,
-            //no de chasing, vai ativar a função de de chasing,
-            //no de attacking e de cooling down, eles vão chamar a função de parada
-
-            //toda a sequência de ataque, cooldown e mudança de estado foi feita pelo AttackRoutine
-
-            //FixedUpdate focado no Movimento, CoRoutines para tempo de intervalos e transições de estados
+            case BettleState.Chasing:
+                HandleChasing();
+                break;
+            
+            case BettleState.PreparingAttack:
+            case BettleState.CoolingDown:
+                HandleStopping(); 
+                break;
         }
     }
 
-    //método para realizar o comportamento de perseguição do player 
     void HandleChasing()
-    {   //se o player não existir, não faz nada
-        if (playerTarget == null) 
+    {
+        Vector3 playerPosition = GetPlayerPosition();
+        Vector3 direction = playerPosition - transform.position;
+        float distance = direction.magnitude;
+
+        // Condição de Ataque
+        if (distance <= stopAndShootDistance)
         {
-            return;
+            currentState = BettleState.PreparingAttack;
+            attackRoutineInstance = StartCoroutine(AttackRoutine());
+            return; 
         }
 
-        //obter posição do alvo (Player)
-        playerPosition = playerTarget.transform.position;
-
-        //obter posição do inimigo
-        enemyPosition = transform.position;
-
-        //calcular direção para seguir
-        direction = playerPosition - enemyPosition;
-
-        distance = direction.magnitude;
-
-        if (distance > stoppingDistance) {
-            direction.y = 0f;
-            //colocamos o eixo Y do inimigo em 0 para evitar dele "voar" em direção ao seu alvo
-
-            direction = direction.normalized;
-            //depois de encontrarmos o vetor da direção, precisamos normalizar, pra ele andar em
-            //velocidade constante e não ficar em velocidades absurdas em um único frame
-
-            rb.linearVelocity = new Vector3(direction.x * enemySpeed, rb.linearVelocity.y, direction.z * enemySpeed);
-            // para definir a velocidade do inimigo, vamos usar o x e o z da direção que calculamos
-            // junto da velocidade linear do eixo Y do rigidbody, assim, ele vai procurar o player,
-            //sem sair voando por aí, já que a única força aplicada verticalmente é a do rigidbody
-
-            transform.LookAt(playerPosition);
-        }
-        else {
-            //inicia o estado de ataque 
-            currentState = EnemyState.Attacking;
-
-            StartCoroutine(AttackRoutine()); //começa ciclo de Tiro e cooldown
-        }
+        // Movimento e Rotação
+        direction.y = 0f;
+        direction = direction.normalized;
+        transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
+        rb.linearVelocity = new Vector3(direction.x * enemySpeed, rb.linearVelocity.y, direction.z * enemySpeed);
     }
 
     void HandleStopping()
     {
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+        Vector3 playerPosition = GetPlayerPosition();
+        transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
     }
+    
+    // --- Lógica de Ataque ---
 
     IEnumerator AttackRoutine()
     {
-        //Alterna a cor e prepara o inimigo para o novo ciclo de ataque
-        ShooterTypeCounter++; 
+        // 1. Preparação (PreparingAttack)
+        yield return new WaitForSeconds(prepTime); 
 
-        // Alterna a cor do inimigo (e, consequentemente, das balas deste burst)
-        currentColor = (ShooterTypeCounter % 2 == 0) ? 1 : 0;
+        // 2. Disparo
+        Shoot();
+        
+        // 3. Cooldown (CoolingDown)
+        currentState = BettleState.CoolingDown;
+        yield return new WaitForSeconds(cooldownTime); 
 
-        Material targetMaterial = (currentColor == 1) ?
-        GameControllerScript.controller.PlayerMatFirst :
-        GameControllerScript.controller.PlayerMatSecond;
-
-        myRenderer.material = targetMaterial;
-
-        //mirou no player
-        transform.LookAt(playerPosition);
-
-        //Estado 1 -> ATAQUE
-        for (int i = 0; i < shotsPerBurst; i++)
-        {
-            Shoot();
-            yield return new WaitForSeconds(fireRate); //pausa entre tiros
-        }
-
-        //Estado 2 -> CoolDown
-        currentState = EnemyState.CoolingDown;
-        yield return new WaitForSeconds(cooldownTime); //pausa de cooldown
-
-        //Estado 3 -> Chasing (FIM)
-        currentState = EnemyState.Chasing;
+        // 4. Recomeço
+        currentState = BettleState.Chasing;
     }
 
     void Shoot()
     {
-        //cria uma bala
+        if (bulletPrefab == null || firePoint == null) return;
+        
+        // Tenta obter o Controller de TESTE
+        var testController = gameControllerReference as TESTGameController; 
+        // var standardController = gameControllerReference as GameControllerScript; // Para o padrão
+
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        //pegamos o script da nova bala instaciada e jogamos na variável BulletScript, do tipo BulletController
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
-
-        Renderer BulletRenderer = newBullet.GetComponent<Renderer>();
-
-        //variável de material vazia para podermos colocar o material do inimigo nas balas
-        Material targetMaterial = null;
 
         if (bulletScript != null)
         {
             bulletScript.isFiredByPlayer = false;
-
-            if (currentColor == 1)
-            {
-                targetMaterial = GameControllerScript.controller.PlayerMatFirst;
-            }
-            else
-            {
-                targetMaterial = GameControllerScript.controller.PlayerMatSecond;
-            }
-
-            if (BulletRenderer != null)
-            {
-                BulletRenderer.material = targetMaterial;
-            }
-            
             bulletScript.bulletColor = currentColor;
+
+            Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
+            if (bulletRenderer != null)
+            {
+                Material targetMaterial = null;
+
+                if (testController != null)
+                {
+                    targetMaterial = (currentColor == 1) ?
+                        testController.PlayerMatFirst :
+                        testController.PlayerMatSecond;
+                }
+                // else if (standardController != null)
+                // {
+                //     // Lógica para o GameController Padrão aqui
+                // }
+                
+                if (targetMaterial != null)
+                {
+                    bulletRenderer.material = targetMaterial;
+                }
+            }
         }
     }
-
-    public void TakingDamage(int bulletDamage)
+    
+    void SetEnemyColor(TESTGameController testController)
     {
-        //se a cor do inimigo é diferente da cor da bala
-        Hp -= bulletDamage;
-        Debug.Log("Inimigo recebeu " + bulletDamage + "de dano. Vida restante:  " + Hp);
-
-        if (Hp <= 0)
+        if (myRenderer != null && testController != null)
         {
-            GameControllerScript.controller.AumentarNumerodeInimigosMortos();
-            //animação de morte e depois...
-            Destroy(gameObject);
+            myRenderer.material = (currentColor == 1) ?
+                testController.PlayerMatFirst :
+                testController.PlayerMatSecond;
         }
+        // Adicione aqui a lógica para o GameController Padrão
+    }
+
+    // --- Lógica de Dano/Morte ---
+
+    public void TakingDamage(int bulletDamage, int bulletColor)
+    {
+    // A checagem de cor foi feita na bala (BulletController).
+    // Aqui, apenas subtraímos o HP.
+    Hp -= bulletDamage;
+    Debug.Log("Besouro recebeu " + bulletDamage + " de dano. Vida restante: " + Hp);
+
+    if (Hp <= 0)
+    {
+        Die();
+    }
+}
+
+    void Die()
+    {
+        // Notificação de Morte (Usando Referência Híbrida)
+        var testController = gameControllerReference as TESTGameController;
+        // var standardController = gameControllerReference as GameControllerScript;
+
+        if (testController != null)
+        {
+            // testController.AumentarNumerodeInimigosMortos(); // Atualmente comentado
+        }
+        // else if (standardController != null)
+        // {
+        //     // standardController.AumentarNumerodeInimigosMortos(); 
+        // }
+        
+        if (attackRoutineInstance != null) StopCoroutine(attackRoutineInstance);
+        
+        Destroy(gameObject);
+    }
+
+    // --- Métodos Auxiliares ---
+    
+    Vector3 GetPlayerPosition()
+    {
+        // Acessa a posição do player de forma segura, seja ele TESTPlayer ou Player Padrão
+        if (playerReference != null)
+        {
+            return playerReference.transform.position;
+        }
+        return Vector3.zero;
     }
 }
