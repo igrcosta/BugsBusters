@@ -70,6 +70,7 @@ public class GameControllerScript : MonoBehaviour
             if (!HasWaveStarted)
             {
                 HasWaveStarted = true;
+                SafeZone.DisableAndReset();
                 ActualCoroutine = StartCoroutine(FirstWaveRoutine());
             }
         }
@@ -155,8 +156,6 @@ public class GameControllerScript : MonoBehaviour
 
         Player.DisableInputs();
 
-        SafeZone.ResetSize();
-
         yield return new WaitForSeconds(3f);
 
         WaveManagerRef.StartNextWave();
@@ -167,8 +166,6 @@ public class GameControllerScript : MonoBehaviour
         Timer.StartTimer();
 
         Player.EnableInputs();
-
-        SafeZone.BeginShrinking();
 
         IsGameActive = true;
         //essa booleana serve pro jogo não perceber que tem 0 inimigos no início e já dar gameOver
@@ -181,12 +178,12 @@ public class GameControllerScript : MonoBehaviour
         yield return new WaitForSeconds(5f);
 
         EnemySpawnManagerScriptRef.ResetSpawners();
-        SafeZone.ResetSize();
+        Timer.ResetTimer();
 
         WaveManagerRef.StartNextWave();
 
+        SafeZone.ActivateAndBeginShrinking();
         Timer.StartTimer();
-        SafeZone.BeginShrinking();
         IsGameActive = true;
     }
 

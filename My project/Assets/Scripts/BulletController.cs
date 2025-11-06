@@ -95,7 +95,6 @@ public class BulletController : MonoBehaviour
             }
             else if (standardPlayer != null)
             {
-                // AQUI ESTAVA O ERRO CS1503: Chamamos a nova função ApplyDamageToStandardPlayer
                 ApplyDamageToStandardPlayer(standardPlayer, standardPlayer.currentColor); 
             }
             

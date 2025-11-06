@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class SafeZoneScript : MonoBehaviour
 {
-    private bool IsBigger = true;
+    private bool isShrinking = false;
+    private bool isActive = false;
 
-    private Vector3 BiggerScale = new Vector3(150f,150f,150f);
+    private Vector3 InitialScale = new Vector3(150f,150f,150f);
 
-    private Vector3 SmallerScale = new Vector3(50f,50f,50f);
+    private Vector3 ShrinkStartScale = new Vector3(60f,60f,60f);
 
-    private Vector3 ActualScale = new Vector3(0f,0f,0f);
+    private Vector3 SmallerScale = new Vector3(0f,0f,0f);
 
     [SerializeField] private float ShrinkSpeed = 1f;
 
@@ -17,55 +18,46 @@ public class SafeZoneScript : MonoBehaviour
     {
         GameControllerScript.controller.SafeZone = this;
         //SafeZone se insere dentro do GameController (referência encontrada)
+
+        transform.localScale = InitialScale;
     }
 
     void Update()
     {
-        if (IsBigger)
+        if (isActive && isShrinking)
         {
             ShrinkingScale();
-        }
-        else
-        {
-            ResetScale();
-        }
-    }
-
-    void ResetScale()
-    {
-        if(IsBigger == false)
-        {
-            transform.localScale = BiggerScale;
         }
     }
 
     void ShrinkingScale()
     {
-        if(IsBigger == true && transform.localScale.x > SmallerScale.x)
-        {
-
-            transform.localScale = Vector3.MoveTowards(
-                transform.localScale,
-                SmallerScale,
-                ShrinkSpeed * Time.deltaTime
-            );
-        }
-        else
+        if(transform.localScale.x <= SmallerScale.x + 0.01f)
         {
             transform.localScale = SmallerScale;
-            IsBigger = false;
+            isShrinking = false;
+            isActive = false;
+            return;
         }
+
+        transform.localScale = Vector3.MoveTowards(
+            transform.localScale,
+            SmallerScale,
+            ShrinkSpeed * Time.deltaTime
+        );
     }
 
-    public void ResetSize()
+    public void DisableAndReset()
     {
-        IsBigger = false;
+        isActive = false;
+        isShrinking = false;
+        transform.localScale = InitialScale;
     }
 
-    public void BeginShrinking()
+    public void ActivateAndBeginShrinking()
     {
-        IsBigger = true;
+        isActive = true;
+        isShrinking = true;
+        transform.localScale = ShrinkStartScale;
     }
-
-
 }

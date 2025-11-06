@@ -6,6 +6,7 @@ public class TimerScript : MonoBehaviour
     [SerializeField] TextMeshProUGUI timerText;
     [Header("Inserir o tempo em segundos")]
     [SerializeField] float remainingTime;
+    private float resetedTiming;
 
     private bool isRunning = false;
     private bool PlayerSafeZoneHit = false;
@@ -15,6 +16,8 @@ public class TimerScript : MonoBehaviour
     {
         GameControllerScript.controller.Timer = this;
         //o timer ao dar start na cena, vai se inserir dentro do GameController
+
+        resetedTiming = remainingTime;
     }
 
     public void StartTimer()
@@ -27,9 +30,9 @@ public class TimerScript : MonoBehaviour
         isRunning = false;
     }
 
-    public void Lose10Seconds()
+    public void ResetTimer()
     {
-        PlayerSafeZoneHit = true;
+        remainingTime = resetedTiming;
     }
 
     void Update()
@@ -42,15 +45,6 @@ public class TimerScript : MonoBehaviour
         else
         {
             //se for false, roda isso
-        }
-
-        if (PlayerSafeZoneHit)
-        {
-            Reducing10Seconds();
-        }
-        else
-        {
-            //NADA
         }
     }
 

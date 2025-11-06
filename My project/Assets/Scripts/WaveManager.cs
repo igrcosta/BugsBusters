@@ -31,7 +31,6 @@ public class WaveManager : MonoBehaviour
 
         WaveConfig currentWave = waves[currentWaveIndex];
         
-        // NOVO: Chamamos a nova função de ativação do SpawnController
         spawnController.Activation(
             currentWave.numberOfSpawnersToActivate, 
             currentWave.spawnAttemptsPerSpawner, 

@@ -46,15 +46,14 @@ public class BettleEnemyScript : MonoBehaviour
         if (TESTGameController.controller != null)
         {
             gameControllerReference = TESTGameController.controller;
-            playerReference = FindFirstObjectByType<TESTPlayer>();
+            playerReference = TESTGameController.controller.Player;
             Debug.Log("Besouro: Conectado ao TESTGameController.");
         }
         // Tenta encontrar o Controller PADRÃO
         else 
         {
-            // Nota: Se seu GameController PADRÃO é um Singleton (como o TEST), use a referência estática.
-            // gameControllerReference = GameControllerScript.controller; 
-            playerReference = GameObject.FindGameObjectWithTag("Player")?.GetComponent<MonoBehaviour>();
+            gameControllerReference = GameControllerScript.controller;
+            playerReference = GameControllerScript.controller.Player;
             Debug.Log("Besouro: Tentando usar referências Padrão.");
         }
         
@@ -76,12 +75,11 @@ public class BettleEnemyScript : MonoBehaviour
         // Escolhe a cor aleatoriamente (0 ou 1) para o resto da vida do inimigo
         currentColor = Random.Range(0, 2); 
         
-        var testController = gameControllerReference as TESTGameController;
-        // var standardController = gameControllerReference as GameControllerScript;
+        var standardController = gameControllerReference as GameControllerScript;
         
-        if (testController != null)
+        if (standardController != null)
         {
-            SetEnemyColor(testController);
+            SetEnemyColor(standardController);
         }
     }
 
@@ -155,8 +153,7 @@ public class BettleEnemyScript : MonoBehaviour
         if (bulletPrefab == null || firePoint == null) return;
         
         // Tenta obter o Controller de TESTE
-        var testController = gameControllerReference as TESTGameController; 
-        // var standardController = gameControllerReference as GameControllerScript; // Para o padrão
+        var standardController = gameControllerReference as GameControllerScript; 
 
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
@@ -171,16 +168,12 @@ public class BettleEnemyScript : MonoBehaviour
             {
                 Material targetMaterial = null;
 
-                if (testController != null)
+                if (standardController != null)
                 {
                     targetMaterial = (currentColor == 1) ?
-                        testController.PlayerMatFirst :
-                        testController.PlayerMatSecond;
+                        standardController.PlayerMatFirst :
+                        standardController.PlayerMatSecond;
                 }
-                // else if (standardController != null)
-                // {
-                //     // Lógica para o GameController Padrão aqui
-                // }
                 
                 if (targetMaterial != null)
                 {
@@ -190,15 +183,14 @@ public class BettleEnemyScript : MonoBehaviour
         }
     }
     
-    void SetEnemyColor(TESTGameController testController)
+    void SetEnemyColor(GameControllerScript Controller)
     {
-        if (myRenderer != null && testController != null)
+        if (myRenderer != null && gameControllerReference != null)
         {
             myRenderer.material = (currentColor == 1) ?
-                testController.PlayerMatFirst :
-                testController.PlayerMatSecond;
+                GameControllerScript.controller.PlayerMatFirst:
+                GameControllerScript.controller.PlayerMatSecond;
         }
-        // Adicione aqui a lógica para o GameController Padrão
     }
 
     // --- Lógica de Dano/Morte ---
