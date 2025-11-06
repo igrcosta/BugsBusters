@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using System.Linq;
 
 public class SpawnPointsControllerScripts : MonoBehaviour
 {
@@ -35,35 +37,53 @@ public class SpawnPointsControllerScripts : MonoBehaviour
         }
     }
 
-    public void Activation()
+    public void Activation(int numSpawnersToActivate, int spawnAttempts, List<EnemySpawnRate> enemyRates)
     {
         int currentWaveTotalEnemies = 0;
         //int para contar o total de inimigos que vão spawnar, assim o player só ganha se matar esse número
 
-        for(int i = 0; i < 3; i++)
+        // Garante que não tentamos ativar mais spawners do que existem
+        int spawnersToUse = Mathf.Min(numSpawnersToActivate, SpawnPoints.Length);
+
+        ResetSpawners();
+
+        // Cria uma lista de índices disponíveis (0, 1, 2, 3, ...)
+        List<int> availableIndices = Enumerable.Range(0, SpawnPoints.Length).ToList();
+        
+        // Embaralha a lista de índices (Fisher-Yates simplificado)
+        // Isso garante que os 'spawnersToUse' primeiros que pegarmos serão únicos.
+        for (int i = 0; i < availableIndices.Count; i++)
         {
-            int SpawnerSelected = Random.Range(0,(SpawnPoints.Length));
-            if(!SpawnPoints[SpawnerSelected].activeInHierarchy)
-            {
-                GameObject selectedSpawner = SpawnPoints[SpawnerSelected];
-
-                selectedSpawner.gameObject.SetActive(true);
-                //se o spawner aleatório selecionado não estiver ativo na Hierarquia,
-                //ative ele, se não, só pula
-
-                Spawner SpawnerScript = selectedSpawner.GetComponent<Spawner>();
-
-                currentWaveTotalEnemies += SpawnerScript.Enemycounter;
-
-                SpawnerScript.StartSpawning();
-            }
-            else
-            {
-                
-            }
+            int temp = availableIndices[i];
+            int randomIndex = Random.Range(i, availableIndices.Count);
+            availableIndices[i] = availableIndices[randomIndex];
+            availableIndices[randomIndex] = temp;
         }
 
-        //depois de já ativar todos os spawners...
+        // ATIVAÇÃO E CONFIGURAÇÃO
+        for (int i = 0; i < spawnersToUse; i++)
+        {
+            // Pega o índice aleatório e único
+            int spawnerIndex = availableIndices[i];
+            
+            GameObject selectedSpawner = SpawnPoints[spawnerIndex];
+
+            // Ativa o Spawner
+            selectedSpawner.gameObject.SetActive(true);
+
+            // Configura o Script do Spawner
+            Spawner SpawnerScript = selectedSpawner.GetComponent<Spawner>();
+            
+            // Passa a lista de inimigos e as tentativas de spawn
+            SpawnerScript.SetupSpawner(spawnAttempts, enemyRates);
+
+            currentWaveTotalEnemies += SpawnerScript.Enemycounter;
+
+            SpawnerScript.StartSpawning();
+        }
+
+        // Atualiza a contagem de inimigos
         GameControllerScript.controller.SetTotalEnemiesToKill(currentWaveTotalEnemies);
+
     }
 }
