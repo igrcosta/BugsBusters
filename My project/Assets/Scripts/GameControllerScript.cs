@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GameControllerScript : MonoBehaviour
 {
@@ -50,6 +51,7 @@ public class GameControllerScript : MonoBehaviour
     public int[] ColorLogic = { 1, 2 };
     //agora, o game controller vai se responsabilizar pela lógica de cores durante o jogo, X é uma cor, Y é outra
 
+    public Image backgroundMenu; 
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -84,6 +86,7 @@ public class GameControllerScript : MonoBehaviour
     private void Awake()
     {
         Singleton();
+        
     }
 
     private void Singleton()
@@ -124,6 +127,8 @@ public class GameControllerScript : MonoBehaviour
                   }
                 }
             }
+
+
 
             //lógica das waves aqui
 
@@ -194,12 +199,17 @@ public class GameControllerScript : MonoBehaviour
             IsPaused = true;
             //aparecer tela de pause com um SetActive
             Time.timeScale = 0;
+            backgroundMenu.gameObject.SetActive(true);
+            
+            
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == true)
         {
             IsPaused = false;
             //aparecer tela de pause com um SetActive
             Time.timeScale = 1;
+            backgroundMenu.gameObject.SetActive(false);
+            
         }
     }
 
@@ -270,6 +280,7 @@ public class GameControllerScript : MonoBehaviour
         totalEnemiesToKill = total;
         Debug.Log("Meta de inimigos para matar nesta wave: " + totalEnemiesToKill);
     }
+
 
    
     
