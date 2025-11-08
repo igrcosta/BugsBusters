@@ -25,7 +25,6 @@ public class BettleEnemyScript : MonoBehaviour
     private Rigidbody rb;
 
     // --- REFERÊNCIAS FLEXÍVEIS (Híbridas) ---
-    // Usamos 'object' ou 'MonoBehaviour' para armazenar a referência dinâmica e fazer a conversão no uso.
     private MonoBehaviour playerReference; 
     private MonoBehaviour gameControllerReference;
     // ----------------------------------------
@@ -42,7 +41,7 @@ public class BettleEnemyScript : MonoBehaviour
 
         // --- 2. CONEXÃO HÍBRIDA (Player e Controller) ---
         
-        // Tenta encontrar o Controller de TESTE (prioridade)
+        // Tenta encontrar o Controller de TESTE (se ele existir na sua cena)
         if (TESTGameController.controller != null)
         {
             gameControllerReference = TESTGameController.controller;
@@ -50,11 +49,15 @@ public class BettleEnemyScript : MonoBehaviour
             Debug.Log("Besouro: Conectado ao TESTGameController.");
         }
         // Tenta encontrar o Controller PADRÃO
-        else 
+        else if (GameControllerScript.controller != null)
         {
             gameControllerReference = GameControllerScript.controller;
             playerReference = GameControllerScript.controller.Player;
-            Debug.Log("Besouro: Tentando usar referências Padrão.");
+            Debug.Log("Besouro: Conectado ao GameController Padrão.");
+        }
+        else
+        {
+            Debug.LogError("GameController (TEST ou Padrão) não encontrado!");
         }
         
         // --- 3. Inicialização de Estado ---
@@ -66,7 +69,7 @@ public class BettleEnemyScript : MonoBehaviour
         else
         {
             currentState = BettleState.PreparingAttack; // Fica parado se não achar o Player
-            Debug.LogError("Player (TESTPlayer ou Padrão) não encontrado na cena!");
+            Debug.LogError("Player não encontrado para o Besouro.");
         }
     }
     
@@ -120,11 +123,13 @@ public class BettleEnemyScript : MonoBehaviour
         direction.y = 0f;
         direction = direction.normalized;
         transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
+        // CORREÇÃO: Usar rb.velocity
         rb.linearVelocity = new Vector3(direction.x * enemySpeed, rb.linearVelocity.y, direction.z * enemySpeed);
     }
 
     void HandleStopping()
     {
+        // CORREÇÃO: Usar rb.velocity
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
         Vector3 playerPosition = GetPlayerPosition();
         transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
@@ -150,9 +155,12 @@ public class BettleEnemyScript : MonoBehaviour
 
     void Shoot()
     {
-        if (bulletPrefab == null || firePoint == null) return;
+        if (bulletPrefab == null || firePoint == null) 
+        {
+            Debug.LogError("Faltando Prefab ou FirePoint no Besouro.");
+            return;
+        }
         
-        // Tenta obter o Controller de TESTE
         var standardController = gameControllerReference as GameControllerScript; 
 
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
@@ -185,11 +193,12 @@ public class BettleEnemyScript : MonoBehaviour
     
     void SetEnemyColor(GameControllerScript Controller)
     {
-        if (myRenderer != null && gameControllerReference != null)
+        // CORREÇÃO: Usar a referência 'Controller' recebida por argumento.
+        if (myRenderer != null && Controller != null)
         {
             myRenderer.material = (currentColor == 1) ?
-                GameControllerScript.controller.PlayerMatFirst:
-                GameControllerScript.controller.PlayerMatSecond;
+                Controller.PlayerMatFirst:
+                Controller.PlayerMatSecond;
         }
     }
 
@@ -197,31 +206,26 @@ public class BettleEnemyScript : MonoBehaviour
 
     public void TakingDamage(int bulletDamage, int bulletColor)
     {
-    // A checagem de cor foi feita na bala (BulletController).
-    // Aqui, apenas subtraímos o HP.
-    Hp -= bulletDamage;
-    Debug.Log("Besouro recebeu " + bulletDamage + " de dano. Vida restante: " + Hp);
+        Hp -= bulletDamage;
+        Debug.Log("Besouro recebeu " + bulletDamage + " de dano. Vida restante: " + Hp);
 
-    if (Hp <= 0)
-    {
-        Die();
+        if (Hp <= 0)
+        {
+            Die();
+        }
     }
-}
 
     void Die()
     {
-        // Notificação de Morte (Usando Referência Híbrida)
-        var testController = gameControllerReference as TESTGameController;
-        // var standardController = gameControllerReference as GameControllerScript;
-
-        if (testController != null)
+        // CORREÇÃO CRÍTICA: Notificar o GameController Padrão sobre a morte
+        if (GameControllerScript.controller != null)
         {
-            // testController.AumentarNumerodeInimigosMortos(); // Atualmente comentado
+            GameControllerScript.controller.AumentarNumerodeInimigosMortos();
         }
-        // else if (standardController != null)
-        // {
-        //     // standardController.AumentarNumerodeInimigosMortos(); 
-        // }
+        else
+        {
+            Debug.LogError("GameController NULO no momento da morte do Besouro!");
+        }
         
         if (attackRoutineInstance != null) StopCoroutine(attackRoutineInstance);
         
@@ -232,7 +236,6 @@ public class BettleEnemyScript : MonoBehaviour
     
     Vector3 GetPlayerPosition()
     {
-        // Acessa a posição do player de forma segura, seja ele TESTPlayer ou Player Padrão
         if (playerReference != null)
         {
             return playerReference.transform.position;

@@ -30,23 +30,28 @@ public class BulletController : MonoBehaviour
 
         string hitTag = other.tag;
 
+        // Se o objeto for o Player ou um Inimigo, o componente será buscado abaixo.
+        // Mantenha apenas a declaração de otherBullet e hitTag aqui, e as outras buscas
+        // (BettleEnemy, SmallEnemy, Enemy1) dentro do bloco de dano do Player, para melhor performance
+        // e leitura, ou ajuste a declaração inicial (como você fez, mas ajustando o bloco de dano).
+        
+        // --- COLISÃO ENTRE BALAS ---
         if(otherBullet != null)
         {
-            //se uma bala foi atirada pelo player e a outra pelo inimigo
+            // Se uma bala foi atirada pelo player e a outra pelo inimigo
             if (this.isFiredByPlayer != otherBullet.isFiredByPlayer)
             {
-                Destroy(this.gameObject);
-                //destroi a bala do player
-
+                // Destrói a bala do Player (a que entrou em trigger)
+                Destroy(this.gameObject); 
                 return;
             }
             else
             {
-                return;
-                //igonora
+                return; // Ignora colisão entre balas do mesmo lado
             }
         }
 
+        // --- REGRAS DE IGNORAR ---
         // Se a bala atingiu o Player que a disparou ou vice-versa (regra de ignorar)
         if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy")) 
         {
@@ -56,11 +61,10 @@ public class BulletController : MonoBehaviour
         // --- LÓGICA DE DANO: PLAYER ATIROU (isFiredByPlayer == true) ---
         if (isFiredByPlayer && hitTag == "Enemy")
         {
-            // Tenta obter o script do Inimigo 1
+            // Tenta obter os scripts dos inimigos
             Enemy1 enemy1 = other.GetComponent<Enemy1>();
-            
-            // Tenta obter o script do Besouro
             BettleEnemyScript bettleEnemy = other.GetComponent<BettleEnemyScript>();
+            SmallEnemy smallEnemy = other.GetComponent<SmallEnemy>(); // NOVIDADE
 
             // Verifica qual inimigo foi atingido e aplica a lógica
             if (enemy1 != null)
@@ -69,11 +73,15 @@ public class BulletController : MonoBehaviour
             }
             else if (bettleEnemy != null)
             {
-                ApplyDamageToBettle(bettleEnemy); // <--- Chama o método para Besouro
+                ApplyDamageToBettle(bettleEnemy); 
+            }
+            else if (smallEnemy != null) // NOVO BLOCO para o SmallEnemy
+            {
+                ApplyDamageToSmallEnemy(smallEnemy);
             }
             
             // Destrói a bala após atingir um inimigo válido
-            if (enemy1 != null || bettleEnemy != null)
+            if (enemy1 != null || bettleEnemy != null || smallEnemy != null)
             {
                 Destroy(gameObject);
                 return;
@@ -127,16 +135,30 @@ public class BulletController : MonoBehaviour
 
     private void ApplyDamageToBettle(BettleEnemyScript bettle)
     {
-        // NOVIDADE: Adicionando a lógica de anulação de dano do Besouro (igual ao Enemy1)
         if (bettle.currentColor != bulletColor)
         {
-            // Passamos o dano e a cor da bala. O Besouro fará a subtração de HP.
+            // Passamos o dano e a cor da bala.
             bettle.TakingDamage(PLayerDamage, bulletColor); 
             Debug.Log("DANO Besouro: Cor diferente!");
         }
         else
         {
             Debug.Log("Dano anulado, Besouro mesma cor da bala");
+        }
+    }
+    
+    // NOVIDADE: Método para o SmallEnemy
+    private void ApplyDamageToSmallEnemy(SmallEnemy smallEnemy)
+    {
+        if (smallEnemy.currentColor != bulletColor)
+        {
+            // Passamos o dano e a cor da bala.
+            smallEnemy.TakingDamage(PLayerDamage, bulletColor); 
+            Debug.Log("DANO SmallEnemy: Cor diferente!");
+        }
+        else
+        {
+            Debug.Log("Dano anulado, SmallEnemy mesma cor da bala");
         }
     }
     
@@ -154,10 +176,9 @@ public class BulletController : MonoBehaviour
         }
     }
 
-    // NOVIDADE: Método para o Player PADRÃO (Resolve o erro CS1503)
+    // Método para o Player PADRÃO
     private void ApplyDamageToStandardPlayer(Player player, int playerCurrentColor)
     {
-        // Assume-se que o Player Padrão tem os métodos 'ReceiveDamage' e a variável 'currentColor'
         if (playerCurrentColor != bulletColor)
         {
             player.ReceiveDamage(EnemyDamage); 
