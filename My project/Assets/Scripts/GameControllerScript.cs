@@ -6,40 +6,33 @@ using UnityEngine.InputSystem;
 
 public class GameControllerScript : MonoBehaviour
 {
-    [Header("Tudo sobre o Player")]
+    [Header("CHEATS")]
+    public bool cheatsEnabled = true;
 
-    public Player Player;
-    //acessar o gameObject do tipo Player
+    [Header("Tudo sobre o Player")]
+    public Player Player; // Acessar o gameObject do tipo Player
 
     [Header("Materiais que Inimigos/Player usam")]
-
     public Material PlayerMatFirst, PlayerMatSecond;
 
-    [Header ("Elementos dentro da MainScene")]
-
+    [Header("Elementos dentro da MainScene")]
     public TimerScript Timer;
-
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
-
     public SafeZoneScript SafeZone;
-
     public GameUI GameUI;
 
     private bool IsPaused = false;
     private int ActualSceneIndex;
 
-
     public static GameControllerScript controller;
 
     private Coroutine ActualCoroutine;
 
-    private int EnemiesNumber;
-
-    private int pontos;
-
+    private int EnemiesNumber; // Não está sendo usado
+    private int pontos; // Não está sendo usado
     private int totalEnemiesToKill;
 
-    int inimigosMortos;
+    int inimigosMortos; // Contador de inimigos mortos
 
     private bool HasWaveStarted = false;
     private bool WinCondition = false;
@@ -47,8 +40,7 @@ public class GameControllerScript : MonoBehaviour
 
     public WaveManager WaveManagerRef;
 
-    public int[] ColorLogic = { 1, 2 };
-    //agora, o game controller vai se responsabilizar pela lógica de cores durante o jogo, X é uma cor, Y é outra
+    public int[] ColorLogic = { 1, 0 }; // Corrigido para 0 e 1, seguindo a lógica do Player.cs
 
     private void OnEnable()
     {
@@ -63,9 +55,8 @@ public class GameControllerScript : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Só faz a checagem se estiver na MainScene (índice 1)
-        if (scene.buildIndex == 1) 
+        if (scene.buildIndex == 1)
         {
-            // O Player, Timer, SafeZone, etc., no Awake/Start, se conectam aqui.
             // Garantimos que a wave só tenta começar uma vez.
             if (!HasWaveStarted)
             {
@@ -114,44 +105,82 @@ public class GameControllerScript : MonoBehaviour
                 if (WinCondition)
                 {
                     if (ActualCoroutine != null)
-                  {
-                    StopCoroutine(ActualCoroutine);
-                    Timer.StopTimer();
+                    {
+                        StopCoroutine(ActualCoroutine);
+                        Timer.StopTimer();
 
-                    GameOver();
-                    WinCondition = false;
-                    IsGameActive = false;
-                  }
+                        GameOver();
+                        WinCondition = false;
+                        IsGameActive = false;
+                    }
                 }
             }
+        }
 
-            //lógica das waves aqui
-
-            //esperar 3 segundos depois que a cena carregar, mostrando uma contagem regressiva na tela 
-            //colocar texto para o cara se preparar, sem permitir o player interagir antes dessa contagem
-            //fazer tudo que tiver que fazer antes do jogo iniciar
-
-            //determinar onde vai spawnar inimigos (FEITO)
-            //trazer safe zone pra posição original (ficar maior)
-            //começar timer (FEITO)
-
-            //tempo acabou
-            //tem inimigos vivos? então tela de derrota
-
-            //SE NÃO HOUVER MAIS INIMIGOS PARA SPAWNAR NESSA ONDA
-            //Player vence, FICANDO SEM PODER INTERAGIR DENOVO. enquanto outra onda vai se iniciar
-            //a ideia é que no futuro ele possa roletar entre as trocas de waves para novos tipos de armas
-            //NÃO ESQUECER DISSO NO FUTURO
-
+        if (cheatsEnabled && Input.GetKeyDown(KeyCode.F1))
+        {
+        ForceNextWaveCheat();
         }
     }
 
+    public void DestroyAllActiveEnemies()
+{
+    // Encontra todos os GameObjects que têm a tag "Enemy"
+    GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+    int enemiesDestroyed = 0;
+    foreach (GameObject enemy in enemies)
+    {
+        // Certifica-se de que o objeto é destruído
+        Destroy(enemy);
+        enemiesDestroyed++;
+    }
+
+    Debug.Log($"Destruiu {enemiesDestroyed} inimigos ativos na cena.");
+}
+
+
+    public void ForceNextWaveCheat()
+{
+    if (IsGameActive)
+    {
+        Debug.LogWarning("CHEATER: Forçando transição INSTANTÂNEA para a próxima Wave (F1).");
+
+        // 1. Para a coroutine atual (seja FirstWave, NextWave ou outra)
+        if (ActualCoroutine != null)
+        {
+            StopCoroutine(ActualCoroutine);
+            Timer.StopTimer(); // Garante que o timer pare
+        }
+        
+        // 2. Reseta estados de transição
+        WinCondition = false;
+        IsGameActive = false; // Desativa antes de iniciar a transição
+        
+        // 3. Inicia a nova rotina INSTANTÂNEA
+        ActualCoroutine = StartCoroutine(InstantNextWaveRoutine());
+    }
+    else
+    {
+        Debug.Log("Cheat Ignorado: Jogo não está ativo.");
+    }
+}
+
     IEnumerator FirstWaveRoutine()
     {
-        while (Player == null || Timer == null || SafeZone == null || GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
+        // Garante que todas as referências essenciais (exceto Player, que se registra) existam
+        while (Timer == null || SafeZone == null || GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
         {
             yield return new WaitForEndOfFrame();
         }
+        
+        // CORREÇÃO: Garante que o Player se registrou no Singleton antes de continuar
+        while (Player == null) 
+        {
+            Debug.LogWarning("GameController esperando o Player se registrar...");
+            yield return new WaitForEndOfFrame();
+        }
+
         EnemySpawnManagerScriptRef.ResetSpawners();
 
         Player.DisableInputs();
@@ -161,19 +190,51 @@ public class GameControllerScript : MonoBehaviour
         WaveManagerRef.StartNextWave();
 
         yield return null;
-        //espera um frame pro jogo poder começar já com inimigos spawnados
+        // espera um frame pro jogo poder começar já com inimigos spawnados
 
         Timer.StartTimer();
 
         Player.EnableInputs();
 
         IsGameActive = true;
-        //essa booleana serve pro jogo não perceber que tem 0 inimigos no início e já dar gameOver
     }
+
+    IEnumerator InstantNextWaveRoutine()
+{
+    Debug.LogWarning("CHEATER: Transição Instantânea para a próxima Wave!");
+    
+    // NOVO: Destrói todos os inimigos existentes para limpar a cena
+    DestroyAllActiveEnemies(); 
+
+    // 1. Zera a contagem de inimigos mortos para a nova wave
+    // ... (restante do código: inimigosMortos = 0, GameUI, etc.) ...
+    inimigosMortos = 0; 
+    GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
+
+    // 2. Reseta Spawners e Timer
+    EnemySpawnManagerScriptRef.ResetSpawners();
+    Timer.ResetTimer();
+
+    // 3. Inicia a Próxima Wave
+    WaveManagerRef.StartNextWave();
+
+    // 4. Ativa elementos do jogo
+    SafeZone.ActivateAndBeginShrinking();
+    Timer.StartTimer();
+    IsGameActive = true;
+    
+    yield return null; // Finaliza a coroutine
+}
+
 
     IEnumerator NextWaveTransitionRoutine()
     {
         Debug.Log("Wave Finalizada! preparando para a próxima");
+
+        // CORREÇÃO CRÍTICA: Zera a contagem de inimigos mortos para a nova wave
+        inimigosMortos = 0; 
+        GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
+        // Fim da Correção
 
         yield return new WaitForSeconds(5f);
 
@@ -192,13 +253,11 @@ public class GameControllerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == false)
         {
             IsPaused = true;
-            //aparecer tela de pause com um SetActive
             Time.timeScale = 0;
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == true)
         {
             IsPaused = false;
-            //aparecer tela de pause com um SetActive
             Time.timeScale = 1;
         }
     }
@@ -206,7 +265,6 @@ public class GameControllerScript : MonoBehaviour
     private void FindingActualScene()
     {
         ActualSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        //pegamos o index da cena atual
     }
 
     public void GameOver()
@@ -215,20 +273,24 @@ public class GameControllerScript : MonoBehaviour
         SceneManager.LoadScene(2);
     }
 
-    public void CleanUpGame()
-{
-    //vou resetar todas as referências do gameController pra ele achar tudo denovo quando der retry
-    controller = null;
-    
-    // Zera todas as variáveis de estado
-    HasWaveStarted = false;
-    WinCondition = false;
-    IsGameActive = false;
-    inimigosMortos = 0;
+    public void EndGame()
+    {
+        //SceneManager.LoadScene();
+    }
 
-    //Destroy(gameObject);
-    //tava dando erro de um retry pro outro, então vamo deixar o GameController se recriar
-}
+    public void CleanUpGame()
+    {
+        // Destruição do singleton para que ele se recrie limpo ao carregar a cena inicial
+        Destroy(gameObject);
+        
+        // Essas linhas são redundantes se você destruir o GameObject, mas servem como garantia
+        controller = null; 
+        HasWaveStarted = false;
+        WinCondition = false;
+        IsGameActive = false;
+        inimigosMortos = 0;
+    }
+
     public void WaveFinished()
     {
         if (ActualCoroutine != null)
@@ -245,11 +307,11 @@ public class GameControllerScript : MonoBehaviour
 
     private void CountingEnemies()
     {
-    // Se o jogo está ativo e a contagem total foi definida...
-    if (IsGameActive && totalEnemiesToKill > 0)
+        // Se o jogo está ativo e a contagem total foi definida...
+        if (IsGameActive && totalEnemiesToKill > 0)
         {
-        // ...checa se a wave acabou.
-        WaveManagerRef.CheckWinCondition(inimigosMortos, totalEnemiesToKill);
+            // ...checa se a wave acabou.
+            WaveManagerRef.CheckWinCondition(inimigosMortos, totalEnemiesToKill);
         }
     }
 
@@ -257,8 +319,8 @@ public class GameControllerScript : MonoBehaviour
     {
         inimigosMortos++;
         GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
-
     }
+    
     public void RegisterSpawnManager(SpawnPointsControllerScripts manager)
     {
         EnemySpawnManagerScriptRef = manager;
@@ -270,19 +332,4 @@ public class GameControllerScript : MonoBehaviour
         totalEnemiesToKill = total;
         Debug.Log("Meta de inimigos para matar nesta wave: " + totalEnemiesToKill);
     }
-
-   
-    
-
-
-
-
-    //GameController vai servir para o seguinte:
-    //gerenciar as waves, o que engloba:
-    //Controlar o Timer
-    //Gerenciar os spawns de inimigos 
-    //trazer as condições de vitória e derrota (quando o tempo acaba, derrota aparece, falta verificar se o player matou todos os inimigos, que aí, vai ter a de vitória)
-    //gerenciar quando começa ondas e termina outras
-    //trocar entre cenas (Parcialmente)
-    //garantir "pauses" na gameplay (FEITO)
 }

@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 8183075264993949734}
   - component: {fileID: 8508082295485023890}
   - component: {fileID: 8012323860394558737}
-  - component: {fileID: 8392621447425082614}
   - component: {fileID: 7511338812289023489}
-  m_Layer: 8
-  m_Name: Enemy
+  - component: {fileID: 2163960938987493362}
+  m_Layer: 6
+  m_Name: SmallEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,10 +31,9 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_LocalScale: {x: 0.04, y: 0.04, z: 0.04}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 2387417315619850805}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8183075264993949734
@@ -111,27 +110,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8392621447425082614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417907337024492334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a39323c63933a141a28c409a13437dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Hp: 20
-  enemySpeed: 0.7
-  stoppingDistance: 1
-  bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
-  firePoint: {fileID: 2387417315619850805}
-  fireRate: 0.7
-  shotsPerBurst: 3
-  cooldownTime: 2
-  currentColor: 0
 --- !u!54 &7511338812289023489
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -140,7 +118,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1417907337024492334}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 2
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -159,34 +137,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 1
---- !u!1 &7996937194018148959
-GameObject:
+--- !u!114 &2163960938987493362
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2387417315619850805}
-  m_Layer: 8
-  m_Name: firePoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2387417315619850805
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7996937194018148959}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.52}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3232388830897908060}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 1417907337024492334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a734dca688503d5408bac4b0e85a4030, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Hp: 10
+  enemySpeed: 3
+  explosionRadius: 0.3
+  safeReturnDistance: 1
+  explosionTimer: 0.5
+  damageRadius: 0.3
+  explosionDamage: 20
+  explosionForce: 500
+  bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
+  bulletsInCircle: 8
+  bulletDelay: 1
+  explosionVisualPrefab: {fileID: 1033600852879337965, guid: 86825e6e821a25140be666d28f1ddcd2, type: 3}
+  currentColor: 0

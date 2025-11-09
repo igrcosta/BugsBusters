@@ -565,7 +565,7 @@ GameObject:
   - component: {fileID: 330106236}
   - component: {fileID: 330106235}
   - component: {fileID: 330106234}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EmptyBoxColliders1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -581,7 +581,7 @@ Transform:
   m_GameObject: {fileID: 330106232}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.0161}
   m_LocalScale: {x: 0.04, y: 0.039999988, z: 0.039999988}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -704,15 +704,17 @@ MonoBehaviour:
   - numberOfSpawnersToActivate: 2
     enemyRates:
     - enemyPrefab: {fileID: 1417907337024492334, guid: 826e2a8af6e95d8469f41baaf548c0b5, type: 3}
-      spawnWeight: 100
+      spawnWeight: 70
     spawnAttemptsPerSpawner: 5
   - numberOfSpawnersToActivate: 4
     enemyRates:
     - enemyPrefab: {fileID: 1417907337024492334, guid: 826e2a8af6e95d8469f41baaf548c0b5, type: 3}
-      spawnWeight: 50
+      spawnWeight: 60
     - enemyPrefab: {fileID: 1417907337024492334, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      spawnWeight: 50
-    spawnAttemptsPerSpawner: 7
+      spawnWeight: 10
+    - enemyPrefab: {fileID: 1417907337024492334, guid: eda0129cd32d206479827595c74c249c, type: 3}
+      spawnWeight: 30
+    spawnAttemptsPerSpawner: 2
   spawnController: {fileID: 8454403590880084662}
 --- !u!4 &338366223
 Transform:
@@ -3523,6 +3525,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Corredor
       objectReference: {fileID: 0}
+    - target: {fileID: 4434641555991217179, guid: 2409346f02bedd046b6ddcc1d8942c99, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4507,7 +4513,7 @@ GameObject:
   - component: {fileID: 1555313737}
   - component: {fileID: 1555313736}
   - component: {fileID: 1555313735}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EmptyBoxColliders2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4523,7 +4529,7 @@ Transform:
   m_GameObject: {fileID: 1555313733}
   serializedVersion: 2
   m_LocalRotation: {x: 0.6532815, y: 0.27059805, z: 0.27059805, w: 0.6532815}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: -0.0161}
   m_LocalScale: {x: 0.04, y: 0.039999988, z: 0.039999988}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5339,6 +5345,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1fb7d4cfdbce5244e83c0f397a975a52, type: 2}
+    - target: {fileID: 7748947893257873497, guid: 0f2cdc2ee664f984c8be607c9ba5e9ab, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 7868383352321931423, guid: 0f2cdc2ee664f984c8be607c9ba5e9ab, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

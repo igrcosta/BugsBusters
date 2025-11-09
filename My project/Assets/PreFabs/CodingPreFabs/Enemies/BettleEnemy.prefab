@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8012323860394558737}
   - component: {fileID: 7511338812289023489}
   - component: {fileID: 3206952382252099719}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: BettleEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Hp: 40
   enemySpeed: 0.7
-  stopAndShootDistance: 2
+  stopAndShootDistance: 1
   bulletPrefab: {fileID: 8422060013284516898, guid: 5a8f6e84789729b46bb405017d84007f, type: 3}
   firePoint: {fileID: 2387417315619850805}
   prepTime: 1.5
@@ -167,7 +167,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2387417315619850805}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: firePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
