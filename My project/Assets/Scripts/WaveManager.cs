@@ -25,6 +25,7 @@ public class WaveManager : MonoBehaviour
         if (currentWaveIndex >= waves.Count)
         {
             Debug.Log("Todas as waves foram concluídas. Fim de jogo!");
+            GameControllerScript.controller.EndGame();
             // TODO: Chamar o método de Vitória Final no GameController
             return;
         }

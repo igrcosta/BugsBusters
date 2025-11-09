@@ -194,6 +194,11 @@ public class GameControllerScript : MonoBehaviour
         SceneManager.LoadScene(2);
     }
 
+    public void EndGame()
+    {
+        //SceneManager.LoadScene();
+    }
+
     public void CleanUpGame()
     {
         // Destruição do singleton para que ele se recrie limpo ao carregar a cena inicial
