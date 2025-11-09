@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Hp: 40
   enemySpeed: 0.7
-  stopAndShootDistance: 2
+  stopAndShootDistance: 1
   bulletPrefab: {fileID: 8422060013284516898, guid: 5a8f6e84789729b46bb405017d84007f, type: 3}
   firePoint: {fileID: 2387417315619850805}
   prepTime: 1.5

@@ -6,6 +6,9 @@ using UnityEngine.InputSystem;
 
 public class GameControllerScript : MonoBehaviour
 {
+    [Header("CHEATS")]
+    public bool cheatsEnabled = true;
+
     [Header("Tudo sobre o Player")]
     public Player Player; // Acessar o gameObject do tipo Player
 
@@ -113,7 +116,55 @@ public class GameControllerScript : MonoBehaviour
                 }
             }
         }
+
+        if (cheatsEnabled && Input.GetKeyDown(KeyCode.F1))
+        {
+        ForceNextWaveCheat();
+        }
     }
+
+    public void DestroyAllActiveEnemies()
+{
+    // Encontra todos os GameObjects que têm a tag "Enemy"
+    GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+    int enemiesDestroyed = 0;
+    foreach (GameObject enemy in enemies)
+    {
+        // Certifica-se de que o objeto é destruído
+        Destroy(enemy);
+        enemiesDestroyed++;
+    }
+
+    Debug.Log($"Destruiu {enemiesDestroyed} inimigos ativos na cena.");
+}
+
+
+    public void ForceNextWaveCheat()
+{
+    if (IsGameActive)
+    {
+        Debug.LogWarning("CHEATER: Forçando transição INSTANTÂNEA para a próxima Wave (F1).");
+
+        // 1. Para a coroutine atual (seja FirstWave, NextWave ou outra)
+        if (ActualCoroutine != null)
+        {
+            StopCoroutine(ActualCoroutine);
+            Timer.StopTimer(); // Garante que o timer pare
+        }
+        
+        // 2. Reseta estados de transição
+        WinCondition = false;
+        IsGameActive = false; // Desativa antes de iniciar a transição
+        
+        // 3. Inicia a nova rotina INSTANTÂNEA
+        ActualCoroutine = StartCoroutine(InstantNextWaveRoutine());
+    }
+    else
+    {
+        Debug.Log("Cheat Ignorado: Jogo não está ativo.");
+    }
+}
 
     IEnumerator FirstWaveRoutine()
     {
@@ -147,6 +198,34 @@ public class GameControllerScript : MonoBehaviour
 
         IsGameActive = true;
     }
+
+    IEnumerator InstantNextWaveRoutine()
+{
+    Debug.LogWarning("CHEATER: Transição Instantânea para a próxima Wave!");
+    
+    // NOVO: Destrói todos os inimigos existentes para limpar a cena
+    DestroyAllActiveEnemies(); 
+
+    // 1. Zera a contagem de inimigos mortos para a nova wave
+    // ... (restante do código: inimigosMortos = 0, GameUI, etc.) ...
+    inimigosMortos = 0; 
+    GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
+
+    // 2. Reseta Spawners e Timer
+    EnemySpawnManagerScriptRef.ResetSpawners();
+    Timer.ResetTimer();
+
+    // 3. Inicia a Próxima Wave
+    WaveManagerRef.StartNextWave();
+
+    // 4. Ativa elementos do jogo
+    SafeZone.ActivateAndBeginShrinking();
+    Timer.StartTimer();
+    IsGameActive = true;
+    
+    yield return null; // Finaliza a coroutine
+}
+
 
     IEnumerator NextWaveTransitionRoutine()
     {
