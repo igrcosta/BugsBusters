@@ -1036,9 +1036,9 @@ MonoBehaviour:
   - numberOfSpawnersToActivate: 4
     enemyRates:
     - enemyPrefab: {fileID: 1417907337024492334, guid: 826e2a8af6e95d8469f41baaf548c0b5, type: 3}
-      spawnWeight: 60
+      spawnWeight: 40
     - enemyPrefab: {fileID: 1417907337024492334, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      spawnWeight: 10
+      spawnWeight: 30
     - enemyPrefab: {fileID: 1417907337024492334, guid: eda0129cd32d206479827595c74c249c, type: 3}
       spawnWeight: 30
     spawnAttemptsPerSpawner: 2
