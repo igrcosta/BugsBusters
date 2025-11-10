@@ -265,6 +265,7 @@ GameObject:
   - component: {fileID: 83836850}
   - component: {fileID: 83836849}
   - component: {fileID: 83836853}
+  - component: {fileID: 83836854}
   m_Layer: 5
   m_Name: CanvasEndingHUD
   m_TagString: HUD
@@ -371,6 +372,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 603e398d1d9ccda4285c1bce09eca039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &83836854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83836848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52ac7c1c97dcd6442bc59a3130840a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBarFillImage: {fileID: 0}
+  speed: 2
+  pauseMenu: {fileID: 1795245642}
+  InimigosMortosText: {fileID: 0}
 --- !u!1 &636852803
 GameObject:
   m_ObjectHideFlags: 0
@@ -1688,6 +1705,7 @@ GameObject:
   - component: {fileID: 1795245644}
   - component: {fileID: 1795245643}
   - component: {fileID: 1795245642}
+  - component: {fileID: 1795245645}
   m_Layer: 5
   m_Name: MenuPause
   m_TagString: Untagged
@@ -1755,6 +1773,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1795245645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795245641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eda874806d3e9140875e080958121c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1832653814
 GameObject:
   m_ObjectHideFlags: 0

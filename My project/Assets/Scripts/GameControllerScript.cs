@@ -199,7 +199,8 @@ public class GameControllerScript : MonoBehaviour
             IsPaused = true;
             //aparecer tela de pause com um SetActive
             Time.timeScale = 0;
-            backgroundMenu.gameObject.SetActive(true);
+
+            GameUI.pauseMenu.gameObject.SetActive(true);
             
             
         }
@@ -208,7 +209,7 @@ public class GameControllerScript : MonoBehaviour
             IsPaused = false;
             //aparecer tela de pause com um SetActive
             Time.timeScale = 1;
-            backgroundMenu.gameObject.SetActive(false);
+            GameUI.pauseMenu.gameObject.SetActive(false);
             
         }
     }

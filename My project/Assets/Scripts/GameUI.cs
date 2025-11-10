@@ -10,6 +10,8 @@ public class GameUI : MonoBehaviour
     [Min(0.1f)]
     private float speed = 2;
 
+    public Image pauseMenu;
+
     [SerializeField] Text InimigosMortosText; // NOVO: Referência para o componente Text na HUD
 
     private void LateUpdate()

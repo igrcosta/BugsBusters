@@ -3654,6 +3654,7 @@ GameObject:
   - component: {fileID: 1067138287}
   - component: {fileID: 1067138289}
   - component: {fileID: 1067138288}
+  - component: {fileID: 1067138290}
   m_Layer: 5
   m_Name: MenuPause
   m_TagString: Untagged
@@ -3721,6 +3722,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1067138286}
   m_CullTransparentMesh: 1
+--- !u!114 &1067138290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067138286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eda874806d3e9140875e080958121c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1146396323 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3762475945088313033, guid: fe10d2e2c4964664fa87582fc6e8b200, type: 3}
@@ -3935,6 +3948,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBarFillImage: {fileID: 517263158}
   speed: 2
+  pauseMenu: {fileID: 1067138288}
   InimigosMortosText: {fileID: 1980406127}
 --- !u!4 &1176493937 stripped
 Transform:
@@ -7598,8 +7612,8 @@ SceneRoots:
   - {fileID: 1464501789}
   - {fileID: 3366836956181993222}
   - {fileID: 8454403590880084661}
-  - {fileID: 1164945648}
   - {fileID: 63202562}
   - {fileID: 1737042347}
   - {fileID: 338366223}
   - {fileID: 655102149}
+  - {fileID: 1164945648}
