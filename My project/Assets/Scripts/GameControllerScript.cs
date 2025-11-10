@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GameControllerScript : MonoBehaviour
 {
@@ -42,6 +43,7 @@ public class GameControllerScript : MonoBehaviour
 
     public int[] ColorLogic = { 1, 0 }; // Corrigido para 0 e 1, seguindo a lógica do Player.cs
 
+    public Image backgroundMenu; 
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -75,6 +77,7 @@ public class GameControllerScript : MonoBehaviour
     private void Awake()
     {
         Singleton();
+        
     }
 
     private void Singleton()
@@ -254,11 +257,17 @@ public class GameControllerScript : MonoBehaviour
         {
             IsPaused = true;
             Time.timeScale = 0;
+
+            GameUI.pauseMenu.gameObject.SetActive(true);
+            
+            
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == true)
         {
             IsPaused = false;
             Time.timeScale = 1;
+            GameUI.pauseMenu.gameObject.SetActive(false);
+            
         }
     }
 
