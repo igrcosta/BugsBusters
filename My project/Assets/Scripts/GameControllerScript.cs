@@ -284,7 +284,7 @@ public class GameControllerScript : MonoBehaviour
 
     public void EndGame()
     {
-        //SceneManager.LoadScene();
+        SceneManager.LoadScene(3);
     }
 
     public void CleanUpGame()

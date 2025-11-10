@@ -802,8 +802,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Pause
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
-  m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 34880c361bd99094291cdffa93543772, type: 2}
+  m_sharedMaterial: {fileID: -6948614829266733036, guid: 34880c361bd99094291cdffa93543772, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2338,6 +2338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28b0820f24d157419b5340edbc1f049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cheatsEnabled: 1
   Player: {fileID: 3366836956181993223}
   PlayerMatFirst: {fileID: 2100000, guid: e3d24fa617fb0064a9671236306a7ed3, type: 2}
   PlayerMatSecond: {fileID: 2100000, guid: 3c51358d3517ad14f8dc9e8614eda2b5, type: 2}
@@ -6734,8 +6735,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Song
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
-  m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 34880c361bd99094291cdffa93543772, type: 2}
+  m_sharedMaterial: {fileID: -6948614829266733036, guid: 34880c361bd99094291cdffa93543772, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

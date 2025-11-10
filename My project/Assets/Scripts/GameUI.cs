@@ -32,8 +32,11 @@ public class GameUI : MonoBehaviour
 
     private void Awake()
     {
-        // Registra o Canvas do jogo para o GameController
-        GameControllerScript.controller.GameUI = this;
+        if(GameControllerScript.controller != null)
+        {
+            // Registra o Canvas do jogo para o GameController
+            GameControllerScript.controller.GameUI = this;
+        }
     }
 
     private void Start()
