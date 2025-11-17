@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 30ea3f6af22d8954f946eefb9d44b0f0
+guid: 923cdaf42c95ef94599d3fa64485ab76
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,13 +7,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: VertexClothTemp
-    second: {fileID: 2100000, guid: 364da21220c512d4288ca87847c3d105, type: 2}
+      name: laranja
+    second: {fileID: 2100000, guid: d8eb6769f73eb464189fd9fce1aec403, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: VertexMettalicTemp
-    second: {fileID: 2100000, guid: d7fa594852048344183e2a6704b8ec7b, type: 2}
+      name: preto
+    second: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vermelho
+    second: {fileID: 2100000, guid: fba5289721abaa14284adb70205eb5fe, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
