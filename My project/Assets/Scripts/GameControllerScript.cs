@@ -16,7 +16,7 @@ public class GameControllerScript : MonoBehaviour
     [Header("Materiais que Inimigos/Player usam")]
     public Material PlayerMatFirst, PlayerMatSecond;
 
-    [Header("Elementos dentro da MainScene")]
+    [Header("Elementos dentro do Level01")]
     public TimerScript Timer;
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
     public SafeZoneScript SafeZone;
@@ -56,8 +56,8 @@ public class GameControllerScript : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Só faz a checagem se estiver na MainScene (índice 1)
-        if (scene.buildIndex == 1)
+        // Só faz a checagem se estiver na MainScene (índice 1) (Erika: MainScene agora é Level01, indice 2)
+        if (scene.buildIndex == 2)
         {
             // Garantimos que a wave só tenta começar uma vez.
             if (!HasWaveStarted)
@@ -97,7 +97,7 @@ public class GameControllerScript : MonoBehaviour
     {
         FindingActualScene();
 
-        if (ActualSceneIndex == 1)
+        if (ActualSceneIndex == 2)
         {
             Pause();
 
