@@ -10,6 +10,7 @@ TagManager:
   - HUD
   - SafeZone
   - UIController
+  - Ground
   layers:
   - Default
   - TransparentFX

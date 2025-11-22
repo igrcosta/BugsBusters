@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 
 // criamos uma lista de comportamentos que o inimigo terá
 //chamamos isso de estados da State Machine do inimigo
-public enum EnemyState {Chasing, Attacking, CoolingDown }
+public enum EnemyState { Chasing, Attacking, CoolingDown }
 
 public class Enemy1 : MonoBehaviour
 {
+    private Animator anim;
+    private bool hasLanded = false;
+
     private Renderer myRenderer;
     //randerizador da cor do inimigo
 
@@ -61,36 +64,55 @@ public class Enemy1 : MonoBehaviour
         currentColor = GameControllerScript.controller.ColorLogic[0];
 
         myRenderer = GetComponent<Renderer>();
+
+        //pra animação funcionar
+        anim = GetComponent<Animator>();
+        anim.SetBool("isFalling", true); // inimigo começa caindo
     }
 
-    
+
     void Update()
     {
         switch (currentState)
         {
             case EnemyState.Chasing:
-            HandleChasing(); //chamamos o método de perseguição
-            break;
+                HandleChasing(); //chamamos o método de perseguição
+                break;
 
             case EnemyState.Attacking:
             case EnemyState.CoolingDown:
-            HandleStopping(); //chama método para parar o movimento
-            break;
+                HandleStopping(); //chama método para parar o movimento
+                break;
 
-            // esse dois pontos demonstra o que vai ser feito quando chegar naquele case,
-            //no de chasing, vai ativar a função de de chasing,
-            //no de attacking e de cooling down, eles vão chamar a função de parada
+                // esse dois pontos demonstra o que vai ser feito quando chegar naquele case,
+                //no de chasing, vai ativar a função de de chasing,
+                //no de attacking e de cooling down, eles vão chamar a função de parada
 
-            //toda a sequência de ataque, cooldown e mudança de estado foi feita pelo AttackRoutine
+                //toda a sequência de ataque, cooldown e mudança de estado foi feita pelo AttackRoutine
 
-            //FixedUpdate focado no Movimento, CoRoutines para tempo de intervalos e transições de estados
+                //FixedUpdate focado no Movimento, CoRoutines para tempo de intervalos e transições de estados
+        }
+    }
+
+    //método para tocar a animação Fall ao encostar no chão
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!hasLanded)
+        {
+            // quando tocar o chão pela primeira vez
+            if (collision.gameObject.CompareTag("Ground"))
+            {
+                hasLanded = true;
+                anim.SetBool("isFalling", false);
+                anim.SetTrigger("FallImpact");
+            }
         }
     }
 
     //método para realizar o comportamento de perseguição do player 
     void HandleChasing()
     {   //se o player não existir, não faz nada
-        if (playerTarget == null) 
+        if (playerTarget == null)
         {
             return;
         }
@@ -106,7 +128,9 @@ public class Enemy1 : MonoBehaviour
 
         distance = direction.magnitude;
 
-        if (distance > stoppingDistance) {
+
+        if (distance > stoppingDistance)
+        {
             direction.y = 0f;
             //colocamos o eixo Y do inimigo em 0 para evitar dele "voar" em direção ao seu alvo
 
@@ -120,24 +144,36 @@ public class Enemy1 : MonoBehaviour
             //sem sair voando por aí, já que a única força aplicada verticalmente é a do rigidbody
 
             transform.LookAt(playerPosition);
+
+            anim.SetBool("isWalking", true); //tocar animação Walk
         }
-        else {
+        else
+        {
             //inicia o estado de ataque 
             currentState = EnemyState.Attacking;
 
+            anim.SetBool("isWalking", false); //parar animação Walk
+
             StartCoroutine(AttackRoutine()); //começa ciclo de Tiro e cooldown
+
         }
     }
 
     void HandleStopping()
     {
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+
+        anim.SetBool("isWalking", false); //pra animação
     }
 
     IEnumerator AttackRoutine()
     {
+        //toca animação Attack
+        anim.SetBool("isAttacking", true);
+        anim.SetTrigger("Attack");
+
         //Alterna a cor e prepara o inimigo para o novo ciclo de ataque
-        ShooterTypeCounter++; 
+        ShooterTypeCounter++;
 
         // Alterna a cor do inimigo (e, consequentemente, das balas deste burst)
         currentColor = (ShooterTypeCounter % 2 == 0) ? 1 : 0;
@@ -164,10 +200,16 @@ public class Enemy1 : MonoBehaviour
 
         //Estado 3 -> Chasing (FIM)
         currentState = EnemyState.Chasing;
+
+        anim.SetBool("isAttacking", false); //parar animação Attack
     }
 
     void Shoot()
     {
+        // toca animação Attack
+        anim.SetBool("isAttacking", true);
+        anim.SetTrigger("Attack");
+
         //cria uma bala
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
@@ -196,9 +238,12 @@ public class Enemy1 : MonoBehaviour
             {
                 BulletRenderer.material = targetMaterial;
             }
-            
+
             bulletScript.bulletColor = currentColor;
         }
+
+        //para animação Attack
+        anim.SetBool("isAttacking", false);
     }
 
     public void TakingDamage(int bulletDamage)
