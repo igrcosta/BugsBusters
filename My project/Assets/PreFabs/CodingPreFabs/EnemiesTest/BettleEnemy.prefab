@@ -153,7 +153,7 @@ MonoBehaviour:
   Hp: 40
   enemySpeed: 0.7
   stopAndShootDistance: 1
-  bulletPrefab: {fileID: 8422060013284516898, guid: 5a8f6e84789729b46bb405017d84007f, type: 3}
+  bulletPrefab: {fileID: 1119065107945223968, guid: 2396a369d034afd4e86bcb5d6a375022, type: 3}
   firePoint: {fileID: 2387417315619850805}
   prepTime: 1.5
   cooldownTime: 5
