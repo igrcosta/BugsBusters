@@ -1,261 +1,292 @@
 using UnityEngine;
 using System.Collections;
-using System.Threading.Tasks;
-//utilizei para o AttackRoutine()
+// Não precisamos do System.Threading.Tasks com Coroutines
 
-// criamos uma lista de comportamentos que o inimigo terá
-//chamamos isso de estados da State Machine do inimigo
+// Máquina de Estados Finitos (FSM)
 public enum EnemyState { Chasing, Attacking, CoolingDown }
 
 public class Enemy1 : MonoBehaviour
 {
+    // ====================================================================
+    // 1. COMPONENTES E REFERÊNCIAS
+    // ====================================================================
+    [Header("Componentes")]
     private Animator anim;
-    private bool hasLanded = false;
-
-    private Renderer myRenderer;
-    //randerizador da cor do inimigo
-
-    [SerializeField] int Hp = 20;
-    [SerializeField] float enemySpeed = 5f;
-    [SerializeField] float stoppingDistance = 1.5f;
-    //Esse vai ser o raio de distância para o inimigo parar e encarar o player
-
-    private GameObject playerTarget;
-    //precisamos jogar o player em uma variável, para que seja possível acessar seus dados
-    // e realizar o comportamento desejado do inimigo
-
     private Rigidbody rb;
-    //vamos usar essa variável para movimentar o inimigo por meio do seu rigidbody
+    private Renderer myRenderer;
 
-    private Vector3 direction;
-    //Direção que o inimigo vai seguir para achar o player
+    [Header("Stats")]
+    [SerializeField] int Hp = 20;
+    // enemySpeed aumentado para garantir que o movimento seja visível
+    [SerializeField] float enemySpeed = 15f; 
+    [SerializeField] float stoppingDistance = 1.5f;
 
-    private float distance;
-    private Vector3 playerPosition;
-    private Vector3 enemyPosition;
-    //vetores e vars utilizados no método Chasing,
-    //declarei elas aqui para poupar performance do computador
+    [Header("Alvo & Cena")]
+    private GameObject playerTarget;
+    private bool hasLanded = false;
+    
+    private GameControllerScript gameControllerRef;
+    private TutorialController tutorialControllerRef;
 
-    //estamos escolhendo para o inimigo começar perseguindo o player
-    private EnemyState currentState = EnemyState.Chasing;
-
-    //variáveis para usar o prefab da bala
-    [Header("Ataque")]
+    [Header("Ataque & Cores")]
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform firePoint;
     [SerializeField] float fireRate = 0.3f;
     [SerializeField] int shotsPerBurst = 3;
     [SerializeField] float cooldownTime = 2f;
-
-    //variáveis para comportamento das cores da bala
-    private int ShooterTypeCounter = 0;
+    
+    private int burstCounter = 0;
     public int currentColor;
+    private Coroutine attackCoroutine; 
 
+    // Estado inicial
+    private EnemyState currentState = EnemyState.Chasing;
+
+    // ====================================================================
+    // 2. INICIALIZAÇÃO E ENCONTRO DE ALVO
+    // ====================================================================
 
     void Start()
     {
-        Player meuPlayer = GameControllerScript.controller.Player;
-        playerTarget = GameObject.FindGameObjectWithTag("Player");
-        //encontramos o primeiro objeto na cena com a tag "Player" e guardamos na var playerTarget
-
+        // 1. Obtém Componentes
         rb = GetComponent<Rigidbody>();
-        //só tô pegando o próprio RigidBody do inimigo e jogando na variável rb
-
-        currentColor = GameControllerScript.controller.ColorLogic[0];
-
+        anim = GetComponent<Animator>();
         myRenderer = GetComponent<Renderer>();
 
-        //pra animação funcionar
-        anim = GetComponent<Animator>();
-        anim.SetBool("isFalling", true); // inimigo começa caindo
+        // 2. Encontra o Alvo e Controladores
+        FindTargetAndController();
+        
+        // 3. Inicialização de Estado e Animação
+        currentState = EnemyState.Chasing;
+        anim.SetBool("isFalling", true);
     }
 
-
-    void Update()
+    void FindTargetAndController()
     {
-        switch (currentState)
+        playerTarget = GameObject.FindGameObjectWithTag("Player");
+
+        if (GameControllerScript.controller != null)
         {
-            case EnemyState.Chasing:
-                HandleChasing(); //chamamos o método de perseguição
-                break;
-
-            case EnemyState.Attacking:
-            case EnemyState.CoolingDown:
-                HandleStopping(); //chama método para parar o movimento
-                break;
-
-                // esse dois pontos demonstra o que vai ser feito quando chegar naquele case,
-                //no de chasing, vai ativar a função de de chasing,
-                //no de attacking e de cooling down, eles vão chamar a função de parada
-
-                //toda a sequência de ataque, cooldown e mudança de estado foi feita pelo AttackRoutine
-
-                //FixedUpdate focado no Movimento, CoRoutines para tempo de intervalos e transições de estados
-        }
-    }
-
-    //método para tocar a animação Fall ao encostar no chão
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!hasLanded)
-        {
-            // quando tocar o chão pela primeira vez
-            if (collision.gameObject.CompareTag("Ground"))
-            {
-                hasLanded = true;
-                anim.SetBool("isFalling", false);
-                anim.SetTrigger("FallImpact");
-            }
-        }
-    }
-
-    //método para realizar o comportamento de perseguição do player 
-    void HandleChasing()
-    {   //se o player não existir, não faz nada
-        if (playerTarget == null)
-        {
+            gameControllerRef = GameControllerScript.controller;
+            currentColor = gameControllerRef.ColorLogic[0];
             return;
         }
 
-        //obter posição do alvo (Player)
-        playerPosition = playerTarget.transform.position;
-
-        //obter posição do inimigo
-        enemyPosition = transform.position;
-
-        //calcular direção para seguir
-        direction = playerPosition - enemyPosition;
-
-        distance = direction.magnitude;
-
-
-        if (distance > stoppingDistance)
+        if (TutorialController.controller != null)
         {
-            direction.y = 0f;
-            //colocamos o eixo Y do inimigo em 0 para evitar dele "voar" em direção ao seu alvo
-
-            direction = direction.normalized;
-            //depois de encontrarmos o vetor da direção, precisamos normalizar, pra ele andar em
-            //velocidade constante e não ficar em velocidades absurdas em um único frame
-
-            rb.linearVelocity = new Vector3(direction.x * enemySpeed, direction.y, direction.z * enemySpeed);
-            // para definir a velocidade do inimigo, vamos usar o x e o z da direção que calculamos
-            // junto da velocidade linear do eixo Y do rigidbody, assim, ele vai procurar o player,
-            //sem sair voando por aí, já que a única força aplicada verticalmente é a do rigidbody
-
-            transform.LookAt(playerPosition);
-
-            anim.SetBool("isWalking", true); //tocar animação Walk
+            tutorialControllerRef = TutorialController.controller;
+            if (tutorialControllerRef.PlayerTutorialRef != null)
+            {
+                currentColor = tutorialControllerRef.PlayerTutorialRef.currentColor; 
+            }
+            else
+            {
+                 currentColor = 1; 
+            }
+            return;
         }
-        else
+
+        Debug.LogError("Nenhum controlador de cena (Tutorial ou Game) encontrado! O Inimigo não funcionará corretamente.");
+    }
+    
+    // ====================================================================
+    // 3. MÁQUINA DE ESTADOS (FSM)
+    // ====================================================================
+
+    void Update()
+    {
+        // O Update é usado para detecção de distância e rotação (responsividade visual)
+        switch (currentState)
         {
-            //inicia o estado de ataque 
-            currentState = EnemyState.Attacking;
-
-            StartCoroutine(AttackRoutine()); //começa ciclo de Tiro e cooldown
-
-            anim.SetBool("isWalking", false); //parar animação Walk
-
+            case EnemyState.Chasing:
+                HandleChasingLogicAndRotation();
+                break;
+            // Attacking e CoolingDown são passivos e apenas esperam a Coroutine
         }
+    }
+    
+    void FixedUpdate()
+    {
+        // A aplicação de velocidade (física) DEVE ocorrer no FixedUpdate
+        if (currentState == EnemyState.Chasing)
+        {
+            ApplyMovementVelocity();
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!hasLanded && collision.gameObject.CompareTag("Ground"))
+        {
+            hasLanded = true;
+            anim.SetBool("isFalling", false);
+            anim.SetTrigger("FallImpact");
+        }
+    }
+
+    // ====================================================================
+    // 4. LÓGICA DE ESTADOS
+    // ====================================================================
+    
+    // Variável de instância para armazenar a direção (calculada no Update, usada no FixedUpdate)
+    private Vector3 currentDirection = Vector3.zero;
+
+    void HandleChasingLogicAndRotation()
+    {
+        if (playerTarget == null) return;
+
+        Vector3 playerPosition = playerTarget.transform.position;
+        Vector3 direction = playerPosition - transform.position;
+        float distance = direction.magnitude;
+
+        // 1. Transição de estado: Chasing -> Attacking
+        if (distance <= stoppingDistance)
+        {
+            if (attackCoroutine == null)
+            {
+                HandleStopping(); 
+                attackCoroutine = StartCoroutine(AttackRoutine());
+            }
+            return; 
+        }
+
+        // 2. Cálculo da Rotação e Direção (X e Z)
+        direction.y = 0f;
+        currentDirection = direction.normalized; // Armazena a direção para o FixedUpdate
+
+        if (currentDirection.sqrMagnitude > 0.01f)
+        {
+            transform.rotation = Quaternion.LookRotation(currentDirection, Vector3.up);
+        }
+
+        anim.SetBool("isWalking", true);
+    }
+    
+    // NOVO MÉTODO: Aplica a velocidade horizontal, respeitando a gravidade
+    void ApplyMovementVelocity()
+    {
+        // 🚨 CORREÇÃO: Aplicamos o movimento no XZ, MANTENDO o Y da gravidade.
+        rb.linearVelocity = new Vector3(
+            currentDirection.x * enemySpeed, 
+            rb.linearVelocity.y, // <-- AQUI RESPEITAMOS A GRAVIDADE (Eixo Y)
+            currentDirection.z * enemySpeed
+        );
     }
 
     void HandleStopping()
     {
+        // Para o movimento horizontal do Rigidbody, mantendo a gravidade (y)
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-
-        anim.SetBool("isWalking", false); //pra animação
+        anim.SetBool("isWalking", false);
     }
 
+    // Gerencia o ciclo de ataque completo (Attack -> Cooldown -> Chasing)
     IEnumerator AttackRoutine()
     {
-        //toca animação Attack
-        anim.SetBool("isAttacking", true);
-        anim.SetTrigger("Attack");
+        // --- Fase 1: PREPARAÇÃO DO ATAQUE ---
+        currentState = EnemyState.Attacking;
 
-        //Alterna a cor e prepara o inimigo para o novo ciclo de ataque
-        ShooterTypeCounter++;
-
-        // Alterna a cor do inimigo (e, consequentemente, das balas deste burst)
-        currentColor = (ShooterTypeCounter % 2 == 0) ? 1 : 0;
-
-        Material targetMaterial = (currentColor == 1) ?
-        GameControllerScript.controller.PlayerMatFirst :
-        GameControllerScript.controller.PlayerMatSecond;
-
-        myRenderer.material = targetMaterial;
-
-        //mirou no player
-        transform.LookAt(playerPosition);
-
-        //Estado 1 -> ATAQUE
-        for (int i = 0; i < shotsPerBurst; i++)
+        burstCounter++;
+        currentColor = (burstCounter % 2 == 0) ? 1 : 0;
+        ApplyEnemyMaterial();
+        
+        // Aplica a mira XZ final antes de atirar
+        if (playerTarget != null)
         {
-            Shoot();
-            yield return new WaitForSeconds(fireRate); //pausa entre tiros
+            Vector3 targetXZ = playerTarget.transform.position;
+            targetXZ.y = transform.position.y;
+            Vector3 lookDirection = targetXZ - transform.position;
+
+            if(lookDirection.sqrMagnitude > 0.01f)
+            {
+                transform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
+            }
         }
 
-        //Estado 2 -> CoolDown
-        currentState = EnemyState.CoolingDown;
-        yield return new WaitForSeconds(cooldownTime); //pausa de cooldown
-
-        //Estado 3 -> Chasing (FIM)
-        currentState = EnemyState.Chasing;
-
-        anim.SetBool("isAttacking", false); //parar animação Attack
-    }
-
-    void Shoot()
-    {
-        // toca animação Attack
-        anim.SetBool("isAttacking", true);
+        // --- Fase 2: CICLO DE TIROS ---
+        anim.SetBool("isAttacking", true); 
         anim.SetTrigger("Attack");
 
-        //cria uma bala
+        for (int i = 0; i < shotsPerBurst; i++)
+        {
+            ShootBullet(); 
+            yield return new WaitForSeconds(fireRate);
+        }
+
+        // --- Fase 3: COOLDOWN ---
+        currentState = EnemyState.CoolingDown;
+        anim.SetBool("isAttacking", false);
+        
+        yield return new WaitForSeconds(cooldownTime); 
+
+        // --- Fase 4: RETORNO ---
+        currentState = EnemyState.Chasing;
+        attackCoroutine = null; 
+    }
+
+    void ShootBullet()
+    {
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
-        //pegamos o script da nova bala instaciada e jogamos na variável BulletScript, do tipo BulletController
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
-
-        Renderer BulletRenderer = newBullet.GetComponent<Renderer>();
-
-        //variável de material vazia para podermos colocar o material do inimigo nas balas
-        Material targetMaterial = null;
+        Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
+        Material targetMaterial = GetBulletMaterial(); 
 
         if (bulletScript != null)
         {
             bulletScript.isFiredByPlayer = false;
-
-            if (currentColor == 1)
-            {
-                targetMaterial = GameControllerScript.controller.PlayerMatFirst;
-            }
-            else
-            {
-                targetMaterial = GameControllerScript.controller.PlayerMatSecond;
-            }
-
-            if (BulletRenderer != null)
-            {
-                BulletRenderer.material = targetMaterial;
-            }
-
             bulletScript.bulletColor = currentColor;
         }
 
-        //para animação Attack
-        anim.SetBool("isAttacking", false);
+        if (bulletRenderer != null && targetMaterial != null)
+        {
+            bulletRenderer.material = targetMaterial;
+        }
+    }
+
+    // ====================================================================
+    // 5. LÓGICA REUTILIZÁVEL (Cores e Dano)
+    // ====================================================================
+
+    void ApplyEnemyMaterial()
+    {
+        Material targetMaterial = GetBulletMaterial();
+        if (myRenderer != null && targetMaterial != null)
+        {
+            myRenderer.material = targetMaterial;
+        }
+    }
+
+    Material GetBulletMaterial()
+    {
+        if (gameControllerRef != null)
+        {
+             return (currentColor == 1) ? 
+                gameControllerRef.PlayerMatFirst : 
+                gameControllerRef.PlayerMatSecond;
+        }
+        
+        if (tutorialControllerRef != null)
+        {
+            return (currentColor == 1) ? 
+                tutorialControllerRef.MatFirst : 
+                tutorialControllerRef.MatSecond;
+        }
+        return null;
     }
 
     public void TakingDamage(int bulletDamage)
     {
-        //se a cor do inimigo é diferente da cor da bala
         Hp -= bulletDamage;
-        Debug.Log("Inimigo recebeu " + bulletDamage + "de dano. Vida restante:  " + Hp);
+        Debug.Log("Inimigo recebeu " + bulletDamage + "de dano. Vida restante: " + Hp);
 
         if (Hp <= 0)
         {
-            GameControllerScript.controller.AumentarNumerodeInimigosMortos();
-            //animação de morte e depois...
+            if (gameControllerRef != null)
+            {
+                gameControllerRef.AumentarNumerodeInimigosMortos();
+            }
+            
             Destroy(gameObject);
         }
     }
