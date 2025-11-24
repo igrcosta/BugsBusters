@@ -4,7 +4,7 @@ public class BulletController : MonoBehaviour
 {
     // variáveis da forma como o tiro vai se comportar
     [SerializeField] private float bulletSpeed = 20f;
-    [SerializeField] private float lifetime = 3f;
+    [SerializeField] private float lifetime = 7f;
 
     public int bulletColor;
     public bool isFiredByPlayer = true;
@@ -26,22 +26,17 @@ public class BulletController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // ... (Seu código de OnTriggerEnter permanece o mesmo, pois as correções estão nos auxiliares)
+
         BulletController otherBullet = other.GetComponent<BulletController>();
 
         string hitTag = other.tag;
 
-        // Se o objeto for o Player ou um Inimigo, o componente será buscado abaixo.
-        // Mantenha apenas a declaração de otherBullet e hitTag aqui, e as outras buscas
-        // (BettleEnemy, SmallEnemy, Enemy1) dentro do bloco de dano do Player, para melhor performance
-        // e leitura, ou ajuste a declaração inicial (como você fez, mas ajustando o bloco de dano).
-        
         // --- COLISÃO ENTRE BALAS ---
         if(otherBullet != null)
         {
-            // Se uma bala foi atirada pelo player e a outra pelo inimigo
             if (this.isFiredByPlayer != otherBullet.isFiredByPlayer)
             {
-                // Destrói a bala do Player (a que entrou em trigger)
                 Destroy(this.gameObject); 
                 return;
             }
@@ -52,7 +47,6 @@ public class BulletController : MonoBehaviour
         }
 
         // --- REGRAS DE IGNORAR ---
-        // Se a bala atingiu o Player que a disparou ou vice-versa (regra de ignorar)
         if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy")) 
         {
             return; 
@@ -61,12 +55,10 @@ public class BulletController : MonoBehaviour
         // --- LÓGICA DE DANO: PLAYER ATIROU (isFiredByPlayer == true) ---
         if (isFiredByPlayer && hitTag == "Enemy")
         {
-            // Tenta obter os scripts dos inimigos
             Enemy1 enemy1 = other.GetComponent<Enemy1>();
             BettleEnemyScript bettleEnemy = other.GetComponent<BettleEnemyScript>();
-            SmallEnemy smallEnemy = other.GetComponent<SmallEnemy>(); // NOVIDADE
+            SmallEnemy smallEnemy = other.GetComponent<SmallEnemy>(); 
 
-            // Verifica qual inimigo foi atingido e aplica a lógica
             if (enemy1 != null)
             {
                 ApplyDamageToEnemy1(enemy1);
@@ -75,12 +67,11 @@ public class BulletController : MonoBehaviour
             {
                 ApplyDamageToBettle(bettleEnemy); 
             }
-            else if (smallEnemy != null) // NOVO BLOCO para o SmallEnemy
+            else if (smallEnemy != null)
             {
                 ApplyDamageToSmallEnemy(smallEnemy);
             }
             
-            // Destrói a bala após atingir um inimigo válido
             if (enemy1 != null || bettleEnemy != null || smallEnemy != null)
             {
                 Destroy(gameObject);
@@ -91,10 +82,7 @@ public class BulletController : MonoBehaviour
         // --- LÓGICA DE DANO: INIMIGO ATIROU (isFiredByPlayer == false) ---
         if (!isFiredByPlayer && hitTag == "Player")
         {
-            // Tenta obter o script do Player de TESTE
             TESTPlayer testPlayer = other.GetComponent<TESTPlayer>();
-            
-            // Tenta obter o script do Player PADRÃO
             Player standardPlayer = other.GetComponent<Player>();
 
             if (testPlayer != null)
@@ -106,7 +94,6 @@ public class BulletController : MonoBehaviour
                 ApplyDamageToStandardPlayer(standardPlayer, standardPlayer.currentColor); 
             }
             
-            // Destrói a bala após atingir o Player
             if (testPlayer != null || standardPlayer != null)
             {
                 Destroy(gameObject);
@@ -124,7 +111,7 @@ public class BulletController : MonoBehaviour
     {
         if (enemy.currentColor != bulletColor)
         {
-            enemy.TakingDamage(PLayerDamage); 
+            enemy.TakingDamage(PLayerDamage, bulletColor); // ✅ CORREÇÃO CS7036
             Debug.Log("DANO Enemy1: Cor diferente!");
         }
         else
@@ -137,9 +124,8 @@ public class BulletController : MonoBehaviour
     {
         if (bettle.currentColor != bulletColor)
         {
-            // Passamos o dano e a cor da bala.
-            bettle.TakingDamage(PLayerDamage, bulletColor); 
-            Debug.Log("DANO Besouro: Cor diferente!");
+            bettle.TakingDamage(PLayerDamage, bulletColor); // ✅ CORREÇÃO CS7036
+            Debug.Log("DANO Bettle: Cor diferente!");
         }
         else
         {
@@ -147,13 +133,11 @@ public class BulletController : MonoBehaviour
         }
     }
     
-    // NOVIDADE: Método para o SmallEnemy
     private void ApplyDamageToSmallEnemy(SmallEnemy smallEnemy)
     {
         if (smallEnemy.currentColor != bulletColor)
         {
-            // Passamos o dano e a cor da bala.
-            smallEnemy.TakingDamage(PLayerDamage, bulletColor); 
+            smallEnemy.TakingDamage(PLayerDamage, bulletColor); // ✅ CORREÇÃO CS7036
             Debug.Log("DANO SmallEnemy: Cor diferente!");
         }
         else

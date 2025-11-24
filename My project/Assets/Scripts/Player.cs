@@ -1,130 +1,199 @@
-using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UnityEngine.UI; 
+using System.Collections; 
 
 public class Player : MonoBehaviour
 {
-    [Header("Cor")]
-    public int currentColor;
-    private Renderer myRenderer;
+    // ====================================================================
+    // 1. REFERÊNCIAS E COMPONENTES
+    // ====================================================================
 
+    [Header("Componentes e Referências")]
+    private CharacterController cc; // Variável CharacterController
+    private Slider HealthBarUI;
+    [SerializeField] private Transform CameraTarget; 
+
+    [Header("Stats")]
     [SerializeField] private int maxHealth = 100;
     private int currentHealth;
     public int CurrentHealth => currentHealth;
-    [SerializeField] float speed;
-    private Slider HealthBarUI;
-
-    [Header("Gravidade")]
-    [SerializeField] float gravity = -9.81f;
-
-    private CharacterController cc;
-    // criamos uma variável do tipo CharacterController chamada cc
-
-    private Vector3 verticalVelocity;
+    [SerializeField] float speed = 10f; // 💡 GARANTIR UM VALOR PADRÃO
 
     public bool DummyMode = true;
 
-    public void Initializing()
+    [Header("Gravidade")]
+    [SerializeField] float gravity = -9.81f;
+    private Vector3 verticalVelocity;
+
+    // ====================================================================
+    // 2. CORES E MATERIAIS
+    // ====================================================================
+
+    [Header("Cores, Materiais e afins")]
+    public int currentColor;
+    [SerializeField] Renderer MaterialRenderer; 
+    
+    private const int INDEX_TARGET_MATERIAL = 1; 
+    private Material[] ActualMaterials;
+
+    [Header("Referência de Rotação")]
+    [SerializeField] private Transform PlayerCabecaTransform;
+
+    // ====================================================================
+    // 3. INICIALIZAÇÃO E REGISTRO (CRÍTICO)
+    // ====================================================================
+
+    void Initializing()
     {
-        if (GameControllerScript.controller != null)
-        {
-            GameControllerScript.controller.Player = this;
-        }
-        
-        cc = GetComponent<CharacterController>();
+        // ❌ REMOVIDA A CHAMADA cc = GetComponent<CharacterController>(); (Feito no Awake)
         currentHealth = maxHealth;
         Debug.Log("Player Health: " + currentHealth);
 
-        HealthBarUI = FindFirstObjectByType<Slider>();
+        // Busca o Slider. 
+        HealthBarUI = FindFirstObjectByType<Slider>(); 
 
-        // Checagem de Renderer (Pode falhar se o filho não existir)
-        Transform playerModelTransform = transform.Find("PlayerModel");
-        if (playerModelTransform != null)
+        // Lógica de Materiais
+        if (MaterialRenderer != null)
         {
-            myRenderer = playerModelTransform.GetComponent<Renderer>();
+            ActualMaterials = MaterialRenderer.materials;
+            if (ActualMaterials.Length <= INDEX_TARGET_MATERIAL)
+            {
+                Debug.LogError("O Renderer do PlayerCorpo não possui materiais suficientes.");
+            }
         }
         else
         {
-            Debug.LogError("PlayerModel não encontrado. As cores não serão aplicadas.");
+            Debug.LogError("MaterialRenderer (corpo) não atribuído no Inspector do Player.");
         }
         
-        // Lógica de Cores depende do GameController (agora seguro pelo while)
+        // Lógica de Cores depende do GameController
         if (GameControllerScript.controller != null)
         {
             currentColor = GameControllerScript.controller.ColorLogic[0];
+            ApplyCurrentColor(); 
         }
     }
 
-    //tive que colocar no Awake ao invés do Start, para o sistema de waves já ter referência de forma antecipada
     void Awake()
     {
+        // 🚨 CORREÇÃO CRÍTICA 1: Tenta pegar o CharacterController aqui
+        // (Use GetComponentInParent se o script estiver em um filho e o CC no pai)
+        cc = GetComponent<CharacterController>(); 
+        
+        if (cc == null) 
+        {
+            Debug.LogError("Player.cs: FATAL: CharacterController não encontrado! O Player não andará.");
+        }
+
+        // 🚨 CORREÇÃO CRÍTICA 2: REGISTRO IMEDIATO
+        // Garante que o GameController encontre o Player antes de iniciar a wave.
+        if (GameControllerScript.controller != null)
+        {
+            GameControllerScript.controller.Player = this;
+            Debug.Log("Player registrado no GameController (Awake).");
+        }
+    }
+
+    void Start()
+    {
+        // Chama a inicialização de stats e cores, após o registro no Awake.
         Initializing();
     }
 
+    // ====================================================================
+    // 4. LÓGICA DE JOGO (UPDATE/MOVEMENT)
+    // ====================================================================
+
     void Update()
     {
+        // 🚨 CHECAGEM DE SEGURANÇA PARA CC
+        if (cc == null) return; 
+        
         ApplyGravity();
         Movement();
-        ColorLogic();
         HandleColorSwitchInput();
     }
 
     void ApplyGravity()
     {
+        // cc != null já é checado no Update
         if (cc.isGrounded)
         {
             verticalVelocity.y = -2f;
         }
-
         verticalVelocity.y += gravity * Time.deltaTime;
-
         cc.Move(verticalVelocity * Time.deltaTime);
     }
     
     public void Movement()
     {
+        // cc != null já é checado no Update
         if(!DummyMode)
         {
             float VertMove = Input.GetAxis("Vertical");
-            //quando apertar botões como W ou S, gerar um valor float
-
             float HorizMove = Input.GetAxis("Horizontal");
-            //quando apertar botões como A ou D, gerar um valor float 
 
-            //Esses valores são inseridos à um vector 3, cada float em seu devido eixo
-            Vector3 direction = new Vector3(HorizMove, 0, VertMove);
+            Vector3 cameraForward = Camera.main.transform.forward;
+            Vector3 cameraRight = Camera.main.transform.right;
 
-            //limitar mov diagonal para não ficar mais rápido
-            direction = Vector3.ClampMagnitude(direction, 1f);
+            cameraForward.y = 0;
+            cameraRight.y = 0;
+            cameraForward.Normalize();
+            cameraRight.Normalize();
 
-            //agora com uma boa direção em vetor, vamos multiplicar por speed e Time.deltaTime
-            Vector3 finalMovement = direction * speed * Time.deltaTime;
+            Vector3 finalDirection = (cameraForward * VertMove) + (cameraRight * HorizMove);
+            finalDirection = Vector3.ClampMagnitude(finalDirection, 1f);
 
-            //depois disso, vamos colocar o charactercontroller para se movimentar por meio
-            //vetor que criamos
-            cc.Move(finalMovement);
-        }
-        else
-        {
-            //fazer nada
+            // Linha 129 Antiga (Agora é a nova linha do cc.Move)
+            Vector3 finalMovement = finalDirection * speed * Time.deltaTime; 
+            
+            // ROTAÇÃO
+            if (finalDirection.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(finalDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            }
+
+            cc.Move(finalMovement); // ✅ LINHA CRÍTICA
+            
+            // ATUALIZAÇÃO DA CÂMERA
+            if (CameraTarget != null)
+            {
+                CameraTarget.position = transform.position; 
+            }
         }
     }
 
-    void ColorLogic()
+    // ... (O resto do código HandleColorSwitchInput, ReceiveDamage, etc. permanece o mesmo)
+    
+    // ====================================================================
+    // 5. LÓGICA DE CORES E COMBATE
+    // ====================================================================
+    
+    void ApplyCurrentColor()
     {
-        // CORREÇÃO: Checar myRenderer e GameController antes de tentar acessar
-        if (myRenderer != null && GameControllerScript.controller != null)
+        // Checa se o ambiente e as referências estão prontas
+        if (GameControllerScript.controller == null || MaterialRenderer == null || ActualMaterials == null || ActualMaterials.Length <= INDEX_TARGET_MATERIAL)
         {
-            if(currentColor == 1)
-            {
-                myRenderer.material = GameControllerScript.controller.PlayerMatFirst;
-            }
-            else if (currentColor == 0)
-            {
-                myRenderer.material = GameControllerScript.controller.PlayerMatSecond;
-            }
+            return;
+        }
+        
+        Material NewMaterial = null;
+
+        if (currentColor == 1)
+        {
+            NewMaterial = GameControllerScript.controller.PlayerMatFirst;
+        }
+        else if (currentColor == 0)
+        {
+            NewMaterial = GameControllerScript.controller.PlayerMatSecond;
+        }
+        
+        if(NewMaterial != null)
+        {
+            ActualMaterials[INDEX_TARGET_MATERIAL] = NewMaterial;
+            MaterialRenderer.materials = ActualMaterials;
         }
     }
 
@@ -132,36 +201,36 @@ public class Player : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {
-            // Alterna entre 0 e 1: Se for 1, vira 0. Se for 0, vira 1.
             currentColor = (currentColor == 1) ? 0 : 1;
+            ApplyCurrentColor();
         }
     }
-
+    
     public void ReceiveDamage(int damageAmount)
     {
         currentHealth -= damageAmount;
-        Debug.Log("Player recebeu " + damageAmount + "de dano. Vida restante:  " + currentHealth);
+        Debug.Log("Player recebeu " + damageAmount + " de dano. Vida restante:  " + currentHealth);
         if (currentHealth <= 0)
         {
             Die();
         }
     }
-    private void Die()
-    {
-        Debug.Log("Player morreu!");
-        //Adicionar futuramente uma animação de morte, reiniciar a fase, etc
-        SceneManager.LoadScene(2);
-        Destroy(gameObject);
-    }
-
+    
     public void Curar(float quantidade)
     {
-       currentHealth += (int)quantidade;
+        currentHealth += (int)quantidade;
         if (currentHealth > maxHealth)
         {
             currentHealth = maxHealth;
         }
         Debug.Log("Player curado! Vida atual: " + currentHealth);
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player morreu!");
+        SceneManager.LoadScene(2);
+        Destroy(gameObject);
     }
 
     public void DisableInputs()
@@ -172,5 +241,9 @@ public class Player : MonoBehaviour
     public void EnableInputs()
     {
         DummyMode = false;
+        
+        // 🚨 REMOVIDA A ROTAÇÃO AQUI: Ela é sobrescrita a cada frame pelo GunScript.
+        // Quaternion correctRotation = Quaternion.Euler(90f, 0f, 0f);
+        // PlayerCabecaTransform.localRotation = correctRotation;
     }
 }

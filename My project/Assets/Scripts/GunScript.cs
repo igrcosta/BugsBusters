@@ -4,103 +4,125 @@ public class GunScript : MonoBehaviour
 {
     private Vector3 targetPoint; // Ponto de mira horizontal (alvo)
     
-    // VARIÁVEIS SERIALIZADAS
+    [Header("VARIÁVEIS SERIALIZADAS")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform firePoint;
 
     private Player Player;
-    private Enemy1 Enemy; // Não utilizado na lógica de tiro/mira, mas mantido
+    private Enemy1 Enemy; 
     private int PlayerShootColor;
 
-    private void Update()
-{
-    if(!Player.DummyMode)
+    private void Awake()
     {
+        // 🚨 CORREÇÃO NRE (Busca de Referência): Busca o Player no objeto pai (HeadPivot -> Player)
+        Player = GetComponentInParent<Player>(); 
+        
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+        }
+
+        if (Player == null)
+        {
+            Debug.LogWarning("GunScript não encontrou o componente Player no objeto pai. Tentará buscar no Update.");
+        }
+    }
+
+    private void Update()
+    {
+        // 🚨 NRE FIX: Garante que o Player não seja nulo ANTES de acessar .DummyMode
+        if (Player == null) 
+        {
+            // Tenta pegar a referência do Player via GameController se a busca no Awake falhou
+            if (GameControllerScript.controller != null && GameControllerScript.controller.Player != null)
+            {
+                Player = GameControllerScript.controller.Player;
+            }
+            if (Player == null) return; // Retorna se ainda for nulo
+        }
+
+        if(Player.DummyMode)
+        {
+            return;
+        }
+        
         ShootingLogic();
     }
-}
+    
     void ShootingLogic()
     {
-        // ... (Bloco de segurança e Player.DummyMode == false)
+        // --- LÓGICA DE ROTAÇÃO (APENAS Y) ---
+        
+        // 1. Obtém a posição 2D do mouse na tela
+        Vector3 mousePos = Input.mousePosition;
+        
+        // 2. Define a profundidade (Z)
+        // Pega a distância da câmera até o objeto atual (HeadPivot)
+        float distanceToTarget = (mainCamera != null) 
+            ? Vector3.Distance(mainCamera.transform.position, transform.position) 
+            : 10f; // Valor padrão de segurança
+            
+        mousePos.z = distanceToTarget;
 
-    // --- NOVA LÓGICA DE ROTAÇÃO (CORRIGIDA) ---
-    
-    // 1. Obtém a posição 2D do mouse na tela
-    Vector3 mousePos = Input.mousePosition;
-    
-    // 2. CRÍTICO: Define a profundidade (Z) para a distância da câmera até o jogador/chão.
-    // Usamos a distância Z entre a câmera e o jogador, o que geralmente é:
-    mousePos.z = mainCamera.transform.position.y - transform.position.y;
-    
-    // **ALTERNATIVA MAIS SEGURA (Recomendada):**
-    // Se sua câmera não estiver na vertical pura, é melhor usar a distância Z da câmera.
-    // float cameraDistanceToPlayer = Vector3.Distance(mainCamera.transform.position, transform.position);
-    // mousePos.z = cameraDistanceToPlayer;
-    
-    // O valor a seguir costuma funcionar se a câmera está estática:
-    // mousePos.z = 10f; // Se 10 for a distância Z da sua câmera ao player
+        // 3. Transforma a posição 2D do mouse em um ponto 3D no mundo
+        Vector3 worldMousePos = mainCamera.ScreenToWorldPoint(mousePos);
+        
+        // 4. Calcula o vetor de direção
+        Vector3 dir = worldMousePos - transform.position;
+        
+        // 5. Zera o Y para que o Player olhe apenas na horizontal (chão).
+        dir.y = 0;
 
-    // **Vamos tentar uma correção simples baseada na sua estrutura:**
-    // A distância da câmera até o plano onde o player está.
-    mousePos.z = mainCamera.transform.position.y; 
+        // 6. Aplica a rotação SOMENTE no eixo Y.
+        Quaternion targetRotation = Quaternion.LookRotation(dir, Vector3.up);
 
-    // 3. Transforma a posição 2D do mouse em um ponto 3D no mundo
-    Vector3 worldMousePos = mainCamera.ScreenToWorldPoint(mousePos);
-    
-    // 4. Calcula o vetor de direção
-    Vector3 dir = worldMousePos - transform.position;
-    
-    // 5. Zera o Y para que o Player olhe apenas na horizontal.
-    dir.y = 0;
-    
-    // 6. Aplica a rotação
-    transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
-    
-    // -----------------------------------------------------------
-    
-    // 2. VERIFICA O CLIQUE E ATIRA
-    if (Input.GetMouseButtonDown(0)) 
-    {
-        Atirar();
-    }
+        float rotationY = targetRotation.eulerAngles.y;
+        const float MODEL_COMPENSATION_Z = 180f;
+
+        // Aplica (0, Y, 0) ao HeadPivot. Isso preserva a correção X/Z do modelo filho.
+        transform.localRotation = Quaternion.Euler(0f, rotationY, MODEL_COMPENSATION_Z);
+        
+        // -----------------------------------------------------------
+        
+        // 2. VERIFICA O CLIQUE E ATIRA
+        if (Input.GetMouseButtonDown(0)) 
+        {
+            Atirar();
+        }
     }
 
     void Atirar()
     {
-        // Instancia a bala na posição e rotação do FirePoint.
+        if (bulletPrefab == null || firePoint == null)
+        {
+            Debug.LogError("Bullet Prefab ou Fire Point não atribuído no GunScript.");
+            return;
+        }
+
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
         Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
 
-        Material targetMaterial = null;
+        if (bulletScript == null || GameControllerScript.controller == null)
+        {
+            Debug.LogError("BulletController ou GameController não encontrado. Verifique Prefab.");
+            Destroy(newBullet);
+            return;
+        }
+        
+        Material targetMaterial = (Player.currentColor == 1) 
+            ? GameControllerScript.controller.PlayerMatFirst 
+            : GameControllerScript.controller.PlayerMatSecond;
 
         bulletScript.isFiredByPlayer = true;
-
-        if (Player.currentColor == 1)
-        {
-            targetMaterial = GameControllerScript.controller.PlayerMatFirst;
-        }
-        else
-        {
-            targetMaterial = GameControllerScript.controller.PlayerMatSecond;
-        }
-
+        
         if (bulletRenderer != null && targetMaterial != null)
         {
             bulletRenderer.material = targetMaterial;
         }
         
         bulletScript.bulletColor = Player.currentColor;
-    }
-
-    void Start()
-    {
-        // Assumindo que este script está anexado ao objeto Player
-        Player = GetComponent<Player>(); 
-        // Nota: O Enemy = GetComponent<Enemy1>() aqui parece incorreto, 
-        // pois você está no GunScript do Player. Mantive para evitar quebrar seu código.
-        Enemy = GetComponent<Enemy1>(); 
     }
 }

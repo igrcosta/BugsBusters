@@ -135,7 +135,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &2163960938987493362
 MonoBehaviour:
@@ -150,15 +150,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hp: 10
-  enemySpeed: 3
-  explosionRadius: 0.3
+  enemySpeed: 1.7
+  explosionRadius: 0.5
   safeReturnDistance: 1
-  explosionTimer: 0.5
+  explosionTimer: 0.3
   damageRadius: 0.3
   explosionDamage: 20
   explosionForce: 500
   bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
   bulletsInCircle: 8
   bulletDelay: 1
+  bulletScale: 0.05
   explosionVisualPrefab: {fileID: 1033600852879337965, guid: 86825e6e821a25140be666d28f1ddcd2, type: 3}
+  rotationSpeed: 10
   currentColor: 0

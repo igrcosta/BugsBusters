@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-// Não precisamos do System.Threading.Tasks com Coroutines
 
 // Máquina de Estados Finitos (FSM)
 public enum EnemyState { Chasing, Attacking, CoolingDown }
@@ -10,6 +9,7 @@ public class Enemy1 : MonoBehaviour
     // ====================================================================
     // 1. COMPONENTES E REFERÊNCIAS
     // ====================================================================
+    
     [Header("Componentes")]
     private Animator anim;
     private Rigidbody rb;
@@ -17,17 +17,15 @@ public class Enemy1 : MonoBehaviour
 
     [Header("Stats")]
     [SerializeField] int Hp = 20;
-    // enemySpeed aumentado para garantir que o movimento seja visível
     [SerializeField] float enemySpeed = 15f; 
     [SerializeField] float stoppingDistance = 1.5f;
 
     [Header("Alvo & Cena")]
-    private GameObject playerTarget;
+    private Transform playerTargetTransform; 
+    // Referência UNIFICADA para o GameController OU TutorialController
+    private Component gameControllerRef; // ✅ Mantido como Component
     private bool hasLanded = false;
     
-    private GameControllerScript gameControllerRef;
-    private TutorialController tutorialControllerRef;
-
     [Header("Ataque & Cores")]
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform firePoint;
@@ -39,8 +37,8 @@ public class Enemy1 : MonoBehaviour
     public int currentColor;
     private Coroutine attackCoroutine; 
 
-    // Estado inicial
     private EnemyState currentState = EnemyState.Chasing;
+    private Vector3 currentDirection = Vector3.zero;
 
     // ====================================================================
     // 2. INICIALIZAÇÃO E ENCONTRO DE ALVO
@@ -48,45 +46,53 @@ public class Enemy1 : MonoBehaviour
 
     void Start()
     {
-        // 1. Obtém Componentes
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         myRenderer = GetComponent<Renderer>();
 
-        // 2. Encontra o Alvo e Controladores
         FindTargetAndController();
         
-        // 3. Inicialização de Estado e Animação
-        currentState = EnemyState.Chasing;
-        anim.SetBool("isFalling", true);
+        if (playerTargetTransform != null)
+        {
+            InitializeColor();
+            currentState = EnemyState.Chasing;
+            anim.SetBool("isFalling", true);
+        }
+        else
+        {
+            Debug.LogError("Player não encontrado! Inimigo desativado.");
+            enabled = false;
+        }
     }
 
     void FindTargetAndController()
     {
-        playerTarget = GameObject.FindGameObjectWithTag("Player");
-
+        // Prioridade 1: GameController Principal
         if (GameControllerScript.controller != null)
         {
             gameControllerRef = GameControllerScript.controller;
-            currentColor = gameControllerRef.ColorLogic[0];
-            return;
+            if (GameControllerScript.controller.Player != null)
+            {
+                playerTargetTransform = GameControllerScript.controller.Player.transform;
+            }
         }
-
-        if (TutorialController.controller != null)
+        // Prioridade 2: TutorialController
+        else if (TutorialController.controller != null)
         {
-            tutorialControllerRef = TutorialController.controller;
-            if (tutorialControllerRef.PlayerTutorialRef != null)
+            gameControllerRef = TutorialController.controller;
+            // Assumindo que PlayerTutorialRef existe no TutorialController
+            // Se o TutorialController tem um campo PlayerTutorialRef que é o Transform
+            if (TutorialController.controller.PlayerTutorialRef != null) 
             {
-                currentColor = tutorialControllerRef.PlayerTutorialRef.currentColor; 
+                playerTargetTransform = TutorialController.controller.PlayerTutorialRef.transform;
             }
-            else
-            {
-                 currentColor = 1; 
-            }
-            return;
         }
-
-        Debug.LogError("Nenhum controlador de cena (Tutorial ou Game) encontrado! O Inimigo não funcionará corretamente.");
+    }
+    
+    void InitializeColor()
+    {
+        currentColor = (burstCounter % 2 == 0) ? 1 : 0; 
+        ApplyEnemyMaterial();
     }
     
     // ====================================================================
@@ -95,19 +101,18 @@ public class Enemy1 : MonoBehaviour
 
     void Update()
     {
-        // O Update é usado para detecção de distância e rotação (responsividade visual)
+        if (playerTargetTransform == null) return;
+        
         switch (currentState)
         {
             case EnemyState.Chasing:
                 HandleChasingLogicAndRotation();
                 break;
-            // Attacking e CoolingDown são passivos e apenas esperam a Coroutine
         }
     }
     
     void FixedUpdate()
     {
-        // A aplicação de velocidade (física) DEVE ocorrer no FixedUpdate
         if (currentState == EnemyState.Chasing)
         {
             ApplyMovementVelocity();
@@ -127,19 +132,13 @@ public class Enemy1 : MonoBehaviour
     // ====================================================================
     // 4. LÓGICA DE ESTADOS
     // ====================================================================
-    
-    // Variável de instância para armazenar a direção (calculada no Update, usada no FixedUpdate)
-    private Vector3 currentDirection = Vector3.zero;
 
     void HandleChasingLogicAndRotation()
     {
-        if (playerTarget == null) return;
-
-        Vector3 playerPosition = playerTarget.transform.position;
+        Vector3 playerPosition = playerTargetTransform.position;
         Vector3 direction = playerPosition - transform.position;
         float distance = direction.magnitude;
 
-        // 1. Transição de estado: Chasing -> Attacking
         if (distance <= stoppingDistance)
         {
             if (attackCoroutine == null)
@@ -150,9 +149,8 @@ public class Enemy1 : MonoBehaviour
             return; 
         }
 
-        // 2. Cálculo da Rotação e Direção (X e Z)
         direction.y = 0f;
-        currentDirection = direction.normalized; // Armazena a direção para o FixedUpdate
+        currentDirection = direction.normalized;
 
         if (currentDirection.sqrMagnitude > 0.01f)
         {
@@ -162,38 +160,32 @@ public class Enemy1 : MonoBehaviour
         anim.SetBool("isWalking", true);
     }
     
-    // NOVO MÉTODO: Aplica a velocidade horizontal, respeitando a gravidade
     void ApplyMovementVelocity()
     {
-        // 🚨 CORREÇÃO: Aplicamos o movimento no XZ, MANTENDO o Y da gravidade.
         rb.linearVelocity = new Vector3(
             currentDirection.x * enemySpeed, 
-            rb.linearVelocity.y, // <-- AQUI RESPEITAMOS A GRAVIDADE (Eixo Y)
+            rb.linearVelocity.y, 
             currentDirection.z * enemySpeed
         );
     }
 
     void HandleStopping()
     {
-        // Para o movimento horizontal do Rigidbody, mantendo a gravidade (y)
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
         anim.SetBool("isWalking", false);
     }
 
-    // Gerencia o ciclo de ataque completo (Attack -> Cooldown -> Chasing)
     IEnumerator AttackRoutine()
     {
-        // --- Fase 1: PREPARAÇÃO DO ATAQUE ---
         currentState = EnemyState.Attacking;
 
         burstCounter++;
-        currentColor = (burstCounter % 2 == 0) ? 1 : 0;
+        currentColor = (currentColor == 1) ? 0 : 1; // Inverte a cor
         ApplyEnemyMaterial();
         
-        // Aplica a mira XZ final antes de atirar
-        if (playerTarget != null)
+        if (playerTargetTransform != null)
         {
-            Vector3 targetXZ = playerTarget.transform.position;
+            Vector3 targetXZ = playerTargetTransform.position;
             targetXZ.y = transform.position.y;
             Vector3 lookDirection = targetXZ - transform.position;
 
@@ -203,7 +195,6 @@ public class Enemy1 : MonoBehaviour
             }
         }
 
-        // --- Fase 2: CICLO DE TIROS ---
         anim.SetBool("isAttacking", true); 
         anim.SetTrigger("Attack");
 
@@ -213,24 +204,24 @@ public class Enemy1 : MonoBehaviour
             yield return new WaitForSeconds(fireRate);
         }
 
-        // --- Fase 3: COOLDOWN ---
         currentState = EnemyState.CoolingDown;
         anim.SetBool("isAttacking", false);
         
         yield return new WaitForSeconds(cooldownTime); 
 
-        // --- Fase 4: RETORNO ---
         currentState = EnemyState.Chasing;
         attackCoroutine = null; 
     }
 
     void ShootBullet()
     {
+        if (bulletPrefab == null || firePoint == null) return;
+        
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
         Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
-        Material targetMaterial = GetBulletMaterial(); 
+        Material targetMaterial = GetMaterialForColor(); 
 
         if (bulletScript != null)
         {
@@ -250,44 +241,49 @@ public class Enemy1 : MonoBehaviour
 
     void ApplyEnemyMaterial()
     {
-        Material targetMaterial = GetBulletMaterial();
+        Material targetMaterial = GetMaterialForColor();
         if (myRenderer != null && targetMaterial != null)
         {
             myRenderer.material = targetMaterial;
         }
     }
 
-    Material GetBulletMaterial()
+    // 🚨 CORREÇÃO CS0103: Usa gameControllerRef (variável de classe)
+    Material GetMaterialForColor()
     {
-        if (gameControllerRef != null)
+        if (gameControllerRef is GameControllerScript standardController)
         {
-             return (currentColor == 1) ? 
-                gameControllerRef.PlayerMatFirst : 
-                gameControllerRef.PlayerMatSecond;
+            return (currentColor == 1) ? standardController.PlayerMatFirst : standardController.PlayerMatSecond;
         }
         
-        if (tutorialControllerRef != null)
+        if (gameControllerRef is TutorialController tutorialController)
         {
-            return (currentColor == 1) ? 
-                tutorialControllerRef.MatFirst : 
-                tutorialControllerRef.MatSecond;
+            return (currentColor == 1) ? tutorialController.MatFirst : tutorialController.MatSecond;
         }
         return null;
     }
 
-    public void TakingDamage(int bulletDamage)
+    public void TakingDamage(int bulletDamage, int bulletColor)
     {
+        // Seu código já estava correto, aceitando os 2 argumentos
         Hp -= bulletDamage;
-        Debug.Log("Inimigo recebeu " + bulletDamage + "de dano. Vida restante: " + Hp);
+        Debug.Log("Louva-Deus recebeu " + bulletDamage + " de dano. Vida restante: " + Hp);
 
         if (Hp <= 0)
         {
-            if (gameControllerRef != null)
-            {
-                gameControllerRef.AumentarNumerodeInimigosMortos();
-            }
-            
-            Destroy(gameObject);
+            Die();
         }
+    }
+    
+    void Die()
+    {
+        if (GameControllerScript.controller != null)
+        {
+            GameControllerScript.controller.AumentarNumerodeInimigosMortos();
+        }
+        
+        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+        
+        Destroy(gameObject);
     }
 }

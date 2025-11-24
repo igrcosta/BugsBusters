@@ -11,6 +11,7 @@ TagManager:
   - SafeZone
   - UIController
   - Ground
+  - PlayerModel
   layers:
   - Default
   - TransparentFX

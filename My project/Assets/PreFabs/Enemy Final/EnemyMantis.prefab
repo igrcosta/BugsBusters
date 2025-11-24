@@ -1313,10 +1313,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Hp: 50
   enemySpeed: 0.7
-  stoppingDistance: 1
+  stoppingDistance: 0.5
   bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
   firePoint: {fileID: 3763511853491475127}
-  fireRate: 0.7
+  fireRate: 0.5
   shotsPerBurst: 3
   cooldownTime: 2
   currentColor: 0
