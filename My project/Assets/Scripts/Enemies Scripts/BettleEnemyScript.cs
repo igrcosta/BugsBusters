@@ -1,10 +1,14 @@
 using UnityEngine;
 using System.Collections;
 
+
 public enum BettleState { Chasing, PreparingAttack, CoolingDown }
+
 
 public class BettleEnemyScript : MonoBehaviour
 {
+    private TutorialManager tutorialManager;
+
     // ====================================================================
     // 1. CONFIGURAÇÕES & REFERÊNCIAS
     // ====================================================================
@@ -16,36 +20,43 @@ public class BettleEnemyScript : MonoBehaviour
     [SerializeField] float stopAndShootDistance = 12f;
     
     [Header("Ataque Rolabosta")]
-    [SerializeField] GameObject bulletPrefab; 
+    [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform firePoint;
-    [SerializeField] float prepTime = 1.5f; 
-    [SerializeField] float cooldownTime = 10f; 
+    [SerializeField] float prepTime = 1.5f;
+    [SerializeField] float cooldownTime = 10f;
 
     [Header("Cor e Componentes")]
-    public int currentColor; 
+    public int currentColor;
     private Renderer myRenderer;
     private Rigidbody rb;
     
     // --- REFERÊNCIAS DINÂMICAS ---
-    private Transform playerTargetTransform; 
-    private Component gameControllerRef;     
+    private Transform playerTargetTransform;
+    private Component gameControllerRef;      
     // ----------------------------
     
     private BettleState currentState = BettleState.Chasing;
-    private Coroutine attackRoutineInstance;
+    // 🚨 LINHA CRÍTICA PARA CORRIGIR O ERRO CS0103:
+    private Coroutine attackRoutineInstance; 
     private Vector3 currentDirection = Vector3.zero;
+
 
     // ====================================================================
     // 2. INICIALIZAÇÃO HÍBRIDA (COM ESPERA)
     // ====================================================================
     
+    public void SetManager(TutorialManager manager)
+{
+    tutorialManager = manager;
+}
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         myRenderer = GetComponent<Renderer>();
 
         // Tenta encontrar o Player imediatamente
-        FindTargetAndController(); 
+        FindTargetAndController();
         
         if (playerTargetTransform != null)
         {
@@ -64,19 +75,20 @@ public class BettleEnemyScript : MonoBehaviour
     {
         while (GameControllerScript.controller == null && TutorialController.controller == null)
         {
-            yield return null; 
+            yield return null;
         }
         
         while (playerTargetTransform == null)
         {
-            FindTargetAndController(); 
-            yield return null; 
+            FindTargetAndController();
+            yield return null;
         }
         
         currentState = BettleState.Chasing;
         InitializeColor();
         Debug.Log("Besouro Rolabosta: Player encontrado via Coroutine! Iniciando.");
     }
+
 
     // Centraliza a busca do Player e do Controller em qualquer cena
     void FindTargetAndController()
@@ -99,9 +111,11 @@ public class BettleEnemyScript : MonoBehaviour
         }
     }
 
+
     // ====================================================================
     // 3. MOVIMENTO E ESTADOS
     // ====================================================================
+
 
     void Update()
     {
@@ -115,7 +129,7 @@ public class BettleEnemyScript : MonoBehaviour
             
             case BettleState.PreparingAttack:
             case BettleState.CoolingDown:
-                HandleStoppingRotation(); 
+                HandleStoppingRotation();
                 break;
         }
     }
@@ -134,19 +148,22 @@ public class BettleEnemyScript : MonoBehaviour
         }
     }
 
+
     void HandleChasingLogicAndRotation()
     {
         Vector3 playerPosition = playerTargetTransform.position;
         Vector3 direction = playerPosition - transform.position;
         float distance = direction.magnitude;
 
+
         // Transição para Ataque
         if (distance <= stopAndShootDistance && attackRoutineInstance == null)
         {
             currentState = BettleState.PreparingAttack;
             attackRoutineInstance = StartCoroutine(AttackRoutine());
-            return; 
+            return;
         }
+
 
         // Cálculo da Direção para o FixedUpdate
         direction.y = 0f;
@@ -156,11 +173,12 @@ public class BettleEnemyScript : MonoBehaviour
         transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
     }
 
+
     void ApplyMovementVelocity()
     {
         rb.linearVelocity = new Vector3(
-            currentDirection.x * enemySpeed, 
-            rb.linearVelocity.y, 
+            currentDirection.x * enemySpeed,
+            rb.linearVelocity.y,
             currentDirection.z * enemySpeed
         );
     }
@@ -180,16 +198,19 @@ public class BettleEnemyScript : MonoBehaviour
     
     IEnumerator AttackRoutine()
     {
-        yield return new WaitForSeconds(prepTime); 
+        yield return new WaitForSeconds(prepTime);
+
 
         Shoot();
         
         currentState = BettleState.CoolingDown;
-        yield return new WaitForSeconds(cooldownTime); 
+        yield return new WaitForSeconds(cooldownTime);
+
 
         currentState = BettleState.Chasing;
         attackRoutineInstance = null;
     }
+
 
     void Shoot()
     {
@@ -197,6 +218,7 @@ public class BettleEnemyScript : MonoBehaviour
         
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
+
 
         if (bulletScript != null)
         {
@@ -208,7 +230,7 @@ public class BettleEnemyScript : MonoBehaviour
     
     void InitializeColor()
     {
-        currentColor = Random.Range(0, 2); 
+        currentColor = Random.Range(0, 2);
         ApplyEnemyMaterial(myRenderer);
     }
     
@@ -234,10 +256,11 @@ public class BettleEnemyScript : MonoBehaviour
         }
         else if (gameControllerRef is TutorialController tutorialController)
         {
-            return (currentColor == 1) ? tutorialController.MatFirst : tutorialController.MatSecond; 
+            return (currentColor == 1) ? tutorialController.MatFirst : tutorialController.MatSecond;
         }
         return null;
     }
+
 
     // ====================================================================
     // 5. LÓGICA DE DANO/MORTE
@@ -252,14 +275,26 @@ public class BettleEnemyScript : MonoBehaviour
         }
     }
 
+
     void Die()
     {
-        if (GameControllerScript.controller != null)
+        // NOVO: 1. Tenta notificar o TutorialController (se estiver no tutorial)
+        if (gameControllerRef is TutorialController tutorialController)
+        {
+            tutorialController.EnemyKilled();
+        }
+        // 2. Mantém a lógica existente para o GameController (jogo principal)
+        else if (GameControllerScript.controller != null)
         {
             GameControllerScript.controller.AumentarNumerodeInimigosMortos();
         }
         
+        // 🚨 CORREÇÃO: Usa a variável de classe que foi reconfirmada no topo.
         if (attackRoutineInstance != null) StopCoroutine(attackRoutineInstance);
+
+        if (tutorialManager != null)
+    tutorialManager.EnemyKilled();
+        Debug.Log($"ENEMY KILLED: {gameObject.name}");
         
         Destroy(gameObject);
     }

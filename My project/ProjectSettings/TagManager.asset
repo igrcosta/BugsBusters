@@ -12,6 +12,8 @@ TagManager:
   - UIController
   - Ground
   - PlayerModel
+  - TriggerWall
+  - Wall
   layers:
   - Default
   - TransparentFX
