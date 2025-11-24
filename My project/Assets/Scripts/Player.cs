@@ -117,6 +117,8 @@ public class Player : MonoBehaviour
 
     void ApplyGravity()
     {
+        if (cc == null) return;
+
         // cc != null já é checado no Update
         if (cc.isGrounded)
         {
@@ -128,7 +130,12 @@ public class Player : MonoBehaviour
     
     public void Movement()
     {
-        // cc != null já é checado no Update
+        if (Camera.main == null)
+    {
+        Debug.LogError("FATAL: Camera principal (tag MainCamera) não encontrada.");
+        return;
+    }
+
         if(!DummyMode)
         {
             float VertMove = Input.GetAxis("Vertical");
@@ -147,21 +154,9 @@ public class Player : MonoBehaviour
 
             // Linha 129 Antiga (Agora é a nova linha do cc.Move)
             Vector3 finalMovement = finalDirection * speed * Time.deltaTime; 
-            
-            // ROTAÇÃO
-            if (finalDirection.sqrMagnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(finalDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
-            }
 
-            cc.Move(finalMovement); // ✅ LINHA CRÍTICA
+            cc.Move(finalMovement);
             
-            // ATUALIZAÇÃO DA CÂMERA
-            if (CameraTarget != null)
-            {
-                CameraTarget.position = transform.position; 
-            }
         }
     }
 
