@@ -9,10 +9,10 @@ public class SpawnPoint : MonoBehaviour
 
     [Header("Spawn Settings")]
     [SerializeField] float spawnInterval = 1f;   // tempo entre cada spawn
-    [SerializeField] float spawnRangeX = 0.1f;     // limite horizontal
+    [SerializeField] float spawnRangeX = 1f;     // limite horizontal
 
     [Header("Limits")]
-    [SerializeField] int maxEnemies = 10;        // número máximo permitido
+    [SerializeField] int maxEnemies = 10;        // nï¿½mero mï¿½ximo permitido
     private int currentEnemies = 0;              // contador interno
 
     private void Start()
@@ -36,17 +36,30 @@ public class SpawnPoint : MonoBehaviour
 
         if (prefabToSpawn == null) return;
 
-        // Posição do Empty Object (SpawnPoint)
-        Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        //Vector3 spawnPos = new Vector3(0, 0, 0);
+        // 1. PosiÃ§Ã£o base do SpawnPoint (this.transform.position)
+    Vector3 basePos = transform.position;
 
-        // Instancia o inimigo
-        //GameObject enemy = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
-        GameObject enemy = Instantiate(prefabToSpawn, transform.position, transform.rotation); //instancia um prefab do inimigo na posição do nosso spawner
+    // 2. Cria deslocamentos aleatÃ³rios (jitter) em X e Z
+    // Usamos spawnRangeX como o limite mÃ¡ximo do deslocamento (o raio)
+    float jitterX = Random.Range(-spawnRangeX, spawnRangeX);
+    // Usa um jitterRange semelhante para Z
+    float jitterZ = Random.Range(-spawnRangeX, spawnRangeX); 
+    
+    // 3. Aplica o deslocamento Ã  posiÃ§Ã£o base, mantendo o Y inalterado (para a queda)
+    Vector3 finalSpawnPos = new Vector3(
+        basePos.x + jitterX,
+        basePos.y,
+        basePos.z + jitterZ
+    );
+    
+    // --- FIM DA LÃ“GICA DO JITTER ---
 
-        // sempre caindo para baixo
-        Rigidbody rb = enemy.GetComponent<Rigidbody>();
-        if (rb != null)
+        // Instancia o inimigo na POSIÃ‡ÃƒO FINAL CALCULADA
+    GameObject enemy = Instantiate(prefabToSpawn, finalSpawnPos, transform.rotation); 
+
+    // sempre caindo para baixo
+    Rigidbody rb = enemy.GetComponent<Rigidbody>();
+    if (rb != null)
         {
             rb.linearVelocity = new Vector3(0, -1f, 0); 
         }

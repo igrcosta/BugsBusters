@@ -1273,7 +1273,7 @@ GameObject:
   - component: {fileID: 7334137292502433941}
   - component: {fileID: 5503443375085103543}
   - component: {fileID: 2062426034450449074}
-  - component: {fileID: 9106897190688085782}
+  - component: {fileID: 1860144263144239244}
   m_Layer: 0
   m_Name: EnemyMantis
   m_TagString: Enemy
@@ -1345,7 +1345,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!95 &2062426034450449074
 Animator:
@@ -1369,8 +1369,8 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!65 &9106897190688085782
-BoxCollider:
+--- !u!136 &1860144263144239244
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1387,9 +1387,11 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.08067387, y: 0.09784176, z: 0.09976387}
-  m_Center: {x: 0.00028851628, y: 0.048509236, z: 0.012612343}
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.17
+  m_Direction: 1
+  m_Center: {x: -0, y: 0.04, z: 0.01}
 --- !u!1 &8981452834231292393
 GameObject:
   m_ObjectHideFlags: 0

@@ -90,10 +90,11 @@ public class Enemy1 : MonoBehaviour
     }
     
     void InitializeColor()
-    {
-        currentColor = (burstCounter % 2 == 0) ? 1 : 0; 
-        ApplyEnemyMaterial();
-    }
+{
+    currentColor = Random.Range(0, 2); 
+    
+    ApplyEnemyMaterial();
+}
     
     // ====================================================================
     // 3. MÁQUINA DE ESTADOS (FSM)
@@ -112,22 +113,39 @@ public class Enemy1 : MonoBehaviour
     }
     
     void FixedUpdate()
+{
+    // 🚨 CORREÇÃO: Aplica a velocidade APENAS se o inimigo já tiver pousado.
+    if (currentState == EnemyState.Chasing && hasLanded) 
     {
-        if (currentState == EnemyState.Chasing)
-        {
-            ApplyMovementVelocity();
-        }
+        ApplyMovementVelocity();
     }
+    // O else permite que a gravidade continue atuando durante a queda.
+}
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!hasLanded && collision.gameObject.CompareTag("Ground"))
-        {
-            hasLanded = true;
-            anim.SetBool("isFalling", false);
-            anim.SetTrigger("FallImpact");
-        }
+        // Verifica se tocou no chão e ainda não pousou
+    if (!hasLanded && collision.gameObject.CompareTag("Ground"))
+    {
+        hasLanded = true;
+        anim.SetBool("isFalling", false);
+        anim.SetTrigger("FallImpact");
+        
+        // 🚨 NOVO: Zere a velocidade horizontal, mas mantenha a queda
+        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0); 
+        rb.angularVelocity = Vector3.zero;
+        
+        // Zera o contador de queda para evitar que ele voe
+        currentDirection = Vector3.zero; 
     }
+    }
+
+    // 🚨 NOVO MÉTODO: Chamado para garantir que o inimigo pare de deslizar/voar
+private void ResetVelocity()
+{
+    // Garante que o movimento lateral pare (apenas XZ)
+    rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0); 
+}
 
     // ====================================================================
     // 4. LÓGICA DE ESTADOS
@@ -161,13 +179,23 @@ public class Enemy1 : MonoBehaviour
     }
     
     void ApplyMovementVelocity()
+{
+    if (rb == null) return; 
+    
+    // 🚨 ATENÇÃO: Se o movimento horizontal estiver zero, chame ResetVelocity
+    if (currentDirection.sqrMagnitude < 0.01f)
     {
-        rb.linearVelocity = new Vector3(
-            currentDirection.x * enemySpeed, 
-            rb.linearVelocity.y, 
-            currentDirection.z * enemySpeed
-        );
+        ResetVelocity();
+        return;
     }
+
+    // Aplica o movimento, MANTENDO A VELOCIDADE Y
+    rb.linearVelocity = new Vector3(
+        currentDirection.x * enemySpeed, 
+        rb.linearVelocity.y, 
+        currentDirection.z * enemySpeed
+    );
+}
 
     void HandleStopping()
     {
