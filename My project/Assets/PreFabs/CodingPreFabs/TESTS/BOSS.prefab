@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7024886836076562357}
   m_Layer: 0
-  m_Name: ShootPoint BACK + RIGHT
+  m_Name: ShootPoint FRONT + RIGHT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -117,13 +117,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2821573894627176173}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.17020324, y: -2.6352634, z: -0.9894638}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.17020324, y: -2.6352634, z: 0.101}
   m_LocalScale: {x: 0.67, y: 0.67, z: 0.67}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5963885280253718033}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4266318744679137855
 GameObject:
   m_ObjectHideFlags: 0
@@ -148,13 +148,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4266318744679137855}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.189, y: -2.6352634, z: -0.035}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -0.189, y: -2.6352634, z: -1.003}
   m_LocalScale: {x: 0.67, y: 0.67, z: 0.67}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5963885280253718033}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &4480549538147467472
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,7 +165,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1203663029639941221}
   m_Layer: 0
-  m_Name: ShootPoint BACK + LEFT
+  m_Name: ShootPoint FRONT + LEFT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -195,6 +195,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8463706812139514914}
+  - component: {fileID: 4731399823225887467}
+  - component: {fileID: 7417536323456438280}
   m_Layer: 0
   m_Name: BOSS
   m_TagString: Untagged
@@ -219,6 +221,61 @@ Transform:
   - {fileID: 5963885280253718033}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4731399823225887467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6088521684864435472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e19f8571344e645be253610c70a0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Health: 100
+  BulletsDamage: 10
+  ShockwaveDamage: 30
+  TurnSpeed: 2
+  FireRate: 0.5
+  BigBullet: {fileID: 1119065107945223968, guid: 2396a369d034afd4e86bcb5d6a375022, type: 3}
+  BettleEnemy: {fileID: 1417907337024492334, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
+  SmallEnemy: {fileID: 1417907337024492334, guid: eda0129cd32d206479827595c74c249c, type: 3}
+  Front: {fileID: 5592001375572962459}
+  FrontandRight: {fileID: 7024886836076562357}
+  FrontandLeft: {fileID: 1203663029639941221}
+  Right: {fileID: 3661457516030453783}
+  Left: {fileID: 4016254265152994925}
+  Back: {fileID: 7616524594221577394}
+  BackandRight: {fileID: 634611613965696956}
+  BackandLeft: {fileID: 5626303109850343667}
+--- !u!54 &7417536323456438280
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6088521684864435472}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7237164768410872643
 GameObject:
   m_ObjectHideFlags: 0
@@ -246,7 +303,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7237164768410872643}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -369,7 +426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5626303109850343667}
   m_Layer: 0
-  m_Name: ShootPoint FRONT + LEFT
+  m_Name: ShootPoint BACK + LEFT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -439,7 +496,7 @@ GameObject:
   m_Component:
   - component: {fileID: 634611613965696956}
   m_Layer: 0
-  m_Name: ShootPoint FRONT + RIGHT
+  m_Name: ShootPoint BACK + RIGHT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
