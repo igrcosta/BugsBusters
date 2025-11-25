@@ -1820,15 +1820,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28b0820f24d157419b5340edbc1f049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cheatsEnabled: 1
   Player: {fileID: 0}
-  UIController: {fileID: 0}
   PlayerMatFirst: {fileID: 2100000, guid: e3d24fa617fb0064a9671236306a7ed3, type: 2}
   PlayerMatSecond: {fileID: 2100000, guid: 3c51358d3517ad14f8dc9e8614eda2b5, type: 2}
   Timer: {fileID: 1229945368}
   EnemySpawnManagerScriptRef: {fileID: 263482192}
   SafeZone: {fileID: 1862078191}
-  PlayerInputs: {fileID: 3366836956181993223}
+  GameUI: {fileID: 0}
+  WaveManagerRef: {fileID: 0}
   ColorLogic: 0100000002000000
+  backgroundMenu: {fileID: 0}
 --- !u!4 &568215254
 Transform:
   m_ObjectHideFlags: 0
@@ -3018,7 +3020,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf02ff13a5b4d0c4abd9c9dfb4f0b12b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InimigosMortos: {fileID: 1980406127}
 --- !u!4 &819682767
 Transform:
   m_ObjectHideFlags: 0
@@ -3406,11 +3407,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c60ddb8061e7b14b8d8b9819cada8b8, type: 3}
---- !u!4 &976154685 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4795297490663879769, guid: b3b53732b547bdd4ba11869a2e16e812, type: 3}
-  m_PrefabInstance: {fileID: 3366836956181993222}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &988804338
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3894,6 +3890,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBarFillImage: {fileID: 517263158}
   speed: 2
+  pauseMenu: {fileID: 0}
+  InimigosMortosText: {fileID: 0}
 --- !u!4 &1176493937 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ec76d15968e093e4cb298c6b6a97352a, type: 3}
@@ -4734,7 +4732,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 928fee5f378bdf7498f3221a4ad65538, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerRoot: {fileID: 976154685}
 --- !u!1 &1475407248 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7880662355695249518, guid: fe10d2e2c4964664fa87582fc6e8b200, type: 3}
@@ -5820,7 +5817,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShrinkSpeed: 1.6
-  knockbackForce: 10
 --- !u!4 &1862078194 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8778689205888331531, guid: a9208261a277e684d9ba834ee3fd06c8, type: 3}
@@ -6700,7 +6696,7 @@ PrefabInstance:
     - target: {fileID: 2754584903435332781, guid: b3b53732b547bdd4ba11869a2e16e812, type: 3}
       propertyPath: InputsComponent
       value: 
-      objectReference: {fileID: 3366836956181993223}
+      objectReference: {fileID: 0}
     - target: {fileID: 3452374320407527060, guid: b3b53732b547bdd4ba11869a2e16e812, type: 3}
       propertyPath: m_Name
       value: Player_ROOT
@@ -6757,17 +6753,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3366836956181993227}
   m_SourcePrefab: {fileID: 100100000, guid: b3b53732b547bdd4ba11869a2e16e812, type: 3}
---- !u!114 &3366836956181993223 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5978445011670640882, guid: b3b53732b547bdd4ba11869a2e16e812, type: 3}
-  m_PrefabInstance: {fileID: 3366836956181993222}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2077199264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3366836956181993227
 MonoBehaviour:
   m_ObjectHideFlags: 0
