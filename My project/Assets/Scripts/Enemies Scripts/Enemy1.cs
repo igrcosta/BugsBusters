@@ -43,8 +43,9 @@ public class Enemy1 : MonoBehaviour
     // 2. INICIALIZAÇÃO E ENCONTRO DE ALVO
     // ====================================================================
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return null;
         tutorial = FindObjectOfType<TutorialController>();
 
         rb = GetComponent<Rigidbody>();
