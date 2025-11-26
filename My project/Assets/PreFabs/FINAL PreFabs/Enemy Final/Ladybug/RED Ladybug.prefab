@@ -104,7 +104,6 @@ MonoBehaviour:
   bulletScale: 0.05
   explosionVisualPrefab: {fileID: 1033600852879337965, guid: 86825e6e821a25140be666d28f1ddcd2, type: 3}
   rotationSpeed: 10
-  currentColor: 0
 --- !u!114 &8011144967777980827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,6 +116,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7009b959b3cb0b4cb1820ab0266e8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentColor: 0
+  myRenderer: {fileID: 0}
+  greenMaterial: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
+  redMaterial: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
 --- !u!1 &3093227524117120347
 GameObject:
   m_ObjectHideFlags: 0

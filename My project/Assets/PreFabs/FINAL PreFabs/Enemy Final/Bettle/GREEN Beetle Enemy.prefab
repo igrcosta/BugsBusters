@@ -212,7 +212,7 @@ MonoBehaviour:
   firePoint: {fileID: 4453108789209489043}
   prepTime: 1.5
   cooldownTime: 5
-  currentColor: 0
+  InitialColor: 1
 --- !u!114 &450507823123534494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,6 +225,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7009b959b3cb0b4cb1820ab0266e8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentColor: 1
+  myRenderer: {fileID: 7014363649414849168}
+  greenMaterial: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
+  redMaterial: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
 --- !u!1 &5196243723344378979
 GameObject:
   m_ObjectHideFlags: 0

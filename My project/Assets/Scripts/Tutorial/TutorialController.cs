@@ -5,7 +5,7 @@ public class TutorialController : MonoBehaviour
     public static TutorialController controller;
 
     [Header("Referências")]
-    public TutorialPlayer PlayerTutorialRef;
+    public Player PlayerTutorialRef;
 
     [Header("Materiais que todos usam")]
     public Material MatFirst, MatSecond;

@@ -5,6 +5,12 @@ public class ColorHandler : MonoBehaviour
         // Define a cor deste objeto no Inspector (ou via script, no caso do Player)
         [SerializeField] public BulletColor currentColor;
 
+        //Materiais e coisas que o player vai precisar pra trocar a cor via código
+        [Header("Materiais")]
+        [SerializeField] private Renderer myRenderer; //colocar renderer do player aqui
+        [SerializeField] private Material greenMaterial; // Material Verde do Player
+        [SerializeField] private Material redMaterial; // Material Vermelho do Player
+
         ///<summary>
         ///Esse método aqui é universal, qualquer corno que tomar bala TEM QUE CHAMAR ESSE MÉTODO
         ///AQUI É O LUGAR DA REGRA DO IKARUGA, ISSO NÃO PDOE SER DESVIADO PARA OUTRO LUGAR
@@ -57,6 +63,21 @@ public class ColorHandler : MonoBehaviour
                 //o tiro se destrói e nada acontece, feijoada
 
                 //haha piadas enfadonhas
+            }
+        }
+
+        public void UpdateVisualMaterial()
+        {
+            if (myRenderer == null)
+            {
+                return;
+            }
+
+            Material targetMat = (currentColor == BulletColor.Green) ? greenMaterial : redMaterial;
+
+            if (myRenderer.material != targetMat)
+            {
+                myRenderer.material = targetMat;
             }
         }
 }
