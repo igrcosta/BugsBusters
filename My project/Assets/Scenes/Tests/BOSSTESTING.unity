@@ -640,6 +640,22 @@ PrefabInstance:
       propertyPath: RotationTime
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 4731399823225887467, guid: 68ebc3c71ec1d1c4ea0c1ef584b21cab, type: 3}
+      propertyPath: REDSmallEnemy
+      value: 
+      objectReference: {fileID: 2798812565783371171, guid: 94b1228d97c29f04ba5249132fd8a891, type: 3}
+    - target: {fileID: 4731399823225887467, guid: 68ebc3c71ec1d1c4ea0c1ef584b21cab, type: 3}
+      propertyPath: REDBettleEnemy
+      value: 
+      objectReference: {fileID: 5590033882022118572, guid: 2e67932efc619a640b3d39ed92b04f10, type: 3}
+    - target: {fileID: 4731399823225887467, guid: 68ebc3c71ec1d1c4ea0c1ef584b21cab, type: 3}
+      propertyPath: GREENSmallEnemy
+      value: 
+      objectReference: {fileID: 5255655054801715502, guid: 9fb20652f364ef948a50ef05feed0299, type: 3}
+    - target: {fileID: 4731399823225887467, guid: 68ebc3c71ec1d1c4ea0c1ef584b21cab, type: 3}
+      propertyPath: GREENBettleEnemy
+      value: 
+      objectReference: {fileID: 3586323193611423016, guid: 5e02cff251f48f0448a90d5fe7280246, type: 3}
     - target: {fileID: 6088521684864435472, guid: 68ebc3c71ec1d1c4ea0c1ef584b21cab, type: 3}
       propertyPath: m_Name
       value: BOSS

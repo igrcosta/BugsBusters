@@ -29,11 +29,14 @@ public class boss : MonoBehaviour
     [SerializeField] GameObject BigBullet;
 
     //provavelmente vou ter q colocar a merda de um bigbullet de outra cor
+    [Header("Enemies Prefabs")]
 
-    [SerializeField] GameObject BettleEnemy;
+    [SerializeField] GameObject REDBettleEnemy;
+    [SerializeField] GameObject GREENBettleEnemy;
     //spawn na 2a fase
 
-    [SerializeField] GameObject SmallEnemy;
+    [SerializeField] GameObject REDSmallEnemy;
+    [SerializeField] GameObject GREENSmallEnemy;
     //spawn na 3a fase
 
     [Header ("Pontos que ele usa para atirar")]
