@@ -20,7 +20,8 @@ public class BettleEnemyScript : MonoBehaviour
     [SerializeField] float stopAndShootDistance = 12f;
     
     [Header("Ataque Rolabosta")]
-    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject redBulletPrefab;   // Prefab de Bala VERMELHA
+    [SerializeField] GameObject greenBulletPrefab; // Prefab de Bala VERDE
     [SerializeField] Transform firePoint;
     [SerializeField] float prepTime = 1.5f;
     [SerializeField] float cooldownTime = 10f;
@@ -40,7 +41,6 @@ public class BettleEnemyScript : MonoBehaviour
     // ----------------------------
     
     private BettleState currentState = BettleState.Chasing;
-    // 🚨 LINHA CRÍTICA PARA CORRIGIR O ERRO CS0103:
     private Coroutine attackRoutineInstance; 
     private Vector3 currentDirection = Vector3.zero;
 
@@ -223,24 +223,42 @@ public class BettleEnemyScript : MonoBehaviour
 
 
     void Shoot()
+{
+    if (colorHandler == null || firePoint == null) return; 
+
+    GameObject prefabToInstantiate = null;
+    BulletColor enemyColor = colorHandler.currentColor;
+
+    // 1. Seleciona o prefab de bala baseado na cor do inimigo.
+    if (enemyColor == BulletColor.Red)
     {
-        if (bulletPrefab == null || firePoint == null) return;
-        
-        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        BulletController bulletScript = newBullet.GetComponent<BulletController>();
-
-
-        if (bulletScript != null)
-        {
-            bulletScript.isFiredByPlayer = false;
-            bulletScript.bulletColor = colorHandler.currentColor;
-        }
-        else
-        {
-            Destroy(newBullet);
-        }
+        prefabToInstantiate = redBulletPrefab;
+    }
+    else if (enemyColor == BulletColor.Green)
+    {
+        prefabToInstantiate = greenBulletPrefab;
+    }
+    
+    if (prefabToInstantiate == null) 
+    {
+        Debug.LogError($"Prefab de bala para a cor {enemyColor} está faltando no BettleEnemyScript.");
+        return;
     }
 
+    // 2. Instancia o prefab correto
+    GameObject newBullet = Instantiate(prefabToInstantiate, firePoint.position, firePoint.rotation);
+    BulletController bulletScript = newBullet.GetComponent<BulletController>();
+
+    if (bulletScript != null)
+    {
+        bulletScript.isFiredByPlayer = false;
+        bulletScript.bulletColor = enemyColor; // Passa a cor correta (Red ou Green)
+    }
+    else
+    {
+        Destroy(newBullet);
+    }
+}
     // ====================================================================
     // 5. LÓGICA DE DANO/MORTE
     // ====================================================================

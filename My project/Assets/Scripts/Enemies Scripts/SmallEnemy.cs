@@ -47,7 +47,8 @@ public class SmallEnemy : MonoBehaviour
 
     [Header("Disparo de Balas ao Morrer")]
 
-    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject redBulletPrefab;   // Prefab de Bala VERMELHA
+    [SerializeField] GameObject greenBulletPrefab; // Prefab de Bala VERDE
 
     [SerializeField] int bulletsInCircle = 8;
 
@@ -541,43 +542,44 @@ else if (distance > safeReturnDistance && explosionCoroutine != null)
    
 
     void ShootCircleOfBullets()
+{
+    ColorHandler myColorHandler = GetComponent<ColorHandler>(); 
+    if (myColorHandler == null) return;
+    
+    GameObject prefabToInstantiate = null;
+    BulletColor enemyColor = myColorHandler.currentColor;
 
+    // 1. SELEÇÃO DO PREFAB CORRETO
+    if (enemyColor == BulletColor.Red)
     {
-
-        if (bulletPrefab == null) return;
-
-       
-
-        float angleStep = 360f / bulletsInCircle;
-       
-
-        for (int i = 0; i < bulletsInCircle; i++)
-
-        {
-
-            float angle = i * angleStep;
-
-            Quaternion rotation = Quaternion.Euler(0, angle, 0);  
-
-
-            GameObject newBullet = Instantiate(bulletPrefab, transform.position, rotation);
-
-            // 💡 CORRIGIDO: Aplica a escala para garantir o tamanho dos projéteis
-
-            newBullet.transform.localScale = Vector3.one * bulletScale;  
-
-           
-
-            BulletController bulletScript = newBullet.GetComponent<BulletController>();
-
-
-            if (bulletScript == null) continue;
-
-            bulletScript.isFiredByPlayer = false;
-
-            bulletScript.bulletColor = GetComponent<ColorHandler>()?.currentColor ?? BulletColor.Red;
-
-        }
-
+        prefabToInstantiate = redBulletPrefab;
     }
+    else if (enemyColor == BulletColor.Green)
+    {
+        prefabToInstantiate = greenBulletPrefab;
+    }
+
+    if (prefabToInstantiate == null) return; // Sai se o prefab não for encontrado
+    
+    float angleStep = 360f / bulletsInCircle;
+    
+    for (int i = 0; i < bulletsInCircle; i++)
+    {
+        float angle = i * angleStep;
+        Quaternion rotation = Quaternion.Euler(0, angle, 0);  
+
+        // 2. INSTANCIA O PREFAB SELECIONADO (prefabToInstantiate)
+        GameObject newBullet = Instantiate(prefabToInstantiate, transform.position, rotation);
+
+        newBullet.transform.localScale = Vector3.one * bulletScale;  
+        
+        BulletController bulletScript = newBullet.GetComponent<BulletController>();
+
+        if (bulletScript == null) continue;
+
+        bulletScript.isFiredByPlayer = false;
+        // 3. Atribui a cor correta
+        bulletScript.bulletColor = enemyColor; 
+    }
+}
 } 

@@ -104,7 +104,8 @@ MonoBehaviour:
   damageRadius: 0.3
   explosionDamage: 20
   explosionForce: 500
-  bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
+  redBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  greenBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
   bulletsInCircle: 8
   bulletDelay: 1
   bulletScale: 0.05
