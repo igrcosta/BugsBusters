@@ -47,7 +47,8 @@ public class SmallEnemy : MonoBehaviour
 
     [Header("Disparo de Balas ao Morrer")]
 
-    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject redBulletPrefab;   // Prefab de Bala VERMELHA
+    [SerializeField] GameObject greenBulletPrefab; // Prefab de Bala VERDE
 
     [SerializeField] int bulletsInCircle = 8;
 
@@ -61,10 +62,6 @@ public class SmallEnemy : MonoBehaviour
     [SerializeField] GameObject explosionVisualPrefab;
 
     [SerializeField] float rotationSpeed = 10f; // 💡 NOVO: Para rotação suave
-
-    public int currentColor;
-
-    private Renderer myRenderer;
 
     private Rigidbody rb;
 
@@ -103,8 +100,6 @@ public void SetManager(TutorialManager manager)
     {
 
         rb = GetComponent<Rigidbody>();
-
-        myRenderer = GetComponent<Renderer>();
 
     }
 
@@ -147,10 +142,6 @@ public void SetManager(TutorialManager manager)
             yield return null;
 
         }
-
-       
-
-        InitializeColor();
 
         Debug.Log(gameObject.name + ": Inicialização de SmallEnemy bem-sucedida.");
 
@@ -210,6 +201,8 @@ public void SetManager(TutorialManager manager)
 
     {
 
+        ColorHandler myColorHandler = GetComponent<ColorHandler>();
+
         if (playerTargetTransform == null || isDying)  
 
         {
@@ -259,41 +252,18 @@ public void SetManager(TutorialManager manager)
 
        
 
-        // INICIA O TIMER (e a parada será gerenciada pelo FixedUpdate)
+        // INICIA O TIMER
+if (distance <= explosionRadius && explosionCoroutine == null)
+{   
+    explosionCoroutine = StartCoroutine(CountdownToExplosion());
+}
 
-        if (distance <= explosionRadius && explosionCoroutine == null)
-
-        {
-
-            // 💡 Acrescenta a inversão de cor para feedback visual imediato
-
-            currentColor = (currentColor == 1) ? 0 : 1;
-
-            ApplyEnemyMaterial(myRenderer);
-
-           
-
-            explosionCoroutine = StartCoroutine(CountdownToExplosion());
-
-        }
-
-        // CANCELA O TIMER (Se saiu da zona de segurança)
-
-        else if (distance > safeReturnDistance && explosionCoroutine != null)
-
-        {
-
-            StopCoroutine(explosionCoroutine);
-
-            explosionCoroutine = null;
-
-            // 💡 Restaura a cor original ao cancelar a explosão
-
-            currentColor = (currentColor == 1) ? 0 : 1;
-
-            ApplyEnemyMaterial(myRenderer);
-
-        }
+// CANCELA O TIMER
+else if (distance > safeReturnDistance && explosionCoroutine != null)
+{
+    StopCoroutine(explosionCoroutine);
+    explosionCoroutine = null;
+}
 
     }
 
@@ -404,7 +374,6 @@ public void SetManager(TutorialManager manager)
 
         ExplodeAreaDamage();  
 
-        myRenderer.enabled = false;
 
        
 
@@ -427,7 +396,7 @@ public void SetManager(TutorialManager manager)
 
    
 
-    public void TakingDamage(int bulletDamage, int bulletColor)
+    public void TakingDamage(int bulletDamage)
 
     {
 
@@ -514,15 +483,17 @@ public void SetManager(TutorialManager manager)
 
             // Dano ao Player
 
-            hitCollider.GetComponent<Player>()?.ReceiveDamage(explosionDamage);
+            hitCollider.GetComponent<Player>()?.TakingDamage(explosionDamage);
+
+            //deixei pelo fato da explosão não ser uma bala e quero que cause dano, independente de cores
 
            
 
-            // Dano a Outros Inimigos (Usando o padrão de 2 argumentos para Bettle/SmallEnemy)
+            // Dano a Outros Inimigos
 
-            hitCollider.GetComponent<Enemy1>()?.TakingDamage(explosionDamage, 0);
+            hitCollider.GetComponent<Enemy1>()?.TakingDamage(explosionDamage);
 
-            hitCollider.GetComponent<BettleEnemyScript>()?.TakingDamage(explosionDamage, 0);
+            hitCollider.GetComponent<BettleEnemyScript>()?.TakingDamage(explosionDamage);
 
            
 
@@ -532,7 +503,7 @@ public void SetManager(TutorialManager manager)
 
             {
 
-                 otherSmallEnemy.TakingDamage(explosionDamage, 0);  
+                 otherSmallEnemy.TakingDamage(explosionDamage);  
 
             }
 
@@ -556,8 +527,6 @@ public void SetManager(TutorialManager manager)
             GameControllerScript.controller.AumentarNumerodeInimigosMortos();
         }
         
-        myRenderer.enabled = false;
-        
         if (rb != null) rb.linearVelocity = Vector3.zero;
         
         Collider col = GetComponent<Collider>();
@@ -573,130 +542,44 @@ public void SetManager(TutorialManager manager)
    
 
     void ShootCircleOfBullets()
+{
+    ColorHandler myColorHandler = GetComponent<ColorHandler>(); 
+    if (myColorHandler == null) return;
+    
+    GameObject prefabToInstantiate = null;
+    BulletColor enemyColor = myColorHandler.currentColor;
 
+    // 1. SELEÇÃO DO PREFAB CORRETO
+    if (enemyColor == BulletColor.Red)
     {
-
-        if (bulletPrefab == null) return;
-
-       
-
-        float angleStep = 360f / bulletsInCircle;
-
-       
-
-        Material targetMaterial = GetTargetMaterial();
-
-       
-
-        for (int i = 0; i < bulletsInCircle; i++)
-
-        {
-
-            float angle = i * angleStep;
-
-            Quaternion rotation = Quaternion.Euler(0, angle, 0);  
-
-
-            GameObject newBullet = Instantiate(bulletPrefab, transform.position, rotation);
-
-           
-
-            // 💡 CORRIGIDO: Aplica a escala para garantir o tamanho dos projéteis
-
-            newBullet.transform.localScale = Vector3.one * bulletScale;  
-
-           
-
-            BulletController bulletScript = newBullet.GetComponent<BulletController>();
-
-
-            if (bulletScript == null) continue;
-
-           
-
-            bulletScript.isFiredByPlayer = false;
-
-            bulletScript.bulletColor = currentColor;
-
-
-            Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
-
-            if (bulletRenderer != null && targetMaterial != null)
-
-            {
-
-                bulletRenderer.material = targetMaterial;
-
-            }
-
-        }
-
+        prefabToInstantiate = redBulletPrefab;
+    }
+    else if (enemyColor == BulletColor.Green)
+    {
+        prefabToInstantiate = greenBulletPrefab;
     }
 
-
-    // ====================================================================
-
-    // 5. MÉTODOS AUXILIARES
-
-    // ====================================================================
-
-
-    void InitializeColor()
-
+    if (prefabToInstantiate == null) return; // Sai se o prefab não for encontrado
+    
+    float angleStep = 360f / bulletsInCircle;
+    
+    for (int i = 0; i < bulletsInCircle; i++)
     {
+        float angle = i * angleStep;
+        Quaternion rotation = Quaternion.Euler(0, angle, 0);  
 
-        currentColor = Random.Range(0, 2);  
+        // 2. INSTANCIA O PREFAB SELECIONADO (prefabToInstantiate)
+        GameObject newBullet = Instantiate(prefabToInstantiate, transform.position, rotation);
 
-        ApplyEnemyMaterial(myRenderer);
+        newBullet.transform.localScale = Vector3.one * bulletScale;  
+        
+        BulletController bulletScript = newBullet.GetComponent<BulletController>();
 
+        if (bulletScript == null) continue;
+
+        bulletScript.isFiredByPlayer = false;
+        // 3. Atribui a cor correta
+        bulletScript.bulletColor = enemyColor; 
     }
-
-   
-
-    void ApplyEnemyMaterial(Renderer targetRenderer)
-
-    {
-
-        Material targetMat = GetTargetMaterial();
-
-        if (targetRenderer != null && targetMat != null)
-
-        {
-
-            targetRenderer.material = targetMat;
-
-        }
-
-    }
-
-   
-
-    Material GetTargetMaterial()
-
-    {
-
-        // Unifica a busca de material (suporta GameController e TutorialController)
-
-        if (gameControllerRef is GameControllerScript standardController)
-
-        {
-
-            return (currentColor == 1) ? standardController.PlayerMatFirst : standardController.PlayerMatSecond;
-
-        }
-
-        else if (gameControllerRef is TutorialController tutorialController)
-
-        {
-
-             // Assumindo que TutorialController possui as variáveis MatFirst e MatSecond
-
-             return (currentColor == 1) ? tutorialController.MatFirst : tutorialController.MatSecond;
-
-        }
-
-        return null;
-
-    }
-
+}
 } 

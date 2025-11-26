@@ -1270,12 +1270,17 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8197206010559070688}
+  - component: {fileID: 9012088969081651706}
   - component: {fileID: 7334137292502433941}
   - component: {fileID: 5503443375085103543}
   - component: {fileID: 2062426034450449074}
   - component: {fileID: 2038880838496912339}
   m_Layer: 0
+<<<<<<<< HEAD:My project/Assets/PreFabs/FINAL PreFabs/Enemy Final/Mantis/EnemyMantisRed.prefab
   m_Name: EnemyMantisRed
+========
+  m_Name: REDMantis
+>>>>>>>> Dev-BOSS:My project/Assets/PreFabs/FINAL PreFabs/Enemy Final/Mantis/REDMantis.prefab
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1290,7 +1295,7 @@ Transform:
   m_GameObject: {fileID: 8829733417989069658}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.63684326, y: 0.0691, z: -12.103102}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1299,6 +1304,22 @@ Transform:
   - {fileID: 3763511853491475127}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &9012088969081651706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8829733417989069658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7009b959b3cb0b4cb1820ab0266e8a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentColor: 0
+  myRenderer: {fileID: 0}
+  greenMaterial: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
+  redMaterial: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
 --- !u!114 &7334137292502433941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1314,12 +1335,12 @@ MonoBehaviour:
   Hp: 50
   enemySpeed: 0.7
   stoppingDistance: 0.5
-  bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
+  redBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  greenBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
   firePoint: {fileID: 3763511853491475127}
   fireRate: 0.5
   shotsPerBurst: 3
   cooldownTime: 2
-  currentColor: 0
 --- !u!54 &5503443375085103543
 Rigidbody:
   m_ObjectHideFlags: 0

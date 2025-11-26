@@ -1704,16 +1704,24 @@ MonoBehaviour:
   - numberOfSpawnersToActivate: 2
     enemyRates:
     - enemyPrefab: {fileID: 8829733417989069658, guid: 38ed41ea94fbea9479ff23202cef5eeb, type: 3}
-      spawnWeight: 70
+      spawnWeight: 50
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 9d762efa1c41b4c408b80ca5b59732bd, type: 3}
+      spawnWeight: 50
     spawnAttemptsPerSpawner: 5
   - numberOfSpawnersToActivate: 4
     enemyRates:
     - enemyPrefab: {fileID: 8829733417989069658, guid: 38ed41ea94fbea9479ff23202cef5eeb, type: 3}
-      spawnWeight: 40
-    - enemyPrefab: {fileID: 1417907337024492334, guid: 4c1edf8f862cd97468f2c18e854a9c5c, type: 3}
-      spawnWeight: 30
-    - enemyPrefab: {fileID: 1417907337024492334, guid: eda0129cd32d206479827595c74c249c, type: 3}
-      spawnWeight: 30
+      spawnWeight: 15
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 9d762efa1c41b4c408b80ca5b59732bd, type: 3}
+      spawnWeight: 15
+    - enemyPrefab: {fileID: 2798812565783371171, guid: 94b1228d97c29f04ba5249132fd8a891, type: 3}
+      spawnWeight: 10
+    - enemyPrefab: {fileID: 5255655054801715502, guid: 9fb20652f364ef948a50ef05feed0299, type: 3}
+      spawnWeight: 10
+    - enemyPrefab: {fileID: 5590033882022118572, guid: 2e67932efc619a640b3d39ed92b04f10, type: 3}
+      spawnWeight: 25
+    - enemyPrefab: {fileID: 3586323193611423016, guid: 5e02cff251f48f0448a90d5fe7280246, type: 3}
+      spawnWeight: 25
     spawnAttemptsPerSpawner: 2
   spawnController: {fileID: 8454403590880084662}
 --- !u!4 &338366223
@@ -8575,7 +8583,7 @@ PrefabInstance:
     - target: {fileID: 7456968382868319266, guid: a321bb665ee2e0442b8da9b64354df80, type: 3}
       propertyPath: mainCamera
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 626938104}
     - target: {fileID: 7456968382868319266, guid: a321bb665ee2e0442b8da9b64354df80, type: 3}
       propertyPath: rotationZOffset
       value: 0

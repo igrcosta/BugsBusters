@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
 
     [Header("Componentes e Referências")]
     private CharacterController cc; // Variável CharacterController
+    private ColorHandler playerColorHandler;
     private Slider HealthBarUI;
     [SerializeField] private Transform CameraTarget; 
 
@@ -26,16 +27,13 @@ public class Player : MonoBehaviour
     [SerializeField] float gravity = -9.81f;
     private Vector3 verticalVelocity;
 
-    // ====================================================================
-    // 2. CORES E MATERIAIS
-    // ====================================================================
+    [Header("Tutorial")]
+    private TutorialController tutorialControllerRef;
+    private TutorialManager tutorialManagerRef;
 
-    [Header("Cores, Materiais e afins")]
-    public int currentColor;
-    [SerializeField] Renderer MaterialRenderer; 
-    
-    private const int INDEX_TARGET_MATERIAL = 1; 
-    private Material[] ActualMaterials;
+    // ====================================================================
+    // 2. Rotações
+    // ====================================================================
 
     [Header("Referência de Rotação")]
     [SerializeField] private Transform PlayerCabecaTransform;
@@ -52,27 +50,6 @@ public class Player : MonoBehaviour
 
         // Busca o Slider. 
         HealthBarUI = FindFirstObjectByType<Slider>(); 
-
-        // Lógica de Materiais
-        if (MaterialRenderer != null)
-        {
-            ActualMaterials = MaterialRenderer.materials;
-            if (ActualMaterials.Length <= INDEX_TARGET_MATERIAL)
-            {
-                Debug.LogError("O Renderer do PlayerCorpo não possui materiais suficientes.");
-            }
-        }
-        else
-        {
-            Debug.LogError("MaterialRenderer (corpo) não atribuído no Inspector do Player.");
-        }
-        
-        // Lógica de Cores depende do GameController
-        if (GameControllerScript.controller != null)
-        {
-            currentColor = GameControllerScript.controller.ColorLogic[0];
-            ApplyCurrentColor(); 
-        }
     }
 
     void Awake()
@@ -96,9 +73,19 @@ public class Player : MonoBehaviour
     }
 
     void Start()
-    {
-        // Chama a inicialização de stats e cores, após o registro no Awake.
+    {   
+        playerColorHandler = GetComponent<ColorHandler>();
+        if (playerColorHandler == null)
+        {
+            Debug.LogError("Player tá sem ColorHandler para funcionar. VAI SE FUDE");
+            enabled = false;
+            return;
+        }
+
         Initializing();
+
+        tutorialControllerRef = FindObjectOfType<TutorialController>();
+        tutorialManagerRef = FindObjectOfType<TutorialManager>();
     }
 
     // ====================================================================
@@ -166,42 +153,30 @@ public class Player : MonoBehaviour
     // 5. LÓGICA DE CORES E COMBATE
     // ====================================================================
     
-    void ApplyCurrentColor()
-    {
-        // Checa se o ambiente e as referências estão prontas
-        if (GameControllerScript.controller == null || MaterialRenderer == null || ActualMaterials == null || ActualMaterials.Length <= INDEX_TARGET_MATERIAL)
-        {
-            return;
-        }
-        
-        Material NewMaterial = null;
-
-        if (currentColor == 1)
-        {
-            NewMaterial = GameControllerScript.controller.PlayerMatFirst;
-        }
-        else if (currentColor == 0)
-        {
-            NewMaterial = GameControllerScript.controller.PlayerMatSecond;
-        }
-        
-        if(NewMaterial != null)
-        {
-            ActualMaterials[INDEX_TARGET_MATERIAL] = NewMaterial;
-            MaterialRenderer.materials = ActualMaterials;
-        }
-    }
-
+    
     void HandleColorSwitchInput()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift))
+        // 💡 NOVO: Verifica o input.
+        if (!DummyMode && (Input.GetKeyDown(KeyCode.LeftShift)))
         {
-            currentColor = (currentColor == 1) ? 0 : 1;
-            ApplyCurrentColor();
+             if (playerColorHandler == null) return;
+    
+            // 1. Alterna o estado do enum
+            if (playerColorHandler.currentColor == BulletColor.Green)
+            {
+                playerColorHandler.currentColor = BulletColor.Red;
+            }
+            else
+            {
+                playerColorHandler.currentColor = BulletColor.Green;
+            }
+        
+            // 2. Aplica o visual (o ColorHandler faz a troca de material)
+            playerColorHandler.UpdateVisualMaterial();
         }
     }
     
-    public void ReceiveDamage(int damageAmount)
+    public void TakingDamage(int damageAmount)
     {
         currentHealth -= damageAmount;
         Debug.Log("Player recebeu " + damageAmount + " de dano. Vida restante:  " + currentHealth);

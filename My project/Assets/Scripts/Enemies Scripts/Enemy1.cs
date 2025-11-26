@@ -13,7 +13,7 @@ public class Enemy1 : MonoBehaviour
     [Header("Componentes")]
     private Animator anim;
     private Rigidbody rb;
-    private Renderer myRenderer;
+    private ColorHandler myColorHandler;
 
     [Header("Stats")]
     [SerializeField] int Hp = 20;
@@ -26,14 +26,14 @@ public class Enemy1 : MonoBehaviour
     private bool hasLanded = false;
 
     [Header("Ataque & Cores")]
-    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject redBulletPrefab;   // Prefab de Bala VERMELHA
+    [SerializeField] GameObject greenBulletPrefab; // Prefab de Bala VERDE
     [SerializeField] Transform firePoint;
     [SerializeField] float fireRate = 0.3f;
     [SerializeField] int shotsPerBurst = 3;
     [SerializeField] float cooldownTime = 2f;
 
     private int burstCounter = 0;
-    public int currentColor;
     private Coroutine attackCoroutine;
 
     private EnemyState currentState = EnemyState.Chasing;
@@ -49,13 +49,12 @@ public class Enemy1 : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        myRenderer = GetComponent<Renderer>();
+        myColorHandler = GetComponent<ColorHandler>();
 
         FindTargetAndController();
 
         if (playerTargetTransform != null)
         {
-            InitializeColor();
             currentState = EnemyState.Chasing;
             anim.SetBool("isFalling", true);
         }
@@ -86,12 +85,6 @@ public class Enemy1 : MonoBehaviour
                 playerTargetTransform = TutorialController.controller.PlayerTutorialRef.transform;
             }
         }
-    }
-
-    void InitializeColor()
-    {
-        currentColor = Random.Range(0, 2);
-        ApplyEnemyMaterial();
     }
 
     // ====================================================================
@@ -197,8 +190,6 @@ public class Enemy1 : MonoBehaviour
         currentState = EnemyState.Attacking;
 
         burstCounter++;
-        currentColor = (currentColor == 1) ? 0 : 1;
-        ApplyEnemyMaterial();
 
         if (playerTargetTransform != null)
         {
@@ -232,57 +223,48 @@ public class Enemy1 : MonoBehaviour
     }
 
     void ShootBullet()
+{
+    if (myColorHandler == null || firePoint == null) return;
+
+    GameObject prefabToInstantiate = null;
+    BulletColor enemyColor = myColorHandler.currentColor;
+    
+    // 1. SELEÇÃO DO PREFAB CORRETO
+    if (enemyColor == BulletColor.Red)
     {
-        if (bulletPrefab == null || firePoint == null) return;
-
-        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        BulletController bulletScript = newBullet.GetComponent<BulletController>();
-        Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
-
-        Material targetMaterial = GetMaterialForColor();
-
-        if (bulletScript != null)
-        {
-            bulletScript.isFiredByPlayer = false;
-            bulletScript.bulletColor = currentColor;
-        }
-
-        if (bulletRenderer != null && targetMaterial != null)
-        {
-            bulletRenderer.material = targetMaterial;
-        }
+        prefabToInstantiate = redBulletPrefab;
     }
+    else if (enemyColor == BulletColor.Green)
+    {
+        prefabToInstantiate = greenBulletPrefab;
+    }
+    
+    if (prefabToInstantiate == null) 
+    {
+        Debug.LogError($"Prefab de bala para a cor {enemyColor} está faltando no Inspector do Enemy1.");
+        return;
+    }
+    
+    // 2. INSTANCIAÇÃO
+    GameObject newBullet = Instantiate(prefabToInstantiate, firePoint.position, firePoint.rotation);
+
+    // 3. CONFIGURAÇÃO DO SCRIPT
+    BulletController bulletScript = newBullet.GetComponent<BulletController>();
+
+    if (bulletScript != null)
+    {
+        bulletScript.isFiredByPlayer = false;
+        // Atribui a cor, que deve ser a mesma cor visual do prefab instanciado.
+        bulletScript.bulletColor = enemyColor; 
+    }
+}
 
     // ====================================================================
-    // 5. DANO E MATERIAIS
+    // 5. DANO 
     // ====================================================================
 
-    void ApplyEnemyMaterial()
-    {
-        Material targetMaterial = GetMaterialForColor();
-        if (myRenderer != null && targetMaterial != null)
-        {
-            myRenderer.material = targetMaterial;
-        }
-    }
 
-    Material GetMaterialForColor()
-    {
-        if (gameControllerRef is GameControllerScript standardController)
-        {
-            return (currentColor == 1) ? standardController.PlayerMatFirst : standardController.PlayerMatSecond;
-        }
-
-        if (gameControllerRef is TutorialController tutorialController)
-        {
-            return (currentColor == 1) ? tutorialController.MatFirst : tutorialController.MatSecond;
-        }
-
-        return null;
-    }
-
-    public void TakingDamage(int bulletDamage, int bulletColor)
+    public void TakingDamage(int bulletDamage)
     {
         Hp -= bulletDamage;
 

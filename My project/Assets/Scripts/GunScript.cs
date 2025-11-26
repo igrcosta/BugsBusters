@@ -3,17 +3,20 @@ using UnityEngine;
 public class GunScript : MonoBehaviour
 {
     private Vector3 targetPoint; // Ponto de mira horizontal (alvo)
+    [Header("Prefabs de Bala por Cor")]
+    [SerializeField] GameObject REDBulletPrefab;
+    [SerializeField] GameObject GREENBulletPrefab;
     
     [Header("VARIÁVEIS SERIALIZADAS")]
     [SerializeField] private Camera mainCamera;
-    [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform firePoint;
 
     private Player Player;
-    // Removido Enemy1 Enemy, pois não é usado
-    private int PlayerShootColor;
+    private ColorHandler playerColorHandler;
 
-    // 🚨 VARIÁVEL CRÍTICA: Plano do chão para o Raycast
+    private bool isGamePaused = false;
+
+    // Plano do chão para o Raycast
     private Plane groundPlane; 
     
     // 🚨 VARIÁVEL CRÍTICA: Compensação de rotação para alinhar o modelo
@@ -32,9 +35,15 @@ public class GunScript : MonoBehaviour
             mainCamera = Camera.main;
         }
 
-        if (Player == null)
+        //Busca o color handler do objeto pai (Player)
+        if (Player != null)
         {
-            Debug.LogWarning("GunScript não encontrou o componente Player no objeto pai.");
+            playerColorHandler = Player.GetComponent<ColorHandler>();
+        }
+
+        if (playerColorHandler == null)
+        {
+             Debug.LogError("GunScript: FUDEU: ColorHandler não encontrado no Player. A cor do tiro não será definida.");
         }
     }
     
@@ -47,24 +56,14 @@ public class GunScript : MonoBehaviour
 
     private void Update()
     {
-        // Garante que o Player não seja nulo ANTES de acessar .DummyMode
-        if (Player == null) 
-        {
-            if (GameControllerScript.controller != null && GameControllerScript.controller.Player != null)
-            {
-                Player = GameControllerScript.controller.Player;
-            }
-            if (Player == null) return; 
-        }
-        
-        // Garante que a Câmera exista para o Raycast
-        if (mainCamera == null) return;
-
-        if(Player.DummyMode)
+        // CHECAGEM PARA QUANDO A ARMA DEVE PARAR DE FUNCIONAR: Pausado ou DummyMode ativo
+        if (isGamePaused || (Player != null && Player.DummyMode))
         {
             return;
         }
         
+        if (mainCamera == null) return;
+
         ShootingLogic();
     }
     
@@ -112,24 +111,42 @@ public class GunScript : MonoBehaviour
 
     void Atirar()
     {
-        if (bulletPrefab == null || firePoint == null)
+        if (firePoint == null || (REDBulletPrefab == null && GREENBulletPrefab == null)) 
         {
-            Debug.LogError("Bullet Prefab ou Fire Point não atribuído no GunScript.");
+            Debug.LogError("Bullet Prefab ou Fire Point não atribuído no GunScript. como atirar sem bala carai?");
             return;
         }
         
-        // Garante que o GameController existe para pegar materiais
-        if (GameControllerScript.controller == null)
+        // Verifica se o ColorHandler existe antes de atirar
+        if (playerColorHandler == null)
         {
-            Debug.LogError("GameController não encontrado. Não é possível atirar.");
+            Debug.LogError("ColorHandler do Player não encontrado. SEM COR TU QUEBRA MEU JOGO");
+            return;
+        }
+
+        // 1. SELEÇÃO DO PREFAB CORRETO
+        GameObject prefabToInstantiate = null;
+        BulletColor currentBulletColor = playerColorHandler.currentColor;
+
+        if (currentBulletColor == BulletColor.Green)
+        {
+            prefabToInstantiate = GREENBulletPrefab;
+        }
+        else if (currentBulletColor == BulletColor.Red)
+        {
+            prefabToInstantiate = REDBulletPrefab;
+        }
+    
+        if (prefabToInstantiate == null)
+        {
+            Debug.LogError($"Prefab para a cor {currentBulletColor} está faltando no GunScript.");
             return;
         }
         
         // Instancia a bala na posição e rotação do FirePoint.
-        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        GameObject newBullet = Instantiate(prefabToInstantiate, firePoint.position, firePoint.rotation);
         
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
-        Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
 
         if (bulletScript == null)
         {
@@ -137,18 +154,10 @@ public class GunScript : MonoBehaviour
             Destroy(newBullet);
             return;
         }
+
+        bulletScript.bulletColor = currentBulletColor;
         
-        Material targetMaterial = (Player.currentColor == 1) 
-            ? GameControllerScript.controller.PlayerMatFirst 
-            : GameControllerScript.controller.PlayerMatSecond;
 
         bulletScript.isFiredByPlayer = true;
-        
-        if (bulletRenderer != null && targetMaterial != null)
-        {
-            bulletRenderer.material = targetMaterial;
-        }
-        
-        bulletScript.bulletColor = Player.currentColor;
     }
 }

@@ -374,7 +374,7 @@ SkinnedMeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 90772bfb31af9bb4d857ad629b995b91, type: 2}
   - {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
-  - {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
+  - {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1270,13 +1270,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8197206010559070688}
-  - component: {fileID: 7558907888772294491}
+  - component: {fileID: 7745516734932526203}
   - component: {fileID: 7334137292502433941}
   - component: {fileID: 5503443375085103543}
   - component: {fileID: 2062426034450449074}
   - component: {fileID: 2038880838496912339}
   m_Layer: 0
-  m_Name: EnemyMantis
+  m_Name: GREEN Mantis
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1291,7 +1291,7 @@ Transform:
   m_GameObject: {fileID: 8829733417989069658}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.63684326, y: 0.0691, z: -12.103102}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1300,7 +1300,7 @@ Transform:
   - {fileID: 3763511853491475127}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &7558907888772294491
+--- !u!114 &7745516734932526203
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1309,10 +1309,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8829733417989069658}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 618e60a6df75900448b526b932832452, type: 3}
+  m_Script: {fileID: 11500000, guid: c7009b959b3cb0b4cb1820ab0266e8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  currentColor: 1
+  myRenderer: {fileID: 0}
+  greenMaterial: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
+  redMaterial: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
 --- !u!114 &7334137292502433941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1328,12 +1331,12 @@ MonoBehaviour:
   Hp: 50
   enemySpeed: 0.7
   stoppingDistance: 0.5
-  bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
+  redBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  greenBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
   firePoint: {fileID: 3763511853491475127}
   fireRate: 0.5
   shotsPerBurst: 3
   cooldownTime: 2
-  currentColor: 0
 --- !u!54 &5503443375085103543
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1359,7 +1362,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!95 &2062426034450449074
 Animator:
