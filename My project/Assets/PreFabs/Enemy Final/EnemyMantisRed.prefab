@@ -1275,7 +1275,7 @@ GameObject:
   - component: {fileID: 2062426034450449074}
   - component: {fileID: 2038880838496912339}
   m_Layer: 0
-  m_Name: EnemyMantis
+  m_Name: EnemyMantisRed
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
