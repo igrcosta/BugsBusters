@@ -43,8 +43,9 @@ public class Enemy1 : MonoBehaviour
     // 2. INICIALIZAÇÃO E ENCONTRO DE ALVO
     // ====================================================================
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return null;
         tutorial = FindObjectOfType<TutorialController>();
 
         rb = GetComponent<Rigidbody>();
@@ -123,6 +124,8 @@ public class Enemy1 : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
             currentDirection = Vector3.zero;
         }
+
+        
     }
 
     private void ResetVelocity()
@@ -281,31 +284,33 @@ public class Enemy1 : MonoBehaviour
     // ====================================================================
 
     void Die()
-{
-    // 1) Notifica o TutorialManager (se existir) — prioridade para o manager que controla paredes.
-    TutorialManager tm = FindObjectOfType<TutorialManager>();
-    if (tm != null)
     {
-        tm.EnemyKilled();
-    }
-    else
-    {
-        // 2) Se não houver TutorialManager, tenta o TutorialController (compatibilidade)
-        if (tutorial != null)
+        // 1) Notifica o TutorialManager (se existir) — prioridade para o manager que controla paredes.
+        TutorialManager tm = FindObjectOfType<TutorialManager>();
+        if (tm != null)
         {
-            tutorial.EnemyKilled();
+            tm.EnemyKilled();
         }
-        // 3) Se não for tutorial, notifica o GameController padrão (jogo principal)
-        else if (GameControllerScript.controller != null)
+        else
         {
-            GameControllerScript.controller.AumentarNumerodeInimigosMortos();
+            // 2) Se não houver TutorialManager, tenta o TutorialController (compatibilidade)
+            if (tutorial != null)
+            {
+                tutorial.EnemyKilled();
+            }
+            // 3) Se não for tutorial, notifica o GameController padrão (jogo principal)
+            else if (GameControllerScript.controller != null)
+            {
+                GameControllerScript.controller.AumentarNumerodeInimigosMortos();
+            }
         }
+
+        // Para garantir que não reste coroutine ativa
+        if (attackCoroutine != null)
+            StopCoroutine(attackCoroutine);
+
+        Destroy(gameObject);
     }
 
-    // Para garantir que não reste coroutine ativa
-    if (attackCoroutine != null)
-        StopCoroutine(attackCoroutine);
-
-    Destroy(gameObject);
-}
+    
 }
