@@ -1331,8 +1331,8 @@ MonoBehaviour:
   Hp: 50
   enemySpeed: 0.7
   stoppingDistance: 0.5
-  redBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
-  greenBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  redBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  greenBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
   firePoint: {fileID: 3763511853491475127}
   fireRate: 0.5
   shotsPerBurst: 3
