@@ -201,7 +201,7 @@ public class Player : MonoBehaviour
         }
     }
     
-    public void ReceiveDamage(int damageAmount)
+    public void TakingDamage(int damageAmount)
     {
         currentHealth -= damageAmount;
         Debug.Log("Player recebeu " + damageAmount + " de dano. Vida restante:  " + currentHealth);

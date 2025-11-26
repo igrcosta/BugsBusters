@@ -13,7 +13,7 @@ public class Enemy1 : MonoBehaviour
     [Header("Componentes")]
     private Animator anim;
     private Rigidbody rb;
-    private Renderer myRenderer;
+    private ColorHandler myColorHandler;
 
     [Header("Stats")]
     [SerializeField] int Hp = 20;
@@ -33,7 +33,6 @@ public class Enemy1 : MonoBehaviour
     [SerializeField] float cooldownTime = 2f;
 
     private int burstCounter = 0;
-    public int currentColor;
     private Coroutine attackCoroutine;
 
     private EnemyState currentState = EnemyState.Chasing;
@@ -49,13 +48,12 @@ public class Enemy1 : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        myRenderer = GetComponent<Renderer>();
+        myColorHandler = GetComponent<ColorHandler>();
 
         FindTargetAndController();
 
         if (playerTargetTransform != null)
         {
-            InitializeColor();
             currentState = EnemyState.Chasing;
             anim.SetBool("isFalling", true);
         }
@@ -86,12 +84,6 @@ public class Enemy1 : MonoBehaviour
                 playerTargetTransform = TutorialController.controller.PlayerTutorialRef.transform;
             }
         }
-    }
-
-    void InitializeColor()
-    {
-        currentColor = Random.Range(0, 2);
-        ApplyEnemyMaterial();
     }
 
     // ====================================================================
@@ -197,8 +189,6 @@ public class Enemy1 : MonoBehaviour
         currentState = EnemyState.Attacking;
 
         burstCounter++;
-        currentColor = (currentColor == 1) ? 0 : 1;
-        ApplyEnemyMaterial();
 
         if (playerTargetTransform != null)
         {
@@ -238,51 +228,20 @@ public class Enemy1 : MonoBehaviour
         GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
-        Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
-
-        Material targetMaterial = GetMaterialForColor();
 
         if (bulletScript != null)
         {
             bulletScript.isFiredByPlayer = false;
-            bulletScript.bulletColor = currentColor;
-        }
-
-        if (bulletRenderer != null && targetMaterial != null)
-        {
-            bulletRenderer.material = targetMaterial;
+            bulletScript.bulletColor = myColorHandler.currentColor;
         }
     }
 
     // ====================================================================
-    // 5. DANO E MATERIAIS
+    // 5. DANO 
     // ====================================================================
 
-    void ApplyEnemyMaterial()
-    {
-        Material targetMaterial = GetMaterialForColor();
-        if (myRenderer != null && targetMaterial != null)
-        {
-            myRenderer.material = targetMaterial;
-        }
-    }
 
-    Material GetMaterialForColor()
-    {
-        if (gameControllerRef is GameControllerScript standardController)
-        {
-            return (currentColor == 1) ? standardController.PlayerMatFirst : standardController.PlayerMatSecond;
-        }
-
-        if (gameControllerRef is TutorialController tutorialController)
-        {
-            return (currentColor == 1) ? tutorialController.MatFirst : tutorialController.MatSecond;
-        }
-
-        return null;
-    }
-
-    public void TakingDamage(int bulletDamage, int bulletColor)
+    public void TakingDamage(int bulletDamage)
     {
         Hp -= bulletDamage;
 

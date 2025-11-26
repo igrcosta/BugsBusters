@@ -26,7 +26,11 @@ public class BettleEnemyScript : MonoBehaviour
     [SerializeField] float cooldownTime = 10f;
 
     [Header("Cor e Componentes")]
-    public int currentColor;
+    [Tooltip("Defina a cor fixa deste prefab (RED ou GREEN).")]
+    [SerializeField] private BulletColor InitialColor;
+
+    private ColorHandler colorHandler;
+
     private Renderer myRenderer;
     private Rigidbody rb;
     
@@ -49,6 +53,14 @@ public class BettleEnemyScript : MonoBehaviour
 {
     tutorialManager = manager;
 }
+    private void Awake()
+    {
+        //Pega ref do ColorHandler
+        colorHandler = GetComponent<ColorHandler>();
+
+        //Define a cor desse merdinha
+        colorHandler.currentColor = InitialColor;
+    }
 
     void Start()
     {
@@ -61,7 +73,6 @@ public class BettleEnemyScript : MonoBehaviour
         if (playerTargetTransform != null)
         {
             currentState = BettleState.Chasing;
-            InitializeColor();
         }
         else
         {
@@ -85,7 +96,6 @@ public class BettleEnemyScript : MonoBehaviour
         }
         
         currentState = BettleState.Chasing;
-        InitializeColor();
         Debug.Log("Besouro Rolabosta: Player encontrado via Coroutine! Iniciando.");
     }
 
@@ -223,50 +233,19 @@ public class BettleEnemyScript : MonoBehaviour
         if (bulletScript != null)
         {
             bulletScript.isFiredByPlayer = false;
-            bulletScript.bulletColor = currentColor;
-            ApplyBulletMaterial(newBullet.GetComponent<Renderer>());
+            bulletScript.bulletColor = colorHandler.currentColor;
         }
-    }
-    
-    void InitializeColor()
-    {
-        currentColor = Random.Range(0, 2);
-        ApplyEnemyMaterial(myRenderer);
-    }
-    
-    void ApplyEnemyMaterial(Renderer targetRenderer)
-    {
-        Material targetMat = GetTargetMaterial();
-        if (targetRenderer != null && targetMat != null)
+        else
         {
-            targetRenderer.material = targetMat;
+            Destroy(newBullet);
         }
     }
-    
-    void ApplyBulletMaterial(Renderer bulletRenderer)
-    {
-        ApplyEnemyMaterial(bulletRenderer);
-    }
-    
-    Material GetTargetMaterial()
-    {
-        if (gameControllerRef is GameControllerScript standardController)
-        {
-            return (currentColor == 1) ? standardController.PlayerMatFirst : standardController.PlayerMatSecond;
-        }
-        else if (gameControllerRef is TutorialController tutorialController)
-        {
-            return (currentColor == 1) ? tutorialController.MatFirst : tutorialController.MatSecond;
-        }
-        return null;
-    }
-
 
     // ====================================================================
     // 5. LÓGICA DE DANO/MORTE
     // ====================================================================
     
-    public void TakingDamage(int bulletDamage, int bulletColor) // ASSINATURA CORRETA
+    public void TakingDamage(int bulletDamage)
     {
         Hp -= bulletDamage;
         if (Hp <= 0)

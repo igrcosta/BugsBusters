@@ -6,7 +6,7 @@ public class BulletController : MonoBehaviour
     [SerializeField] private float bulletSpeed = 20f;
     [SerializeField] private float lifetime = 7f;
 
-    public int bulletColor;
+    public BulletColor bulletColor;
     public bool isFiredByPlayer = true;
 
     public int PLayerDamage = 10;
@@ -26,25 +26,8 @@ public class BulletController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // ... (Seu código de OnTriggerEnter permanece o mesmo, pois as correções estão nos auxiliares)
-
-        BulletController otherBullet = other.GetComponent<BulletController>();
-
         string hitTag = other.tag;
-
-        // --- COLISÃO ENTRE BALAS ---
-        if(otherBullet != null)
-        {
-            if (this.isFiredByPlayer != otherBullet.isFiredByPlayer)
-            {
-                Destroy(this.gameObject); 
-                return;
-            }
-            else
-            {
-                return; // Ignora colisão entre balas do mesmo lado
-            }
-        }
+        int damageToApply = isFiredByPlayer ? PLayerDamage : EnemyDamage;
 
         // --- REGRAS DE IGNORAR ---
         if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy")) 
@@ -52,125 +35,22 @@ public class BulletController : MonoBehaviour
             return; 
         }
 
-        // --- LÓGICA DE DANO: PLAYER ATIROU (isFiredByPlayer == true) ---
-        if (isFiredByPlayer && hitTag == "Enemy")
+        // --- LÓGICA DE DANO IKARUGA (Agora com ColorHandler em ColorData ajudando)
+        ColorHandler targetHandler = other.GetComponent<ColorHandler>();
+        //pegamos o componente que vai tomar o tiro e buscamos o componente que lida com seus cores
+
+        //se ele encontrou algm que tenha o handler de cor...
+        if (targetHandler != null)
         {
-            Enemy1 enemy1 = other.GetComponent<Enemy1>();
-            BettleEnemyScript bettleEnemy = other.GetComponent<BettleEnemyScript>();
-            SmallEnemy smallEnemy = other.GetComponent<SmallEnemy>(); 
+            targetHandler.HandleHit(damageToApply, bulletColor);
+            //chamamos função universal de dano que o handler trata
 
-            if (enemy1 != null)
-            {
-                ApplyDamageToEnemy1(enemy1);
-            }
-            else if (bettleEnemy != null)
-            {
-                ApplyDamageToBettle(bettleEnemy); 
-            }
-            else if (smallEnemy != null)
-            {
-                ApplyDamageToSmallEnemy(smallEnemy);
-            }
-            
-            if (enemy1 != null || bettleEnemy != null || smallEnemy != null)
-            {
-                Destroy(gameObject);
-                return;
-            }
+            Destroy(gameObject);
+            //destrói a bala
+            return;
+            //já que n é um método void, retorna nada
         }
-
-        // --- LÓGICA DE DANO: INIMIGO ATIROU (isFiredByPlayer == false) ---
-        if (!isFiredByPlayer && hitTag == "Player")
-        {
-            TESTPlayer testPlayer = other.GetComponent<TESTPlayer>();
-            Player standardPlayer = other.GetComponent<Player>();
-
-            if (testPlayer != null)
-            {
-                ApplyDamageToPlayer(testPlayer, testPlayer.currentColor);
-            }
-            else if (standardPlayer != null)
-            {
-                ApplyDamageToStandardPlayer(standardPlayer, standardPlayer.currentColor); 
-            }
-            
-            if (testPlayer != null || standardPlayer != null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-        }
-
         // Se encostou em qualquer outra coisa (parede, etc.), destrói a bala
         Destroy(gameObject);
-    }
-
-    // --- Métodos Auxiliares para Aplicação de Dano ---
-
-    private void ApplyDamageToEnemy1(Enemy1 enemy)
-    {
-        if (enemy.currentColor != bulletColor)
-        {
-            enemy.TakingDamage(PLayerDamage, bulletColor); // ✅ CORREÇÃO CS7036
-            Debug.Log("DANO Enemy1: Cor diferente!");
-        }
-        else
-        {
-            Debug.Log("Dano anulado, Enemy1 mesma cor da bala");
-        }
-    }
-
-    private void ApplyDamageToBettle(BettleEnemyScript bettle)
-    {
-        if (bettle.currentColor != bulletColor)
-        {
-            bettle.TakingDamage(PLayerDamage, bulletColor); // ✅ CORREÇÃO CS7036
-            Debug.Log("DANO Bettle: Cor diferente!");
-        }
-        else
-        {
-            Debug.Log("Dano anulado, Besouro mesma cor da bala");
-        }
-    }
-    
-    private void ApplyDamageToSmallEnemy(SmallEnemy smallEnemy)
-    {
-        if (smallEnemy.currentColor != bulletColor)
-        {
-            smallEnemy.TakingDamage(PLayerDamage, bulletColor); // ✅ CORREÇÃO CS7036
-            Debug.Log("DANO SmallEnemy: Cor diferente!");
-        }
-        else
-        {
-            Debug.Log("Dano anulado, SmallEnemy mesma cor da bala");
-        }
-    }
-    
-    // Método para o Player de TESTE
-    private void ApplyDamageToPlayer(TESTPlayer player, int playerCurrentColor)
-    {
-        if (playerCurrentColor != bulletColor)
-        {
-            player.ReceiveDamage(EnemyDamage);
-            Debug.Log("DANO Player TEST: Cor diferente!");
-        }
-        else
-        {
-            Debug.Log("Dano anulado, Player TEST mesma cor da bala");
-        }
-    }
-
-    // Método para o Player PADRÃO
-    private void ApplyDamageToStandardPlayer(Player player, int playerCurrentColor)
-    {
-        if (playerCurrentColor != bulletColor)
-        {
-            player.ReceiveDamage(EnemyDamage); 
-            Debug.Log("DANO Player PADRÃO: Cor diferente!");
-        }
-        else
-        {
-            Debug.Log("Dano anulado, Player PADRÃO mesma cor da bala");
-        }
     }
 }
