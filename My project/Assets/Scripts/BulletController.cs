@@ -11,6 +11,8 @@ public class BulletController : MonoBehaviour
 
     public int PLayerDamage = 10;
     public int EnemyDamage  = 5;
+    public AudioSource AudioDamage;
+
 
     void Start()
     {
@@ -72,11 +74,7 @@ public class BulletController : MonoBehaviour
                 ApplyDamageToSmallEnemy(smallEnemy);
             }
             
-            if (enemy1 != null || bettleEnemy != null || smallEnemy != null)
-            {
-                Destroy(gameObject);
-                return;
-            }
+          
         }
 
         // --- LÓGICA DE DANO: INIMIGO ATIROU (isFiredByPlayer == false) ---
@@ -173,4 +171,13 @@ public class BulletController : MonoBehaviour
             Debug.Log("Dano anulado, Player PADRÃO mesma cor da bala");
         }
     }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            AudioDamage.Play();
+        }
+    }
+
 }
