@@ -220,6 +220,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8598819090781390732}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b893d22ba403094396acdad7c989315, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -4144214869813790264}
   m_SourcePrefab: {fileID: 100100000, guid: 6b893d22ba403094396acdad7c989315, type: 3}
 --- !u!4 &6934893428181585632 stripped
 Transform:
@@ -279,3 +282,35 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5194158, y: 0.3311985, z: 0.40319824}
   m_Center: {x: 0.0066482127, y: 0.16648892, z: 0.038420677}
+--- !u!114 &-4144214869813790264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7743482678212826202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e19f8571344e645be253610c70a0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Health: 100
+  BulletsDamage: 10
+  ShockwaveDamage: 30
+  FireRate: 0.5
+  TotalAngle: 720
+  RotationTime: 10
+  SecondTotalAngle: -720
+  BigBullet: {fileID: 0}
+  REDBettleEnemy: {fileID: 0}
+  GREENBettleEnemy: {fileID: 0}
+  REDSmallEnemy: {fileID: 0}
+  GREENSmallEnemy: {fileID: 0}
+  Front: {fileID: 0}
+  FrontandRight: {fileID: 0}
+  FrontandLeft: {fileID: 0}
+  Right: {fileID: 0}
+  Left: {fileID: 0}
+  Back: {fileID: 0}
+  BackandRight: {fileID: 0}
+  BackandLeft: {fileID: 0}
