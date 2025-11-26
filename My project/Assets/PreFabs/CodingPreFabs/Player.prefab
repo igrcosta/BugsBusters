@@ -388,10 +388,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 319f8001b7e68ad44b642b5d6b11bc32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RedColor: {fileID: 0}
-  GreenColor: {fileID: 0}
+  REDBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  GREENBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
   mainCamera: {fileID: 6881998333777447934}
-  bulletPrefab: {fileID: 1119065107945223968, guid: 99ded4f402e5ced478df8994d264fcc4, type: 3}
   firePoint: {fileID: 4521833106155336577}
   rotationXOffset: 0
   rotationZOffset: -180

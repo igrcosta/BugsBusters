@@ -26,7 +26,8 @@ public class Enemy1 : MonoBehaviour
     private bool hasLanded = false;
 
     [Header("Ataque & Cores")]
-    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject redBulletPrefab;   // Prefab de Bala VERMELHA
+    [SerializeField] GameObject greenBulletPrefab; // Prefab de Bala VERDE
     [SerializeField] Transform firePoint;
     [SerializeField] float fireRate = 0.3f;
     [SerializeField] int shotsPerBurst = 3;
@@ -222,19 +223,41 @@ public class Enemy1 : MonoBehaviour
     }
 
     void ShootBullet()
+{
+    if (myColorHandler == null || firePoint == null) return;
+
+    GameObject prefabToInstantiate = null;
+    BulletColor enemyColor = myColorHandler.currentColor;
+    
+    // 1. SELEÇÃO DO PREFAB CORRETO
+    if (enemyColor == BulletColor.Red)
     {
-        if (bulletPrefab == null || firePoint == null) return;
-
-        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        BulletController bulletScript = newBullet.GetComponent<BulletController>();
-
-        if (bulletScript != null)
-        {
-            bulletScript.isFiredByPlayer = false;
-            bulletScript.bulletColor = myColorHandler.currentColor;
-        }
+        prefabToInstantiate = redBulletPrefab;
     }
+    else if (enemyColor == BulletColor.Green)
+    {
+        prefabToInstantiate = greenBulletPrefab;
+    }
+    
+    if (prefabToInstantiate == null) 
+    {
+        Debug.LogError($"Prefab de bala para a cor {enemyColor} está faltando no Inspector do Enemy1.");
+        return;
+    }
+    
+    // 2. INSTANCIAÇÃO
+    GameObject newBullet = Instantiate(prefabToInstantiate, firePoint.position, firePoint.rotation);
+
+    // 3. CONFIGURAÇÃO DO SCRIPT
+    BulletController bulletScript = newBullet.GetComponent<BulletController>();
+
+    if (bulletScript != null)
+    {
+        bulletScript.isFiredByPlayer = false;
+        // Atribui a cor, que deve ser a mesma cor visual do prefab instanciado.
+        bulletScript.bulletColor = enemyColor; 
+    }
+}
 
     // ====================================================================
     // 5. DANO 

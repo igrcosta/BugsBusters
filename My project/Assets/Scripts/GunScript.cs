@@ -3,14 +3,12 @@ using UnityEngine;
 public class GunScript : MonoBehaviour
 {
     private Vector3 targetPoint; // Ponto de mira horizontal (alvo)
-    
-    [Header("Materiais para tiros")]
-    [SerializeField] Material RedColor;
-    [SerializeField] Material GreenColor;
+    [Header("Prefabs de Bala por Cor")]
+    [SerializeField] GameObject REDBulletPrefab;
+    [SerializeField] GameObject GREENBulletPrefab;
     
     [Header("VARIÁVEIS SERIALIZADAS")]
     [SerializeField] private Camera mainCamera;
-    [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform firePoint;
 
     private Player Player;
@@ -113,9 +111,9 @@ public class GunScript : MonoBehaviour
 
     void Atirar()
     {
-        if (bulletPrefab == null || firePoint == null)
+        if (firePoint == null || (REDBulletPrefab == null && GREENBulletPrefab == null)) 
         {
-            Debug.LogError("Bullet Prefab ou Fire Point não atribuído no GunScript.");
+            Debug.LogError("Bullet Prefab ou Fire Point não atribuído no GunScript. como atirar sem bala carai?");
             return;
         }
         
@@ -125,12 +123,30 @@ public class GunScript : MonoBehaviour
             Debug.LogError("ColorHandler do Player não encontrado. SEM COR TU QUEBRA MEU JOGO");
             return;
         }
+
+        // 1. SELEÇÃO DO PREFAB CORRETO
+        GameObject prefabToInstantiate = null;
+        BulletColor currentBulletColor = playerColorHandler.currentColor;
+
+        if (currentBulletColor == BulletColor.Green)
+        {
+            prefabToInstantiate = GREENBulletPrefab;
+        }
+        else if (currentBulletColor == BulletColor.Red)
+        {
+            prefabToInstantiate = REDBulletPrefab;
+        }
+    
+        if (prefabToInstantiate == null)
+        {
+            Debug.LogError($"Prefab para a cor {currentBulletColor} está faltando no GunScript.");
+            return;
+        }
         
         // Instancia a bala na posição e rotação do FirePoint.
-        GameObject newBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        GameObject newBullet = Instantiate(prefabToInstantiate, firePoint.position, firePoint.rotation);
         
         BulletController bulletScript = newBullet.GetComponent<BulletController>();
-        Renderer bulletRenderer = newBullet.GetComponent<Renderer>();
 
         if (bulletScript == null)
         {
@@ -139,28 +155,9 @@ public class GunScript : MonoBehaviour
             return;
         }
 
-        //pegamos a cor do ENUM do player
-        BulletColor currentBulletColor = playerColorHandler.currentColor;
-
         bulletScript.bulletColor = currentBulletColor;
-        //o bullet controller agora sabe quem é a cor da bala
+        
 
         bulletScript.isFiredByPlayer = true;
-        
-        Material targetMaterial = (currentBulletColor == BulletColor.Green) 
-            ? GreenColor
-            : RedColor;
-        
-        if (targetMaterial == null)
-        {
-            Debug.LogError("Material de tiro não foi atribuído no Inspetor, sem pipoco na operação!");
-            Destroy(newBullet);
-            return;
-        }
-
-        if (bulletRenderer != null)
-        {
-            bulletRenderer.material = targetMaterial;
-        }
     }
 }
