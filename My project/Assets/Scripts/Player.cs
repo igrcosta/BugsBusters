@@ -31,6 +31,9 @@ public class Player : MonoBehaviour
     private TutorialController tutorialControllerRef;
     private TutorialManager tutorialManagerRef;
 
+    [Header("Som de Dano")]
+    [SerializeField] private AudioSource hitAudioSource;
+
     // ====================================================================
     // 2. Rotações
     // ====================================================================
@@ -179,6 +182,10 @@ public class Player : MonoBehaviour
     public void TakingDamage(int damageAmount)
     {
         currentHealth -= damageAmount;
+
+        if (hitAudioSource != null)
+            hitAudioSource.Play();
+
         Debug.Log("Player recebeu " + damageAmount + " de dano. Vida restante:  " + currentHealth);
         if (currentHealth <= 0)
         {

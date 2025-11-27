@@ -33,6 +33,9 @@ public class Enemy1 : MonoBehaviour
     [SerializeField] int shotsPerBurst = 3;
     [SerializeField] float cooldownTime = 2f;
 
+    [Header("Som de Dano")]
+    [SerializeField] private AudioSource hitAudioSource;
+
     private int burstCounter = 0;
     private Coroutine attackCoroutine;
 
@@ -270,6 +273,11 @@ public class Enemy1 : MonoBehaviour
     public void TakingDamage(int bulletDamage)
     {
         Hp -= bulletDamage;
+
+       
+        if (hitAudioSource != null)
+            hitAudioSource.Play();
+
 
         Debug.Log("Louva-Deus recebeu " + bulletDamage + " de dano. Vida restante: " + Hp);
 
