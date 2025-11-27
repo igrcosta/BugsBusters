@@ -25,7 +25,6 @@ public class boss : MonoBehaviour
     [SerializeField] GameObject GREENShockwave;
     [SerializeField] GameObject REDShockwave;
 
-    //provavelmente vou ter q colocar a merda de um bigbullet de outra cor
     [Header("Enemies Prefabs")]
     [SerializeField] GameObject REDSmallEnemy;
     [SerializeField] GameObject GREENSmallEnemy;
@@ -190,6 +189,7 @@ public class boss : MonoBehaviour
 
         while(Health > 33)
         {
+        yield return new WaitForSeconds(1.5f);
         SpawnREDShockwave();
         yield return new WaitForSeconds(1.5f);
         SpawnREDShockwave();
@@ -201,6 +201,7 @@ public class boss : MonoBehaviour
 
         IsMovementTime = false;
 
+        yield return new WaitForSeconds(1f);
         SpawnGREENShockwave();
         yield return new WaitForSeconds(1.5f);
         SpawnGREENShockwave();
@@ -229,6 +230,42 @@ public class boss : MonoBehaviour
     IEnumerator LastPhase()
     {
         Debug.Log("Comecei a ULTIMA fase pq sou lendário!");
+
+        Coroutine FinalShootingRef;
+
+        while (Health <= 33)
+        {
+            IsMovementTime = false;
+
+            yield return new WaitForSeconds(1f);
+            SpawnGREENShockwave();
+            yield return new WaitForSeconds(1.5f);
+
+            IsMovementTime = true;
+            FinalShootingRef = StartCoroutine(FirstShooting());
+
+            yield return new WaitForSeconds(5f);
+
+            StopCoroutine(FinalShootingRef);
+            IsMovementTime = false;
+
+            yield return new WaitForSeconds(1f);
+            //spawnar Inimigos aqui
+            yield return new WaitForSeconds(1.5f);
+
+            SpawnREDShockwave();
+            yield return new WaitForSeconds(1.5f);
+
+            IsMovementTime = true;
+            FinalShootingRef = StartCoroutine(SecondShooting());
+
+            yield return new WaitForSeconds(5f);
+
+            StopCoroutine(FinalShootingRef);
+            IsMovementTime = false;
+
+        }
+        
         yield return null;
         StopCoroutine("LastPhase");
     }
