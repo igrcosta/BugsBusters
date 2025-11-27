@@ -93,6 +93,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1325279189350587106}
   m_LocalEulerAnglesHint: {x: 0, y: -135, z: 0}
+--- !u!1 &4384089747941458031
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4463548496174769053}
+  m_Layer: 0
+  m_Name: ExplosionPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4463548496174769053
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4384089747941458031}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0.089, y: 0, z: 0.443}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6934893428181585632}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &4547379899387728624
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,6 +408,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1325279189350587106}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6b893d22ba403094396acdad7c989315, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4463548496174769053}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       insertIndex: -1
@@ -418,6 +452,8 @@ MonoBehaviour:
   ShootBreathing: 2
   GREENBigBullet: {fileID: 1119065107945223968, guid: f4f5460a194324c42a6974e95d20d5d9, type: 3}
   REDBigBullet: {fileID: 1119065107945223968, guid: f459cec4dd62aaa439fcb8bf97b7522d, type: 3}
+  GREENShockwave: {fileID: 5853033130729707644, guid: 5c16b1c3ad026bd448777adcaa53471f, type: 3}
+  REDShockwave: {fileID: 5853033130729707644, guid: 1c3433843379f73479d0d60f3bc9c413, type: 3}
   REDSmallEnemy: {fileID: 2798812565783371171, guid: 94b1228d97c29f04ba5249132fd8a891, type: 3}
   GREENSmallEnemy: {fileID: 5255655054801715502, guid: 9fb20652f364ef948a50ef05feed0299, type: 3}
   Front: {fileID: 1740222164164405834}
@@ -425,6 +461,7 @@ MonoBehaviour:
   FrontandLeft: {fileID: 6257887592263217216}
   Right: {fileID: 2748070496242670628}
   Left: {fileID: 6609261221063937606}
+  ExplosionPoint: {fileID: 4463548496174769053}
 --- !u!54 &1231439602757503583
 Rigidbody:
   m_ObjectHideFlags: 0

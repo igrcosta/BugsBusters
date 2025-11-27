@@ -15,10 +15,15 @@ public class boss : MonoBehaviour
 
     [SerializeField] float ShootBreathing = 1f;
 
+    [SerializeField] float PhasesTransitionTime = 2f;
 
-    [Header ("Balas que vai utilizar")]
+
+    [Header ("Balas e Shockwaves que vai utilizar")]
     [SerializeField] GameObject GREENBigBullet;
     [SerializeField] GameObject REDBigBullet;
+
+    [SerializeField] GameObject GREENShockwave;
+    [SerializeField] GameObject REDShockwave;
 
     //provavelmente vou ter q colocar a merda de um bigbullet de outra cor
     [Header("Enemies Prefabs")]
@@ -26,13 +31,16 @@ public class boss : MonoBehaviour
     [SerializeField] GameObject GREENSmallEnemy;
     //spawn na 3a fase
 
-    [Header ("ShootPoints que ele usa para atirar")]
+    [Header("ShootPoints que ele usa para atirar")]
 
     [SerializeField] Transform Front;
     [SerializeField] Transform FrontandRight;
     [SerializeField] Transform FrontandLeft;
     [SerializeField] Transform Right;
     [SerializeField] Transform Left;
+
+    [Header("Ponto para spawn de shockwaves")]
+    [SerializeField] Transform ExplosionPoint;
 
     //referências chatas
 
@@ -72,13 +80,12 @@ public class boss : MonoBehaviour
 
         Debug.Log("Comecei a primeira fase!");
 
-        IsMovementTime = true;
-
         while(Health >= 67)
         {
             //1. ciclo de tiros verdes
 
             ActualShootingRef = StartCoroutine(FirstShooting());
+            IsMovementTime = true;
 
             yield return new WaitForSeconds(10f);
 
@@ -90,7 +97,7 @@ public class boss : MonoBehaviour
             SingleShot(GREENBigBullet);
             yield return new WaitForSeconds(ShootBreathing);
             SingleShot(GREENBigBullet);
-            yield return new WaitForSeconds(ShootBreathing+0.1f);
+            yield return new WaitForSeconds(ShootBreathing+1f);
 
             //4. ciclo de tiros vermelhos
             IsMovementTime = true;
@@ -105,7 +112,7 @@ public class boss : MonoBehaviour
             SingleShot(REDBigBullet);
             yield return new WaitForSeconds(ShootBreathing);
             SingleShot(REDBigBullet);
-            yield return new WaitForSeconds(ShootBreathing+0.3f);
+            yield return new WaitForSeconds(ShootBreathing+1.5f);
         }
         StopCoroutine("FirstPhase");
         StartCoroutine("SecondPhase");
@@ -179,9 +186,46 @@ public class boss : MonoBehaviour
     IEnumerator SecondPhase()
     {
         Debug.Log("Comecei a SEGUNDA fase pq sou lendário!");
-        yield break;
+        yield return new WaitForSeconds(PhasesTransitionTime);
+
+        while(Health > 33)
+        {
+        SpawnREDShockwave();
+        yield return new WaitForSeconds(1.5f);
+        SpawnREDShockwave();
+        yield return new WaitForSeconds(1.5f);
+
+        IsMovementTime = true;
+
+        yield return new WaitForSeconds(5f);
+
+        IsMovementTime = false;
+
+        SpawnGREENShockwave();
+        yield return new WaitForSeconds(1.5f);
+        SpawnGREENShockwave();
+        yield return new WaitForSeconds(2.5f);
+
+        IsMovementTime = true;
+
+        yield return new WaitForSeconds(5f);
+
+        IsMovementTime = false;
+
+        }
+        StopCoroutine("SecondPhase");
+        StartCoroutine("LastPhase");
     }
 
+    void SpawnREDShockwave()
+    {
+        Instantiate(REDShockwave, ExplosionPoint.position, ExplosionPoint.rotation);
+    }
+
+    void SpawnGREENShockwave()
+    {
+        Instantiate(GREENShockwave, ExplosionPoint.position, ExplosionPoint.rotation);
+    }
     IEnumerator LastPhase()
     {
         Debug.Log("Comecei a ULTIMA fase pq sou lendário!");
