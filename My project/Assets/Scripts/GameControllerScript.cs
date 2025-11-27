@@ -124,6 +124,11 @@ public class GameControllerScript : MonoBehaviour
         {
         ForceNextWaveCheat();
         }
+
+        if(ActualSceneIndex == 3)
+        {
+            
+        }
     }
 
     public void DestroyAllActiveEnemies()

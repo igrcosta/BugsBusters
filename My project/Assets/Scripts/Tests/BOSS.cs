@@ -9,50 +9,38 @@ public class boss : MonoBehaviour
     [SerializeField] int BulletsDamage = 10;
     [SerializeField] int ShockwaveDamage = 30;
 
+    [SerializeField] float speed = 10f;
+
     [SerializeField] float FireRate = 0.5f;
 
-
-    [Header ("Dados para Spins")]
-    //angulações e coisas para o primeiro Spin
-    private Quaternion InitialRotation;
-    [SerializeField] float TotalAngle = 720f;
-    [SerializeField] float RotationTime = 10f;
-
-    private float AngleSpeedPerSecond; //x graus por segundo para o primeiro spin
-
-    [SerializeField] float SecondTotalAngle = -720f;
-
-    private float SecondAngleSpeedPerSecond; //x graus por segundo
+    [SerializeField] float ShootBreathing = 1f;
 
 
-    [Header ("Balas, inimigos que ele vai spawnar, etc")]
-    [SerializeField] GameObject BigBullet;
+    [Header ("Balas que vai utilizar")]
+    [SerializeField] GameObject GREENBigBullet;
+    [SerializeField] GameObject REDBigBullet;
 
     //provavelmente vou ter q colocar a merda de um bigbullet de outra cor
     [Header("Enemies Prefabs")]
-
-    [SerializeField] GameObject REDBettleEnemy;
-    [SerializeField] GameObject GREENBettleEnemy;
-    //spawn na 2a fase
-
     [SerializeField] GameObject REDSmallEnemy;
     [SerializeField] GameObject GREENSmallEnemy;
     //spawn na 3a fase
 
-    [Header ("Pontos que ele usa para atirar")]
+    [Header ("ShootPoints que ele usa para atirar")]
 
     [SerializeField] Transform Front;
     [SerializeField] Transform FrontandRight;
     [SerializeField] Transform FrontandLeft;
     [SerializeField] Transform Right;
     [SerializeField] Transform Left;
-    [SerializeField] Transform Back;
-    [SerializeField] Transform BackandRight;
-    [SerializeField] Transform BackandLeft;
 
     //referências chatas
 
     private Rigidbody rb;
+
+    private Player playerRef;
+
+    private bool IsMovementTime = true;
 
 
     void Start()
@@ -62,36 +50,11 @@ public class boss : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
 
-        //coisas que vai usar para o primeiro e segundo spin:
-        AngleSpeedPerSecond = TotalAngle / RotationTime;
+        playerRef = GameControllerScript.controller.Player;
 
-        SecondAngleSpeedPerSecond = SecondTotalAngle / RotationTime;
-
-        StartCoroutine("PhaseSwitcherCoroutine");
+        StartCoroutine("FirstPhase");
 
         
-    }
-    
-    IEnumerator PhaseSwitcherCoroutine()
-    {
-        if (Health > 67)
-        {
-            //executar primeira fase
-            StartCoroutine("FirstPhase");
-        }
-        else
-        if (Health < 67)
-        {
-            //executar segunda fase
-            StartCoroutine("SecondPhase");
-        }
-        else if (Health <= 33)
-        {
-            //executar última fase
-            StartCoroutine("LastPhase");
-        }
-        yield break;
-
     }
 
     void Update()
@@ -99,6 +62,8 @@ public class boss : MonoBehaviour
         //sla pqp q bgl complexo
 
         //vou ter que colocar no fim de cada fase uma verificação pra ver a vida do boss, se atingir ao oq quero, passar pro próximo
+
+        PlayerChasing();
     }
 
     IEnumerator FirstPhase()
@@ -107,118 +72,107 @@ public class boss : MonoBehaviour
 
         Debug.Log("Comecei a primeira fase!");
 
+        IsMovementTime = true;
+
         while(Health >= 67)
         {
-            ActualShootingRef = StartCoroutine(FirstSpinShooting());
-            yield return StartCoroutine(FirstSpin());
-            //Com esse yield return estamos dizendo que nada acontece antes do giro terminar
+            //1. ciclo de tiros verdes
 
+            ActualShootingRef = StartCoroutine(FirstShooting());
+
+            yield return new WaitForSeconds(10f);
+
+            //2. Depois de um tempo andando e atirando, paramos o tiro e paramos o movimento dele
             StopCoroutine(ActualShootingRef);
-            //paramos o tiro em paralelo
+            IsMovementTime = false;
 
-            yield return new WaitForSeconds (2f);
-            //espera 2 segundos depois de cada girada
+            //3. tiros de transição
+            SingleShot(GREENBigBullet);
+            yield return new WaitForSeconds(ShootBreathing);
+            SingleShot(GREENBigBullet);
+            yield return new WaitForSeconds(ShootBreathing+0.1f);
 
-            ActualShootingRef = StartCoroutine(SecondSpinShooting());
-            yield return StartCoroutine(SecondSpin());
-            //enquanto osegundo giro não terminar, o código não continua
+            //4. ciclo de tiros vermelhos
+            IsMovementTime = true;
+            ActualShootingRef = StartCoroutine(SecondShooting());
+            yield return new WaitForSeconds(10f);
 
+            //5. Parada depois de um tempo andando e atirando
             StopCoroutine(ActualShootingRef);
-            //para a rotina de tiros
+            IsMovementTime = false;
 
-            yield return new WaitForSeconds (2f);
-            //espera 2 segundos depois de cada girada
+            //6. tiros VERMELHOS de transição
+            SingleShot(REDBigBullet);
+            yield return new WaitForSeconds(ShootBreathing);
+            SingleShot(REDBigBullet);
+            yield return new WaitForSeconds(ShootBreathing+0.3f);
         }
+        StopCoroutine("FirstPhase");
         StartCoroutine("SecondPhase");
     }
 
-    IEnumerator FirstSpin()
-    {
-        float timeSpinning = 0f;
-        Quaternion InitialRotation = rb.rotation;
-
-        while(timeSpinning < RotationTime)
-        {
-            timeSpinning += Time.deltaTime;
-            //para não ficar em looping infinito, o tempo vai aumentando gradativamente
-
-            float currentAngle = timeSpinning * AngleSpeedPerSecond;
-            //o angulo de rotação para onde o objeto vai girar, será definido pelo tempo que já está girando * quantos graus ele gira por segundo
-            //assim, à cada frame, ele vai andando de pouco em pouco até onde a gente quer
-
-            Quaternion targetRotation = InitialRotation * Quaternion.Euler(0, currentAngle, 0);
-            //esse targetRotation simboliza isso, ele tá calculando quanto tem que se andar do ponto 0 até o angulo atual
-
-            rb.MoveRotation(targetRotation);
-            //agora, basta aplicar ao rigidbody essas pequenas e constantes mudanças na rotação
-
-            yield return null;
-            //espera o próximo frame para continuar até o loop acabar
-        }
-    }
-
-
-    IEnumerator FirstSpinShooting()
+    IEnumerator FirstShooting()
     {
         while(true)
         //só pra ficar rodando "infinitamente" até que a Coroutine mande parar
         {
-            Instantiate(BigBullet,Front.position, Front.rotation);
-            Instantiate(BigBullet,Back.position, Back.rotation);
-            Instantiate(BigBullet,Right.position, Right.rotation);
-            Instantiate(BigBullet,Left.position, Left.rotation);
-            Instantiate(BigBullet,FrontandLeft.position, FrontandLeft.rotation);
-            Instantiate(BigBullet,FrontandRight.position, FrontandRight.rotation);
-            Instantiate(BigBullet,BackandLeft.position, BackandLeft.rotation);
-            Instantiate(BigBullet,BackandRight.position, BackandRight.rotation);
+            Instantiate(GREENBigBullet,Front.position, Front.rotation);
+            Instantiate(GREENBigBullet,Right.position, Right.rotation);
+            Instantiate(GREENBigBullet,Left.position, Left.rotation);
+            Instantiate(GREENBigBullet,FrontandLeft.position, FrontandLeft.rotation);
+            Instantiate(GREENBigBullet,FrontandRight.position, FrontandRight.rotation);
+
 
             yield return new WaitForSeconds(FireRate);
         }
     }
 
-    IEnumerator SecondSpin()
-    {
-        Debug.Log("Vou dar a segunda girada pq sou sigma!");
-
-        float timeSpinning = 0f;
-        Quaternion InitialRotation = rb.rotation;
-
-        while(timeSpinning < RotationTime)
-        {
-            timeSpinning += Time.deltaTime;
-            //para não ficar em looping infinito, o tempo vai aumentando gradativamente
-
-            float currentAngle = timeSpinning * SecondAngleSpeedPerSecond;
-            //o angulo de rotação para onde o objeto vai girar, será definido pelo tempo que já está girando * quantos graus ele gira por segundo
-            //assim, à cada frame, ele vai andando de pouco em pouco até onde a gente quer
-
-            Quaternion targetRotation = InitialRotation * Quaternion.Euler(0, currentAngle, 0);
-            //esse targetRotation simboliza isso, ele tá calculando quanto tem que se andar do ponto 0 até o angulo atual
-
-            rb.MoveRotation(targetRotation);
-            //agora, basta aplicar ao rigidbody essas pequenas e constantes mudanças na rotação
-
-            yield return null;
-            //espera o próximo frame para continuar até o loop acabar
-        }
-    }
-
-    IEnumerator SecondSpinShooting()
+    IEnumerator SecondShooting()
     {
         while(true)
         //só pra ficar rodando "infinitamente" até que a Coroutine mande parar
         {
             //depois mudar para segundo prefab de bala, criar uma bala na cor x e outra na cor y
-            Instantiate(BigBullet,Front.position, Front.rotation);
-            Instantiate(BigBullet,Back.position, Back.rotation);
-            Instantiate(BigBullet,Right.position, Right.rotation);
-            Instantiate(BigBullet,Left.position, Left.rotation);
-            Instantiate(BigBullet,FrontandLeft.position, FrontandLeft.rotation);
-            Instantiate(BigBullet,FrontandRight.position, FrontandRight.rotation);
-            Instantiate(BigBullet,BackandLeft.position, BackandLeft.rotation);
-            Instantiate(BigBullet,BackandRight.position, BackandRight.rotation);
+            Instantiate(REDBigBullet,Front.position, Front.rotation);
+            Instantiate(REDBigBullet,Right.position, Right.rotation);
+            Instantiate(REDBigBullet,Left.position, Left.rotation);
+            Instantiate(REDBigBullet,FrontandLeft.position, FrontandLeft.rotation);
+            Instantiate(REDBigBullet,FrontandRight.position, FrontandRight.rotation);
 
             yield return new WaitForSeconds(FireRate);
+        }
+    }
+
+    void SingleShot(GameObject bulletPrefab)
+    {
+        Instantiate(bulletPrefab,Front.position, Front.rotation);
+        Instantiate(bulletPrefab,Right.position, Right.rotation);
+        Instantiate(bulletPrefab,Left.position, Left.rotation);
+        Instantiate(bulletPrefab,FrontandLeft.position, FrontandLeft.rotation);
+        Instantiate(bulletPrefab,FrontandRight.position, FrontandRight.rotation);
+    }
+
+    void PlayerChasing()
+    {
+        if (playerRef != null && IsMovementTime)
+        {
+            Vector3 playerPos = playerRef.transform.position;
+            Vector3 targetPos = new Vector3(playerPos.x, transform.position.y, playerPos.z);
+
+            Vector3 direction = (targetPos - transform.position).normalized;
+
+            //aplica uma velocidade para perseguir
+            rb.linearVelocity = direction * speed;
+
+            //boss olhando para o player enquanto faz isso
+            if(direction.sqrMagnitude > 0)
+            {
+                transform.rotation = Quaternion.LookRotation(direction);
+            }
+        }
+        else if (playerRef != null && !IsMovementTime)
+        {
+            rb.linearVelocity = Vector3.zero;
         }
     }
 
@@ -244,12 +198,13 @@ public class boss : MonoBehaviour
 
         //esses aqui serão os três padrões:
 
+        //antes de começar, o boss vai cair no chão com a câmera tremendo ao impacto e o lvl começa
+
         //======PRIMEIRO PADRÃO========
 
         //Indo de (100% até 67% de vida)
 
-        //balas grandes sendo atiradas por 10 segundos (colocar esse tempo numa variável), enquanto o boss gira em sentido horário, colocar um tempo de tiro que dê a impressão de onda, de curva e forçe o player a sair correndo
-        //depois desse tempo, ele troca o sentido que gira e a cor do tiro
+        //boss anda lentamente até o player, enquanto vai alternando entre tiros do tipo 1 e tiros do tipo 2
 
         //==========SEGUNDO PADRÃO=======
 
@@ -257,19 +212,14 @@ public class boss : MonoBehaviour
 
         //o boss dá quicadas que criam shockwaves, que seria basicamente um torus que aumentaria de tamanho 
 
-        //alternando entre dois tipos de quicada (LÁ ELE KKKK)
-
-        //quicada lenta (de 15 em 15 segundos, ele dá uma sentada que manda uma shockwave em velocidade baixa)
-        //spawna inimigos besouros no momento que ele dá a sentada (LÁ ELE 2x KKKKK)
-
-        //quicada mais rápida (de 7 em 7 segundos, ele dá a a sentada que manda uma shockwave em velocidade rápida)
-        //essa não vai spawnar inimigos, mas tô pensando em talvez fazer algo mais ritmado tipo 1, 2, 3!
-        //audio no bloco de notas explica esse ritmo, mas a ideia seria fazer com que o player esteja preocupado em trocar de cor à tempo, essas ondas alternariam de cor rapidamente
+        // uma hora, torus de uma cor, outra hora, torus de outra cor
 
         //==========TERCEIRO PADRÃO=========
 
         //Indo de (33% até o fim de sua vida)
 
-        //cópia do primeiro padrão + spawn de inimigos explosivos de tempos em tempos
+        //inimigo cria shockwaves alternadas e mais rápido, enquanto spawna inimigos explosivos nos cantos do quarto
 
         //Depois disso, só resta o churrascamento
+
+        //AO TOMAR TIROS, DEIXAR MATERIAL VERMELHO E DAR INVULNERABILIDADE DE POUCOS FRAMES, COISA DE 0.5 SEG

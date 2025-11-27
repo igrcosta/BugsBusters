@@ -166,7 +166,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8958887970991014606}
   - component: {fileID: 5064771397462979343}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Global Volume (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
