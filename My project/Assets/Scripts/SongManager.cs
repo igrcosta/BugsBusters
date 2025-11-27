@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class SongManager : MonoBehaviour
 {
     [SerializeField] Slider SongSlider;
+    [SerializeField] Slider SFXSlider;
     void Start()
     {
         if (PlayerPrefs.HasKey("musicValue"))
@@ -21,6 +22,14 @@ public class SongManager : MonoBehaviour
     public void ChangeVolume()
     {
         AudioListener.volume = SongSlider.value;
+        Save();
+    }
+
+
+
+    public void ChangeSFXVolume()
+    {
+        AudioListener.volume = SFXSlider.value;
         Save();
     }
 
