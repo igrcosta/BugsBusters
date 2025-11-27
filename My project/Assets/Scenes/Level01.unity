@@ -1148,7 +1148,6 @@ GameObject:
   m_Component:
   - component: {fileID: 199961309}
   - component: {fileID: 199961311}
-  - component: {fileID: 199961312}
   m_Layer: 5
   m_Name: SongSlider
   m_TagString: Untagged
@@ -1229,7 +1228,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 199961312}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SongManager, Assembly-CSharp
         m_MethodName: ChangeVolume
         m_Mode: 1
@@ -1241,20 +1240,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &199961312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 199961308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4d433c47e6f30c41bc8a8fc07036ec9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SongSlider: {fileID: 0}
-  SFXSlider: {fileID: 0}
 --- !u!1001 &263204365
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1553,6 +1538,52 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a2308c00457b574f99a5545c4ae7fec, type: 3}
+--- !u!1 &325228777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 325228779}
+  - component: {fileID: 325228778}
+  m_Layer: 0
+  m_Name: SongManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &325228778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325228777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4d433c47e6f30c41bc8a8fc07036ec9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SongSlider: {fileID: 199961311}
+  SFXSlider: {fileID: 1741963391}
+--- !u!4 &325228779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325228777}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 447.48532, y: 253.93727, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &329679617
 GameObject:
   m_ObjectHideFlags: 0
@@ -1840,16 +1871,16 @@ MonoBehaviour:
   waves:
   - numberOfSpawnersToActivate: 2
     enemyRates:
-    - enemyPrefab: {fileID: 8829733417989069658, guid: 38ed41ea94fbea9479ff23202cef5eeb, type: 3}
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 9e95a6a78bc14e8429eb7da012fa28e0, type: 3}
       spawnWeight: 50
-    - enemyPrefab: {fileID: 8829733417989069658, guid: 9d762efa1c41b4c408b80ca5b59732bd, type: 3}
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 6c544f4c38478004c88e253a58c4d42c, type: 3}
       spawnWeight: 50
     spawnAttemptsPerSpawner: 5
   - numberOfSpawnersToActivate: 4
     enemyRates:
-    - enemyPrefab: {fileID: 8829733417989069658, guid: 38ed41ea94fbea9479ff23202cef5eeb, type: 3}
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 6c544f4c38478004c88e253a58c4d42c, type: 3}
       spawnWeight: 15
-    - enemyPrefab: {fileID: 8829733417989069658, guid: 9d762efa1c41b4c408b80ca5b59732bd, type: 3}
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 9e95a6a78bc14e8429eb7da012fa28e0, type: 3}
       spawnWeight: 15
     - enemyPrefab: {fileID: 2798812565783371171, guid: 94b1228d97c29f04ba5249132fd8a891, type: 3}
       spawnWeight: 10
@@ -4177,8 +4208,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5.365906, y: 2}
-  m_SizeDelta: {x: -10.414, y: -5.858}
+  m_AnchoredPosition: {x: 7, y: -18}
+  m_SizeDelta: {x: 77.299, y: 43.456}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1067138288
 MonoBehaviour:
@@ -7266,7 +7297,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1741963389}
   - component: {fileID: 1741963391}
-  - component: {fileID: 1741963392}
   m_Layer: 5
   m_Name: SFXSlider
   m_TagString: Untagged
@@ -7359,20 +7389,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1741963392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1741963388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4d433c47e6f30c41bc8a8fc07036ec9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SongSlider: {fileID: 0}
-  SFXSlider: {fileID: 0}
 --- !u!1 &1742241892
 GameObject:
   m_ObjectHideFlags: 0
@@ -9569,3 +9585,4 @@ SceneRoots:
   - {fileID: 338366223}
   - {fileID: 655102149}
   - {fileID: 1164945648}
+  - {fileID: 325228779}

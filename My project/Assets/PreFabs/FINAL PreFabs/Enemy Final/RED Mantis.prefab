@@ -1339,6 +1339,7 @@ MonoBehaviour:
   fireRate: 0.5
   shotsPerBurst: 3
   cooldownTime: 2
+  hitAudioSource: {fileID: 0}
 --- !u!114 &-5473595435507039105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1431,7 +1432,7 @@ AudioSource:
   m_GameObject: {fileID: 8829733417989069658}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -5525963066543815528, guid: a190a94e1ab6d2a4b86d3df896d5fd93, type: 2}
   m_audioClip: {fileID: 8300000, guid: 6c538c676a0a3b649a459d1b1291f26b, type: 3}
   m_Resource: {fileID: 8300000, guid: 6c538c676a0a3b649a459d1b1291f26b, type: 3}
   m_PlayOnAwake: 0

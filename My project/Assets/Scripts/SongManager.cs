@@ -35,7 +35,7 @@ public class SongManager : MonoBehaviour
 
     private void Load()
     {
-        SongSlider.value = PlayerPrefs.GetFloat("musicValue");
+       SongSlider.value = PlayerPrefs.GetFloat("musicValue");
     }
 
     private void Save()
