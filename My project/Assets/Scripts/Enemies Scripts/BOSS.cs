@@ -63,7 +63,6 @@ public class boss : MonoBehaviour
 
     private bool IsMovementTime = true;
 
-
     void Start()
     {
         //colocar aqui as referências das coisas que ele vai usar, que nem os 8 shootpoints, etc
@@ -213,6 +212,10 @@ public class boss : MonoBehaviour
        {
             // Aplica uma velocidade para perseguir
             rb.linearVelocity = direction * speed;
+
+            // Define a velocidade para animação baseado no movimento real
+            float currentMoveSpeed = direction.sqrMagnitude > 0.01f ? speed : 0f;
+            animator.SetFloat("enemySpeed", currentMoveSpeed);
         }
         else // Se não está em tempo de movimento, para.
         {
