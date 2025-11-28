@@ -236,7 +236,7 @@ public class TutorialManager : MonoBehaviour
     }
 
     // Tenta Enemy1 / TutorialEnemy
-    TutorialEnemy te = newEnemy.GetComponent<TutorialEnemy>();
+    Enemy1 te = newEnemy.GetComponent<Enemy1>();
     if (te != null)
     {
         te.SetManager(this);

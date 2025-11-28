@@ -89,6 +89,11 @@ public class Player : MonoBehaviour
 
         tutorialControllerRef = FindObjectOfType<TutorialController>();
         tutorialManagerRef = FindObjectOfType<TutorialManager>();
+
+        if (tutorialControllerRef != null)
+        {
+            tutorialControllerRef.PlayerTutorialRef = this;
+        }
     }
 
     // ====================================================================

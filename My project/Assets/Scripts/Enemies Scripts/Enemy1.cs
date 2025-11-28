@@ -15,6 +15,8 @@ public class Enemy1 : MonoBehaviour
     private Rigidbody rb;
     private ColorHandler myColorHandler;
 
+    private TutorialManager tutorialManager;
+
     [Header("Stats")]
     [SerializeField] int Hp = 20;
     [SerializeField] float enemySpeed = 15f;
@@ -41,6 +43,7 @@ public class Enemy1 : MonoBehaviour
 
     private EnemyState currentState = EnemyState.Chasing;
     private Vector3 currentDirection = Vector3.zero;
+
 
     // ====================================================================
     // 2. INICIALIZAÇÃO E ENCONTRO DE ALVO
@@ -319,6 +322,13 @@ public class Enemy1 : MonoBehaviour
 
         Destroy(gameObject);
     }
+
+    //Função para o tutorial funfar
+
+    public void SetManager(TutorialManager manager)
+{
+    tutorialManager = manager;
+}
 
     
 }
