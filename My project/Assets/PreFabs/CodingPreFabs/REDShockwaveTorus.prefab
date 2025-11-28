@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1674057101614903466}
   - component: {fileID: 4373382199634713911}
   - component: {fileID: 4751906265792977540}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: REDShockwaveTorus
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ GameObject:
   - component: {fileID: 6615959251913930200}
   - component: {fileID: 315276427496951121}
   - component: {fileID: 123070445981732014}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SafeAreaTorus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
