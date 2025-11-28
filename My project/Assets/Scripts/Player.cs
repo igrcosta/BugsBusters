@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     private CharacterController cc; // Variável CharacterController
     private ColorHandler playerColorHandler;
     private Slider HealthBarUI;
+
     [SerializeField] private Transform CameraTarget; 
 
     [Header("Stats")]
@@ -20,6 +21,11 @@ public class Player : MonoBehaviour
     private int currentHealth;
     public int CurrentHealth => currentHealth;
     [SerializeField] float speed = 10f; // 💡 GARANTIR UM VALOR PADRÃO
+
+    [Header("Luz do Player")]
+    [SerializeField] private Light playerSpotlight; 
+    [SerializeField] private Color greenLightColor = Color.green;
+    [SerializeField] private Color redLightColor = Color.red;
 
     public bool DummyMode = true;
 
@@ -78,6 +84,9 @@ public class Player : MonoBehaviour
     void Start()
     {   
         playerColorHandler = GetComponent<ColorHandler>();
+
+        UpdatePlayerSpotlightColor();
+
         if (playerColorHandler == null)
         {
             Debug.LogError("Player tá sem ColorHandler para funcionar. VAI SE FUDE");
@@ -181,7 +190,24 @@ public class Player : MonoBehaviour
         
             // 2. Aplica o visual (o ColorHandler faz a troca de material)
             playerColorHandler.UpdateVisualMaterial();
+
+            UpdatePlayerSpotlightColor();
+            //atualiza a cor do fum~e embaixo do player pra ele ficar tunado fi slc pai tá chave, ixquece
         }
+    }
+
+    public void UpdatePlayerSpotlightColor()
+    {
+        if (playerSpotlight == null || playerColorHandler == null) return;
+
+        BulletColor currentColor = playerColorHandler.currentColor;
+        //pega ref da cor atual que o player tá usando
+
+        Color targetLightColor = (currentColor == BulletColor.Green) ? greenLightColor : redLightColor;
+        //define a cor que o player vai usar, se tu for daltônico, faz o L
+
+        playerSpotlight.color = targetLightColor;
+        //aplica a cor que foi escolhida
     }
     
     public void TakingDamage(int damageAmount)
