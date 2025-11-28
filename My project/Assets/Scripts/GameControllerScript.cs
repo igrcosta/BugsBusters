@@ -22,7 +22,6 @@ public class GameControllerScript : MonoBehaviour
     public SafeZoneScript SafeZone;
     public GameUI GameUI;
 
-    private bool IsPaused = false;
     private int ActualSceneIndex;
 
     public static GameControllerScript controller;
@@ -99,7 +98,6 @@ public class GameControllerScript : MonoBehaviour
 
         if (ActualSceneIndex == 2)
         {
-            Pause();
 
             if (IsGameActive)
             {
@@ -254,26 +252,6 @@ public class GameControllerScript : MonoBehaviour
         SafeZone.ActivateAndBeginShrinking();
         Timer.StartTimer();
         IsGameActive = true;
-    }
-
-    public void Pause()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == false)
-        {
-            IsPaused = true;
-            Time.timeScale = 0;
-
-            GameUI.pauseMenu.gameObject.SetActive(true);
-            
-            
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == true)
-        {
-            IsPaused = false;
-            Time.timeScale = 1;
-            GameUI.pauseMenu.gameObject.SetActive(false);
-            
-        }
     }
 
     private void FindingActualScene()

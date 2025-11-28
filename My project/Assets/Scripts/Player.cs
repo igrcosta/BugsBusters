@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
     private ColorHandler playerColorHandler;
     private Slider HealthBarUI;
 
+    private bool IsPaused = false;
+
     [SerializeField] private Transform CameraTarget; 
 
     [Header("Stats")]
@@ -117,6 +119,8 @@ public class Player : MonoBehaviour
         ApplyGravity();
         Movement();
         HandleColorSwitchInput();
+
+        Pause();
     }
 
     void ApplyGravity()
@@ -253,5 +257,25 @@ public class Player : MonoBehaviour
         // 🚨 REMOVIDA A ROTAÇÃO AQUI: Ela é sobrescrita a cada frame pelo GunScript.
         // Quaternion correctRotation = Quaternion.Euler(90f, 0f, 0f);
         // PlayerCabecaTransform.localRotation = correctRotation;
+    }
+
+    public void Pause()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == false)
+        {
+            IsPaused = true;
+            Time.timeScale = 0;
+
+            GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(true);
+            
+            
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == true)
+        {
+            IsPaused = false;
+            Time.timeScale = 1;
+            GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(true);
+            
+        }
     }
 }
