@@ -81,6 +81,8 @@ public class SmallEnemy : MonoBehaviour
 
     private bool isDying = false;
 
+    private ColorHandler visualColorHandler;
+
 
     // ====================================================================
 
@@ -100,6 +102,8 @@ public void SetManager(TutorialManager manager)
     {
 
         rb = GetComponent<Rigidbody>();
+
+        visualColorHandler = GetComponent<ColorHandler>();
 
     }
 
@@ -430,86 +434,49 @@ else if (distance > safeReturnDistance && explosionCoroutine != null)
 
 
     void ExplodeAreaDamage()
-
+{
+    // o Visual da Explosão
+    if (explosionVisualPrefab != null)
     {
-
-        // 1. Instancia o Visual da Explosão
-
-        if (explosionVisualPrefab != null)
-
+        GameObject visualGO = Instantiate(explosionVisualPrefab, transform.position, Quaternion.identity);
+        
+        ExplosionVisual visualScript = visualGO.GetComponent<ExplosionVisual>();
+        if (visualScript != null)
         {
-
-            GameObject visualGO = Instantiate(explosionVisualPrefab, transform.position, Quaternion.identity);
-
-           
-
-            ExplosionVisual visualScript = visualGO.GetComponent<ExplosionVisual>();
-
-            if (visualScript != null)
-
-            {
-
-                visualScript.Initialize(damageRadius);  
-
-            }
-
+            visualScript.Initialize(damageRadius);  
         }
-
-
-        // 2. Aplica Dano/Repulsão
-
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, damageRadius);
-
-
-        foreach (var hitCollider in hitColliders)
-
-        {
-
-            if (hitCollider.gameObject == gameObject) continue;
-
-
-            Rigidbody hitRb = hitCollider.GetComponent<Rigidbody>();
-
-            if (hitRb != null)
-
-            {
-
-                 // Usamos o AddExplosionForce, que é mais robusto
-
-                 hitRb.AddExplosionForce(explosionForce, transform.position, damageRadius, 1f, ForceMode.Impulse);
-
-            }
-
-
-            // Dano ao Player
-
-            hitCollider.GetComponent<Player>()?.TakingDamage(explosionDamage);
-
-            //deixei pelo fato da explosão não ser uma bala e quero que cause dano, independente de cores
-
-           
-
-            // Dano a Outros Inimigos
-
-            hitCollider.GetComponent<Enemy1>()?.TakingDamage(explosionDamage);
-
-            hitCollider.GetComponent<BettleEnemyScript>()?.TakingDamage(explosionDamage);
-
-           
-
-            SmallEnemy otherSmallEnemy = hitCollider.GetComponent<SmallEnemy>();
-
-            if (otherSmallEnemy != null && otherSmallEnemy != this)  
-
-            {
-
-                 otherSmallEnemy.TakingDamage(explosionDamage);  
-
-            }
-
-        }
-
     }
+
+    visualColorHandler.myRenderer.enabled = false;
+    //SOME COM ELE VISUALMENTE PRA DAR A IDEIA DE QUE ELE SE EXPLODIU
+
+    // Dano/Repulsão SOMENTE AO PLAYER
+    Collider[] hitColliders = Physics.OverlapSphere(transform.position, damageRadius);
+
+    foreach (var hitCollider in hitColliders)
+    {
+        if (hitCollider.gameObject == gameObject) continue;
+
+        // Tenta obter o componente Player
+        Player player = hitCollider.GetComponent<Player>();
+
+        if (player != null)
+        {
+            // APLICA REPULSÃO NO PLAYER
+            Rigidbody hitRb = hitCollider.GetComponent<Rigidbody>();
+            if (hitRb != null)
+            {
+                // Usamos o AddExplosionForce para a repulsão
+                hitRb.AddExplosionForce(explosionForce, transform.position, damageRadius, 1f, ForceMode.Impulse);
+            }
+
+            // APLICA DANO NO PLAYER
+            player.TakingDamage(explosionDamage);
+        }
+        
+        // Todos os outros objetos, incluindo o Boss, são ignorados (não recebem repulsão nem dano).
+    }
+}
 
    
 

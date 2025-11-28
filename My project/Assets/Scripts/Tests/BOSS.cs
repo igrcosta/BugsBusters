@@ -41,7 +41,18 @@ public class boss : MonoBehaviour
     [Header("Ponto para spawn de shockwaves")]
     [SerializeField] Transform ExplosionPoint;
 
-    //referências chatas
+    [Header("Pontos para spawn dos inimigos")]
+    [SerializeField] Transform RightPoint;
+    [SerializeField] Transform LeftPoint;
+
+    [Header("Luzes do Boss")]
+    [SerializeField] private Light bossSpotlight; //componente de luz vai aqui
+    [SerializeField] private Color greenLightColor = Color.green; //cor verde de luz
+    [SerializeField] private Color redLightColor = Color.red; // cor vermelha de luz
+
+    private ColorHandler bossColorHandler;
+
+    //referências e var chatas
 
     private Rigidbody rb;
 
@@ -58,6 +69,8 @@ public class boss : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         playerRef = GameControllerScript.controller.Player;
+
+        bossColorHandler = GetComponent<ColorHandler>();
 
         StartCoroutine("FirstPhase");
 
@@ -79,10 +92,10 @@ public class boss : MonoBehaviour
 
         Debug.Log("Comecei a primeira fase!");
 
-        while(Health >= 67)
+        while(Health >= 670)
         {
-            //1. ciclo de tiros verdes
-
+            //1. ciclo de tiros verdes definindo antes a cor do boss pra verde
+            SetPhaseColor(BulletColor.Green);
             ActualShootingRef = StartCoroutine(FirstShooting());
             IsMovementTime = true;
 
@@ -98,8 +111,9 @@ public class boss : MonoBehaviour
             SingleShot(GREENBigBullet);
             yield return new WaitForSeconds(ShootBreathing+1f);
 
-            //4. ciclo de tiros vermelhos
+            //4. ciclo de tiros vermelhos, definindo a cor dele pra vermelho
             IsMovementTime = true;
+            SetPhaseColor(BulletColor.Red);
             ActualShootingRef = StartCoroutine(SecondShooting());
             yield return new WaitForSeconds(10f);
 
@@ -187,13 +201,26 @@ public class boss : MonoBehaviour
         Debug.Log("Comecei a SEGUNDA fase pq sou lendário!");
         yield return new WaitForSeconds(PhasesTransitionTime);
 
-        while(Health > 33)
+        while(Health > 330)
         {
-        yield return new WaitForSeconds(1.5f);
+            SetPhaseColor(BulletColor.Red);
+        yield return new WaitForSeconds(0.7f);
         SpawnREDShockwave();
-        yield return new WaitForSeconds(1.5f);
+
+        yield return new WaitForSeconds(0.8f);
+        SetPhaseColor(BulletColor.Green);
+        yield return new WaitForSeconds(0.5f);
+        SpawnGREENShockwave();
+
+        yield return new WaitForSeconds(1f);
+
+        SetPhaseColor(BulletColor.Red);
+        yield return new WaitForSeconds(0.5f);
         SpawnREDShockwave();
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.7f);
+        SpawnREDShockwave();
+
+        yield return new WaitForSeconds(0.5f);
 
         IsMovementTime = true;
 
@@ -201,13 +228,26 @@ public class boss : MonoBehaviour
 
         IsMovementTime = false;
 
-        yield return new WaitForSeconds(1f);
+        SetPhaseColor(BulletColor.Green);
+        yield return new WaitForSeconds(0.7f);
         SpawnGREENShockwave();
-        yield return new WaitForSeconds(1.5f);
-        SpawnGREENShockwave();
-        yield return new WaitForSeconds(2.5f);
 
+        yield return new WaitForSeconds(0.8f);
+        SetPhaseColor(BulletColor.Red);
+        yield return new WaitForSeconds(0.5f);
+        SpawnREDShockwave();
+
+        yield return new WaitForSeconds(1f);
+
+        SetPhaseColor(BulletColor.Green);
+        yield return new WaitForSeconds(0.5f);
+        SpawnGREENShockwave();
+        yield return new WaitForSeconds(0.7f);
+        SpawnGREENShockwave();
+
+        yield return new WaitForSeconds(0.5f);
         IsMovementTime = true;
+        SetPhaseColor(BulletColor.Red);
 
         yield return new WaitForSeconds(5f);
 
@@ -233,28 +273,39 @@ public class boss : MonoBehaviour
 
         Coroutine FinalShootingRef;
 
-        while (Health <= 33)
+        while (Health <= 330)
         {
             IsMovementTime = false;
+            SetPhaseColor(BulletColor.Green);
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.7f);
             SpawnGREENShockwave();
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
+
+            SetPhaseColor(BulletColor.Red);
+            yield return new WaitForSeconds(0.4f);
+            SpawnREDShockwave();
+
+            yield return new WaitForSeconds(2f);
+            SetPhaseColor(BulletColor.Green);
 
             IsMovementTime = true;
             FinalShootingRef = StartCoroutine(FirstShooting());
 
             yield return new WaitForSeconds(5f);
+            SetPhaseColor(BulletColor.Red);
 
             StopCoroutine(FinalShootingRef);
             IsMovementTime = false;
 
             yield return new WaitForSeconds(1f);
-            //spawnar Inimigos aqui
+            SetPhaseColor(BulletColor.Green);
+            SpawnEnemies();
             yield return new WaitForSeconds(1.5f);
+            SetPhaseColor(BulletColor.Red);
 
             SpawnREDShockwave();
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
 
             IsMovementTime = true;
             FinalShootingRef = StartCoroutine(SecondShooting());
@@ -270,7 +321,42 @@ public class boss : MonoBehaviour
         StopCoroutine("LastPhase");
     }
 
+    void SpawnEnemies()
+    {
+        Instantiate(GREENSmallEnemy, RightPoint.position, RightPoint.rotation);
+        Instantiate(REDSmallEnemy, LeftPoint.position, LeftPoint.rotation);
+    }
 
+    //LÓGICA DE COR E DANO APLICADA DAQUI PRA BAIXO
+
+    public void TakingDamage(int bulletDamage)
+    {
+        //hit visual aqui
+        Health -= bulletDamage;
+        if (Health <= 0)
+        {
+            //Die();
+        }
+    }
+
+    void SetPhaseColor(BulletColor newColor)
+    {
+        if (bossColorHandler != null)
+        {
+            bossColorHandler.SetColorAndMaterial(newColor, this);
+            //chama o método do colorhandler, passando a referência do boss
+        }
+    }
+
+    public void OnBossColorChange(BulletColor newColor)
+    {
+        //boss vai receber uma cor nova pelo parâmetro
+
+        if (bossSpotlight == null) return;
+
+        Color targetLightColor = (newColor == BulletColor.Green) ? greenLightColor : redLightColor;
+        bossSpotlight.color = targetLightColor;
+    }
 }
 
 //OQ O BOSS TEM QUE FAZER?

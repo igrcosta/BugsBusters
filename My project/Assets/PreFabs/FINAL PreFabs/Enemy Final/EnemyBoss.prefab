@@ -353,15 +353,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.07901837
+      value: -0.0008122921
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.730107
+      value: -10.580322
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       propertyPath: m_LocalRotation.w
@@ -414,6 +414,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 6972289235512043941}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b893d22ba403094396acdad7c989315, type: 3}
+      insertIndex: -1
       addedObject: {fileID: -4144214869813790264}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b893d22ba403094396acdad7c989315, type: 3}
       insertIndex: -1
@@ -432,6 +435,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6b893d22ba403094396acdad7c989315, type: 3}
   m_PrefabInstance: {fileID: 7473452732180408587}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6972289235512043941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7743482678212826202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7009b959b3cb0b4cb1820ab0266e8a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentColor: 1
+  myRenderer: {fileID: 0}
+  greenMaterial: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
+  redMaterial: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
 --- !u!114 &-4144214869813790264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -444,12 +463,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e19f8571344e645be253610c70a0f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 100
+  Health: 1000
   BulletsDamage: 10
   ShockwaveDamage: 30
   speed: 0.5
   FireRate: 1
   ShootBreathing: 2
+  PhasesTransitionTime: 1
   GREENBigBullet: {fileID: 1119065107945223968, guid: f4f5460a194324c42a6974e95d20d5d9, type: 3}
   REDBigBullet: {fileID: 1119065107945223968, guid: f459cec4dd62aaa439fcb8bf97b7522d, type: 3}
   GREENShockwave: {fileID: 5853033130729707644, guid: 5c16b1c3ad026bd448777adcaa53471f, type: 3}
@@ -462,6 +482,11 @@ MonoBehaviour:
   Right: {fileID: 2748070496242670628}
   Left: {fileID: 6609261221063937606}
   ExplosionPoint: {fileID: 4463548496174769053}
+  RightPoint: {fileID: 0}
+  LeftPoint: {fileID: 0}
+  bossSpotlight: {fileID: 5705484612720542759}
+  greenLightColor: {r: 0, g: 1, b: 0, a: 1}
+  redLightColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!54 &1231439602757503583
 Rigidbody:
   m_ObjectHideFlags: 0

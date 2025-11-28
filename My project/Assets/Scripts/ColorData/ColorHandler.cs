@@ -7,7 +7,7 @@ public class ColorHandler : MonoBehaviour
 
         //Materiais e coisas que o player vai precisar pra trocar a cor via código
         [Header("Materiais")]
-        [SerializeField] private Renderer myRenderer; //colocar renderer do player aqui
+        [SerializeField] public Renderer myRenderer; //colocar renderer do player aqui
         [SerializeField] private Material greenMaterial; // Material Verde do Player
         [SerializeField] private Material redMaterial; // Material Vermelho do Player
 
@@ -48,6 +48,10 @@ public class ColorHandler : MonoBehaviour
                     {
                         smallEnemy.TakingDamage(bulletDamage);
                     }
+                    else if(gameObject.TryGetComponent<boss>(out boss Boss))
+                    {
+                        Boss.TakingDamage(bulletDamage);
+                    }
                     //depois vou colocar a do boss aqui com um else if
                     else
                     {
@@ -78,6 +82,18 @@ public class ColorHandler : MonoBehaviour
             if (myRenderer.material != targetMat)
             {
                 myRenderer.material = targetMat;
+            }
+        }
+
+        public void SetColorAndMaterial(BulletColor newColor, boss bossRef)
+        {
+            currentColor = newColor;
+
+            UpdateVisualMaterial();
+
+            if(bossRef != null)
+            {
+                bossRef.OnBossColorChange(newColor);
             }
         }
 }

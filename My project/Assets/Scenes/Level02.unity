@@ -1190,6 +1190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SongSlider: {fileID: 199961311}
+  SFXSlider: {fileID: 0}
 --- !u!114 &199961311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4027,6 +4028,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2547517001390581037, guid: fe10d2e2c4964664fa87582fc6e8b200, type: 3}
   m_PrefabInstance: {fileID: 8454403590880084661}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1019068605 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8969450276897645988, guid: fe10d2e2c4964664fa87582fc6e8b200, type: 3}
+  m_PrefabInstance: {fileID: 8454403590880084661}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1043905246 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 05bfb991c852b6948a812090893b8e8c, type: 3}
@@ -5587,6 +5593,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
+      propertyPath: LeftPoint
+      value: 
+      objectReference: {fileID: 1475407249}
+    - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
+      propertyPath: RightPoint
+      value: 
+      objectReference: {fileID: 1019068605}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.0008122921
@@ -6067,6 +6081,11 @@ PrefabInstance:
 --- !u!1 &1475407248 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7880662355695249518, guid: fe10d2e2c4964664fa87582fc6e8b200, type: 3}
+  m_PrefabInstance: {fileID: 8454403590880084661}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1475407249 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3638563383867222247, guid: fe10d2e2c4964664fa87582fc6e8b200, type: 3}
   m_PrefabInstance: {fileID: 8454403590880084661}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1485125013 stripped
