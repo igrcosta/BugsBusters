@@ -1329,7 +1329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a39323c63933a141a28c409a13437dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hp: 1000
+  Hp: 50
   enemySpeed: 0.7
   stoppingDistance: 0.5
   redBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}

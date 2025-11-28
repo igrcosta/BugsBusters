@@ -11,8 +11,8 @@ public class Enemy1 : MonoBehaviour
     private TutorialController tutorial;
 
     [Header("Componentes")]
-    private Animator anim;
     private Rigidbody rb;
+    private Animator animator; //pra animação funcionar
     private ColorHandler myColorHandler;
 
     private TutorialManager tutorialManager;
@@ -51,11 +51,12 @@ public class Enemy1 : MonoBehaviour
 
     IEnumerator Start()
     {
+
         yield return null;
         tutorial = FindObjectOfType<TutorialController>();
 
         rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
+        animator = GetComponent<Animator>();  //pra animação funcionar
         myColorHandler = GetComponent<ColorHandler>();
 
         FindTargetAndController();
@@ -63,7 +64,7 @@ public class Enemy1 : MonoBehaviour
         if (playerTargetTransform != null)
         {
             currentState = EnemyState.Chasing;
-            anim.SetBool("isFalling", true);
+            //animator.SetBool("isFalling", true); //não vou usar esse mais
         }
         else
         {
@@ -100,6 +101,7 @@ public class Enemy1 : MonoBehaviour
 
     void Update()
     {
+
         if (playerTargetTransform == null) return;
 
         switch (currentState)
@@ -123,8 +125,8 @@ public class Enemy1 : MonoBehaviour
         if (!hasLanded && collision.gameObject.CompareTag("Ground"))
         {
             hasLanded = true;
-            anim.SetBool("isFalling", false);
-            anim.SetTrigger("FallImpact");
+            //animator.SetBool("isFalling", false);
+            //.SetTrigger("FallImpact"); //não vou usar esses mais
 
             rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
             rb.angularVelocity = Vector3.zero;
@@ -149,6 +151,8 @@ public class Enemy1 : MonoBehaviour
         Vector3 direction = playerPosition - transform.position;
         float distance = direction.magnitude;
 
+        //animator.SetFloat("enemySpeed", enemySpeed); //pra animação funcionar
+
         if (distance <= stoppingDistance)
         {
             if (attackCoroutine == null)
@@ -168,7 +172,6 @@ public class Enemy1 : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(currentDirection, Vector3.up);
         }
 
-        anim.SetBool("isWalking", true);
     }
 
     void ApplyMovementVelocity()
@@ -186,12 +189,16 @@ public class Enemy1 : MonoBehaviour
             rb.linearVelocity.y,
             currentDirection.z * enemySpeed
         );
+
+        // Define a velocidade para animação baseado no movimento real
+        float currentMoveSpeed = currentDirection.sqrMagnitude > 0.01f ? enemySpeed : 0f;
+        animator.SetFloat("enemySpeed", currentMoveSpeed);
     }
 
     void HandleStopping()
     {
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-        anim.SetBool("isWalking", false);
+        animator.SetFloat("enemySpeed", 0); //pra forçar a parada da animação de andar 
     }
 
     IEnumerator AttackRoutine()
@@ -213,8 +220,8 @@ public class Enemy1 : MonoBehaviour
             }
         }
 
-        anim.SetBool("isAttacking", true);
-        anim.SetTrigger("Attack");
+        //animator.SetBool("isAttacking", true);
+        //animator.SetTrigger("Attack");                   //não sei se vai dar pra usar a animação de ataque
 
         for (int i = 0; i < shotsPerBurst; i++)
         {
@@ -223,7 +230,7 @@ public class Enemy1 : MonoBehaviour
         }
 
         currentState = EnemyState.CoolingDown;
-        anim.SetBool("isAttacking", false);
+        //animator.SetBool("isAttacking", false);
 
         yield return new WaitForSeconds(cooldownTime);
 

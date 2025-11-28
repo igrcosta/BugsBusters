@@ -17,6 +17,8 @@ public class boss : MonoBehaviour
 
     [SerializeField] float PhasesTransitionTime = 2f;
 
+    private Animator animator; //pra animação funcionar
+
 
     [Header ("Balas e Shockwaves que vai utilizar")]
     [SerializeField] GameObject GREENBigBullet;
@@ -67,6 +69,8 @@ public class boss : MonoBehaviour
         //no caso, a ordem das coroutines que determinam o comportamento do boss vão aqui
 
         rb = GetComponent<Rigidbody>();
+
+        animator = GetComponent<Animator>();  //pra animação funcionar
 
         playerRef = GameControllerScript.controller.Player;
 
@@ -184,8 +188,12 @@ public class boss : MonoBehaviour
             //aplica uma velocidade para perseguir
             rb.linearVelocity = direction * speed;
 
+            // Define a velocidade para animação baseado no movimento real
+            float currentMoveSpeed = direction.sqrMagnitude > 0.01f ? speed : 0f;
+            animator.SetFloat("enemySpeed", currentMoveSpeed);
+
             //boss olhando para o player enquanto faz isso
-            if(direction.sqrMagnitude > 0)
+            if (direction.sqrMagnitude > 0)
             {
                 transform.rotation = Quaternion.LookRotation(direction);
             }
@@ -194,6 +202,8 @@ public class boss : MonoBehaviour
         {
             rb.linearVelocity = Vector3.zero;
         }
+
+
     }
 
     IEnumerator SecondPhase()
