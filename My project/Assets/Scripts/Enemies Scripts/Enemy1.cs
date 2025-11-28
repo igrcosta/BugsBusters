@@ -270,7 +270,8 @@ public class Enemy1 : MonoBehaviour
     if (bulletScript != null)
     {
         bulletScript.isFiredByPlayer = false;
-        // Atribui a cor, que deve ser a mesma cor visual do prefab instanciado.
+        bulletScript.Initialize(false);
+            // Atribui a cor, que deve ser a mesma cor visual do prefab instanciado.
         bulletScript.bulletColor = enemyColor; 
     }
 }

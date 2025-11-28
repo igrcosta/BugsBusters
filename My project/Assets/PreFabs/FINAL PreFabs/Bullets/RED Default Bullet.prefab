@@ -127,6 +127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletSpeed: 3
   lifetime: 3
+  bulletAudio: {fileID: -5752426074014265348}
   bulletColor: 0
   isFiredByPlayer: 1
   PLayerDamage: 10
