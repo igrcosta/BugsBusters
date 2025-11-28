@@ -128,7 +128,7 @@ MonoBehaviour:
   bulletSpeed: 3
   lifetime: 3
   bulletColor: 0
-  isFiredByPlayer: 1
+  isFiredByPlayer: 0
   PLayerDamage: 10
   EnemyDamage: 5
 --- !u!54 &2559818959485414610

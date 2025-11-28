@@ -5,6 +5,7 @@ using System.Collections;
 public class boss : MonoBehaviour
 {
     [Header ("Stats")]
+    private bool IsVulnerable = true;
     [SerializeField] int Health = 100;
     [SerializeField] int BulletsDamage = 10;
     [SerializeField] int ShockwaveDamage = 30;
@@ -94,40 +95,50 @@ public class boss : MonoBehaviour
 
         while(Health >= 670)
         {
-            //1. ciclo de tiros verdes definindo antes a cor do boss pra verde
-            SetPhaseColor(BulletColor.Green);
-            ActualShootingRef = StartCoroutine(FirstShooting());
-            IsMovementTime = true;
+             //1. ciclo de tiros vermelhos, definindo a cor dele pra vermelho
 
-            yield return new WaitForSeconds(10f);
+             IsVulnerable = true;
 
-            //2. Depois de um tempo andando e atirando, paramos o tiro e paramos o movimento dele
-            StopCoroutine(ActualShootingRef);
-            IsMovementTime = false;
+             IsMovementTime = true;
+             SetPhaseColor(BulletColor.Red);
+             ActualShootingRef = StartCoroutine(SecondShooting());
+             yield return new WaitForSeconds(5f);
 
-            //3. tiros de transição
-            SingleShot(GREENBigBullet);
-            yield return new WaitForSeconds(ShootBreathing);
-            SingleShot(GREENBigBullet);
-            yield return new WaitForSeconds(ShootBreathing+1f);
+             //2. Parada depois de um tempo andando e atirando
+             StopCoroutine(ActualShootingRef);
+             IsMovementTime = false;
+             IsVulnerable = false;
 
-            //4. ciclo de tiros vermelhos, definindo a cor dele pra vermelho
-            IsMovementTime = true;
-            SetPhaseColor(BulletColor.Red);
-            ActualShootingRef = StartCoroutine(SecondShooting());
-            yield return new WaitForSeconds(10f);
+             //3. tiros VERMELHOS de transição (INVULNERÁVEL)
+ 
+             SingleShot(REDBigBullet);
+             yield return new WaitForSeconds(ShootBreathing);
+             SingleShot(REDBigBullet);
+             yield return new WaitForSeconds(ShootBreathing+1f);
 
-            //5. Parada depois de um tempo andando e atirando
-            StopCoroutine(ActualShootingRef);
-            IsMovementTime = false;
+             //4. ciclo de tiros verdes definindo antes a cor do boss pra verde
+             SetPhaseColor(BulletColor.Green);
+             IsVulnerable = true;
+             ActualShootingRef = StartCoroutine(FirstShooting());
+             IsMovementTime = true;
 
-            //6. tiros VERMELHOS de transição
-            SingleShot(REDBigBullet);
-            yield return new WaitForSeconds(ShootBreathing);
-            SingleShot(REDBigBullet);
-            yield return new WaitForSeconds(ShootBreathing+1.5f);
+             yield return new WaitForSeconds(5f);
+
+             //5. Depois de um tempo andando e atirando, paramos o tiro e paramos o movimento dele
+
+             StopCoroutine(ActualShootingRef);
+             IsMovementTime = false;
+             IsVulnerable = false;
+
+             //6. tiros de transição
+
+             SingleShot(GREENBigBullet);
+             yield return new WaitForSeconds(ShootBreathing);
+             SingleShot(GREENBigBullet);
+             yield return new WaitForSeconds(ShootBreathing+1.5f);
         }
         StopCoroutine("FirstPhase");
+        IsVulnerable = false;
         StartCoroutine("SecondPhase");
     }
 
@@ -174,27 +185,37 @@ public class boss : MonoBehaviour
 
     void PlayerChasing()
     {
-        if (playerRef != null && IsMovementTime)
+        if (playerRef == null)
         {
-            Vector3 playerPos = playerRef.transform.position;
-            Vector3 targetPos = new Vector3(playerPos.x, transform.position.y, playerPos.z);
-
-            Vector3 direction = (targetPos - transform.position).normalized;
-
-            //aplica uma velocidade para perseguir
-            rb.linearVelocity = direction * speed;
-
-            //boss olhando para o player enquanto faz isso
-            if(direction.sqrMagnitude > 0)
-            {
-                transform.rotation = Quaternion.LookRotation(direction);
-            }
+            // Se não há player, não faça nada.
+            return;
         }
-        else if (playerRef != null && !IsMovementTime)
+
+        // 1. Cálculo da direção para o Player
+        Vector3 playerPos = playerRef.transform.position;
+        Vector3 targetPos = new Vector3(playerPos.x, transform.position.y, playerPos.z);
+        Vector3 direction = (targetPos - transform.position).normalized;
+
+        // 2. Rotação (Olhar para o Player)
+        // O Boss deve olhar para o Player SEMPRE que houver um Player.
+        if (direction.sqrMagnitude > 0)
+        {
+            // Usa Quaternion.LookRotation para fazer o Boss girar na direção do Player
+            transform.rotation = Quaternion.LookRotation(direction);
+        }
+    
+        // 3. Movimento (se IsMovementTime for true)
+        if (IsMovementTime)
+       {
+            // Aplica uma velocidade para perseguir
+            rb.linearVelocity = direction * speed;
+        }
+        else // Se não está em tempo de movimento, para.
         {
             rb.linearVelocity = Vector3.zero;
         }
-    }
+    }  
+
 
     IEnumerator SecondPhase()
     {
@@ -203,6 +224,7 @@ public class boss : MonoBehaviour
 
         while(Health > 330)
         {
+            IsVulnerable = false;
             SetPhaseColor(BulletColor.Red);
         yield return new WaitForSeconds(0.7f);
         SpawnREDShockwave();
@@ -213,9 +235,11 @@ public class boss : MonoBehaviour
         SpawnGREENShockwave();
 
         yield return new WaitForSeconds(1f);
+        IsVulnerable = true;
 
         SetPhaseColor(BulletColor.Red);
         yield return new WaitForSeconds(0.5f);
+        IsVulnerable = false;
         SpawnREDShockwave();
         yield return new WaitForSeconds(0.7f);
         SpawnREDShockwave();
@@ -223,6 +247,7 @@ public class boss : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         IsMovementTime = true;
+        IsVulnerable = true;
 
         yield return new WaitForSeconds(5f);
 
@@ -230,6 +255,7 @@ public class boss : MonoBehaviour
 
         SetPhaseColor(BulletColor.Green);
         yield return new WaitForSeconds(0.7f);
+        IsVulnerable = false;
         SpawnGREENShockwave();
 
         yield return new WaitForSeconds(0.8f);
@@ -237,9 +263,12 @@ public class boss : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         SpawnREDShockwave();
 
+        IsVulnerable = true;
         yield return new WaitForSeconds(1f);
+        
 
         SetPhaseColor(BulletColor.Green);
+        IsVulnerable = false;
         yield return new WaitForSeconds(0.5f);
         SpawnGREENShockwave();
         yield return new WaitForSeconds(0.7f);
@@ -247,11 +276,13 @@ public class boss : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         IsMovementTime = true;
+        IsVulnerable = true;
         SetPhaseColor(BulletColor.Red);
 
         yield return new WaitForSeconds(5f);
 
         IsMovementTime = false;
+        IsVulnerable = false;
 
         }
         StopCoroutine("SecondPhase");
@@ -276,44 +307,66 @@ public class boss : MonoBehaviour
         while (Health <= 330)
         {
             IsMovementTime = false;
+            IsVulnerable = false;
             SetPhaseColor(BulletColor.Green);
 
             yield return new WaitForSeconds(0.7f);
             SpawnGREENShockwave();
+
+            IsVulnerable = true;
             yield return new WaitForSeconds(1f);
 
             SetPhaseColor(BulletColor.Red);
             yield return new WaitForSeconds(0.4f);
+            IsVulnerable = false;
             SpawnREDShockwave();
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
             SetPhaseColor(BulletColor.Green);
 
+            yield return new WaitForSeconds(0.5f);
+
             IsMovementTime = true;
+            IsVulnerable = true;
             FinalShootingRef = StartCoroutine(FirstShooting());
 
             yield return new WaitForSeconds(5f);
-            SetPhaseColor(BulletColor.Red);
 
             StopCoroutine(FinalShootingRef);
             IsMovementTime = false;
+            IsVulnerable = false;
 
             yield return new WaitForSeconds(1f);
-            SetPhaseColor(BulletColor.Green);
             SpawnEnemies();
             yield return new WaitForSeconds(1.5f);
             SetPhaseColor(BulletColor.Red);
 
+            yield return new WaitForSeconds(0.5f);
+
+            IsVulnerable = false;
+            SetPhaseColor(BulletColor.Red);
+            yield return new WaitForSeconds(0.7f);
             SpawnREDShockwave();
-            yield return new WaitForSeconds(1f);
+
+            yield return new WaitForSeconds(0.5f);
+            SpawnREDShockwave();
+
+            yield return new WaitForSeconds(0.8f);
+            SetPhaseColor(BulletColor.Green);
+            yield return new WaitForSeconds(0.3f);
+            SpawnGREENShockwave();
+
+            yield return new WaitForSeconds(0.5f);
 
             IsMovementTime = true;
-            FinalShootingRef = StartCoroutine(SecondShooting());
+            IsVulnerable = true;
+            FinalShootingRef = StartCoroutine(FirstShooting());
 
             yield return new WaitForSeconds(5f);
 
             StopCoroutine(FinalShootingRef);
             IsMovementTime = false;
+            IsVulnerable = false;
 
         }
         
@@ -331,11 +384,29 @@ public class boss : MonoBehaviour
 
     public void TakingDamage(int bulletDamage)
     {
-        //hit visual aqui
-        Health -= bulletDamage;
-        if (Health <= 0)
+        if (IsVulnerable)
         {
-            //Die();
+            //PARTE VISUAL === INÍCIO
+
+            //tempo que vai durar a piscada
+            const float flashDuration = 0.1f;
+
+            TurnSpotlightOff();
+            //desliga a spotlight do boss
+
+            CancelInvoke("TurnSpotlightOn");
+            //cancela outros invokes de ligar aluz pra n dar conflito
+
+            Invoke("TurnSpotlightOn", flashDuration);
+
+            //PARTE VISUAL === FIM
+
+            Health -= bulletDamage;
+
+            if (Health <= 0)
+            {
+                //Die();
+            }
         }
     }
 
@@ -356,6 +427,24 @@ public class boss : MonoBehaviour
 
         Color targetLightColor = (newColor == BulletColor.Green) ? greenLightColor : redLightColor;
         bossSpotlight.color = targetLightColor;
+    }
+
+    //métodos para apagar e acender a luz da frente do boss, indicando dano
+
+    private void TurnSpotlightOff()
+    {
+        if (bossSpotlight != null)
+        {
+            bossSpotlight.enabled = false;
+        }
+    }
+
+    private void TurnSpotlightOn()
+    {
+        if (bossSpotlight != null)
+        {
+            bossSpotlight.enabled = true;
+        }
     }
 }
 

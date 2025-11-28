@@ -681,6 +681,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rug
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e92e4104106227040859e7d478f840a8, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e92e4104106227040859e7d478f840a8, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5594,6 +5602,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
+      propertyPath: Health
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: LeftPoint
       value: 
       objectReference: {fileID: 1475407249}
@@ -8870,6 +8882,10 @@ PrefabInstance:
     - target: {fileID: 7763229328672349264, guid: a321bb665ee2e0442b8da9b64354df80, type: 3}
       propertyPath: DummyMode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7763229328672349264, guid: a321bb665ee2e0442b8da9b64354df80, type: 3}
+      propertyPath: maxHealth
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7763229328672349264, guid: a321bb665ee2e0442b8da9b64354df80, type: 3}
       propertyPath: CameraTarget
