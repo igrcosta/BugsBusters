@@ -5,18 +5,39 @@ public class BulletController : MonoBehaviour
     // variáveis da forma como o tiro vai se comportar
     [SerializeField] private float bulletSpeed = 20f;
     [SerializeField] private float lifetime = 7f;
+    [SerializeField] private AudioSource bulletAudio;
 
+    private AudioSource audioSource;
     public BulletColor bulletColor;
     public bool isFiredByPlayer = true;
 
     public int PLayerDamage = 10;
     public int EnemyDamage  = 5;
 
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
     void Start()
     {
+        if (!isFiredByPlayer && audioSource != null)
+        {
+            audioSource.enabled = false;
+        }
         // depois do tempo de lifetime, a bala que possui esse script será destruída
         Destroy(gameObject, lifetime);
     }
+
+    public void Initialize(bool fromPlayer)
+    {
+        isFiredByPlayer = fromPlayer;
+
+        // Toca som só se for bala do player
+        if (isFiredByPlayer && bulletAudio != null)
+            bulletAudio.Play();
+    }
+
 
     void Update()
     {

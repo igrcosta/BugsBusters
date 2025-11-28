@@ -1,45 +1,31 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class SongManager : MonoBehaviour
 {
-    [SerializeField] Slider SongSlider;
-    [SerializeField] Slider SFXSlider;
-    void Start()
+    public AudioMixer mixer;
+    public Slider sfxVol;
+    public Slider musicVol;
+    public Slider masterVol;
+
+    private void Start()
     {
-        if (PlayerPrefs.HasKey("musicValue"))
-        {
-            PlayerPrefs.SetFloat("musicValue", 1);
-            Load();
-        }
-        else
-        {
-            Load();
-        }
+        
     }
 
-    
-    public void ChangeVolume()
+    public void MusicVolChange()
     {
-        AudioListener.volume = SongSlider.value;
-        Save();
+        mixer.SetFloat("MusicVol", musicVol.value);
     }
 
-
-
-    public void ChangeSFXVolume()
+    public void SFXVolChange()
     {
-        AudioListener.volume = SFXSlider.value;
-        Save();
+        mixer.SetFloat("SFXVol", sfxVol.value);
     }
 
-    private void Load()
+    public void MasterVolChange()
     {
-       SongSlider.value = PlayerPrefs.GetFloat("musicValue");
-    }
-
-    private void Save()
-    {
-        PlayerPrefs.SetFloat("musicVolume" , SongSlider.value);
+        mixer.SetFloat("MasterVol", masterVol.value);
     }
 }
