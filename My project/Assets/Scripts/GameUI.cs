@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI; // Garante que a classe Text esteja acessível
+using System.Collections; // para usar a MASTERPIECE dos games, A.K.A coroutines!
 
 public class GameUI : MonoBehaviour
 {
@@ -13,6 +14,12 @@ public class GameUI : MonoBehaviour
     public Image pauseMenu;
 
     [SerializeField] Text InimigosMortosText; // NOVO: Referência para o componente Text na HUD
+
+    [Header("Barras de vida do boss")]
+
+    private boss BossRef;
+    public RawImage BossGreenBar;
+    public RawImage BossRedBar;
 
     private void LateUpdate()
     {
@@ -51,5 +58,47 @@ public class GameUI : MonoBehaviour
         {
             InimigosMortosText.text = "Inimigos Mortos: " + kills;
         }
+    }
+
+    //daqui pra frente vai ser tudo que envolve a barra de vida do boss na última fase
+
+    public void UpdateBossBar()
+    {
+        BossRef = GameControllerScript.controller.BossRef;
+
+        Vector3 lifebarScale = BossGreenBar.rectTransform.localScale;
+        //pegamos a escala da barra verde e jogamos para um vector 3
+
+        lifebarScale.x = (float)BossRef.Health/ BossRef.MaxHealth;
+        //definimos a escala da barra de vida em x para um valor float da divisão entre a vida atual do boss com a vida máxima dele (esse cálculo serve pra qualquer ser vivo com health bar)
+
+        BossGreenBar.rectTransform.localScale = lifebarScale;
+        //aplicamos o tamanho local da barra verde de vida com o cálculo da redução de x em base da sua vida
+
+        StartCoroutine(DecreasingRedBar(lifebarScale));
+        //iniciamos a coroutina para diminuir a barra vermelha de vida um pouco depois da barra vermelha e de forma gradual
+    }
+
+    IEnumerator DecreasingRedBar(Vector3 newScale)
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        Vector3 redBarScale = BossRedBar.transform.localScale;
+        //pegamos a escala da barra vermelha e colocamos um vector3 para guardar seus valores
+
+        //enquanto a escala em x da barra vermelha de vida, estiver maior que a escala em x da barra de vida verde...
+        while(BossRedBar.transform.localScale.x > newScale.x)
+        {
+            redBarScale.x -= Time.deltaTime * 0.25f;
+            BossRedBar.transform.localScale = redBarScale;
+
+            //a gente faz a redBarScale em x se reduzir de pouco em pouco conforme passa o tempo
+            //e aplica isso no transform da barra vermelha
+
+            yield return null;
+        }
+
+        BossRedBar.transform.localScale = newScale;
+        //definimos o tamanho para ficar exatamente igual o da escala do verde (isso evita bugs)
     }
 }

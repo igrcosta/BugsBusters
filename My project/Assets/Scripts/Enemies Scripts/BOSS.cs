@@ -6,7 +6,8 @@ public class boss : MonoBehaviour
 {
     [Header ("Stats")]
     private bool IsVulnerable = true;
-    [SerializeField] int Health = 100;
+    [SerializeField] public int MaxHealth = 1000;
+    [SerializeField] public int Health = 100;
     [SerializeField] int BulletsDamage = 10;
     [SerializeField] int ShockwaveDamage = 30;
 
@@ -67,6 +68,10 @@ public class boss : MonoBehaviour
     {
         //colocar aqui as referências das coisas que ele vai usar, que nem os 8 shootpoints, etc
         //no caso, a ordem das coroutines que determinam o comportamento do boss vão aqui
+
+        Health = MaxHealth;
+
+        GameControllerScript.controller.BossRef = this;
 
         rb = GetComponent<Rigidbody>();
 
@@ -410,11 +415,13 @@ public class boss : MonoBehaviour
 
             //PARTE VISUAL === FIM
 
+            GameControllerScript.controller.GameUI.UpdateBossBar();
+
             Health -= bulletDamage;
 
             if (Health <= 0)
             {
-                //Die();
+                GameControllerScript.controller.TheGameIsOver();
             }
         }
     }
