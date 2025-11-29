@@ -24,22 +24,32 @@ public class WaveManager : MonoBehaviour
 
         if (currentWaveIndex >= waves.Count)
         {
-            Debug.Log("Todas as waves foram concluídas. Fim de jogo!");
-            GameControllerScript.controller.EndGame();
-            // TODO: Chamar o método de Vitória Final no GameController
+            Debug.Log("Todas as waves foram concluídas neste nível. O GameController cuidará da transição final.");
+            return;
+        }
+        
+        // Restaurando a lógica de configuração e ativação da wave.
+        WaveConfig currentWave = waves[currentWaveIndex];
+        
+        // Garante que a lista de inimigos está configurada antes de passar.
+        if (currentWave.enemyRates == null || currentWave.enemyRates.Count == 0)
+        {
+            Debug.LogError($"WaveManager: Wave {currentWaveIndex + 1} não tem EnemyRates configurados. Verifique o Inspector!");
             return;
         }
 
-        WaveConfig currentWave = waves[currentWaveIndex];
-        
+        // 1. Ativa o controlador de spawn com as configurações da wave atual.
         spawnController.Activation(
             currentWave.numberOfSpawnersToActivate, 
             currentWave.spawnAttemptsPerSpawner, 
             currentWave.enemyRates
         );
         
-        Debug.Log($"Wave {currentWaveIndex + 1} iniciada!");
+        Debug.Log($"Wave {currentWaveIndex + 1} iniciada! Total de Waves: {waves.Count}.");
+        
+        // 2. Incrementa o índice para preparar a próxima chamada.
         currentWaveIndex++;
+        // -------------------------------------------------------------------
     }
 
     public void CheckWinCondition(int totalEnemiesKilled, int totalEnemiesToKill)
@@ -53,6 +63,20 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
-        GameControllerScript.controller.WaveManagerRef = this;
+        // Garante que o GameController exista antes de tentar registrar.
+        if (GameControllerScript.controller != null)
+        {
+            GameControllerScript.controller.WaveManagerRef = this;
+        }
+        else
+        {
+            Debug.LogError("GameController não encontrado/registrado. O WaveManager não pode se referenciar.");
+        }
+    }
+
+    public bool IsFinalWaveCompleted()
+    {
+        // Se o índice atual (após o incremento em StartNextWave) for >= ao total, a última wave terminou.
+        return currentWaveIndex >= waves.Count;
     }
 }

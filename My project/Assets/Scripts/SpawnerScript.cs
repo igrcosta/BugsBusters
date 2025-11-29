@@ -44,17 +44,31 @@ public class Spawner : MonoBehaviour
     {
         int i = 0;
 
+        if (currentEnemyRates == null || currentEnemyRates.Count == 0)
+        {
+            Debug.LogError("FUDEU");
+            SpawningCycleVar = null;
+            yield break;
+        }
+
         while(i < Enemycounter)
         {
             i++;
 
             GameObject enemyToSpawn = GetRandomEnemyPrefab();
 
-            Instantiate(enemyToSpawn, transform.position, transform.rotation);
-            //instancia um prefab do inimigo na posição do nosso spawner
-            
-            yield return new WaitForSeconds(SpawnCoolDown);
-            //espera alguns segundos definidos pelo SpawnCoolDown
+            if (enemyToSpawn == null)
+            {
+                Debug.LogWarning("deu o carai mermo");
+            }
+            else
+            {
+                Instantiate(enemyToSpawn, transform.position, transform.rotation);
+                //instancia um prefab do inimigo na posição do nosso spawner
+
+                yield return new WaitForSeconds(SpawnCoolDown);
+                //espera alguns segundos definidos pelo SpawnCoolDown
+            }
         }
         SpawningCycleVar = null;
         //assim que chegar no final, a Coroutine vai parar, mas recomendam colocar um:

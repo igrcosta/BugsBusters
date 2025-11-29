@@ -2567,15 +2567,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cheatsEnabled: 1
   Player: {fileID: 358944596}
-  PlayerMatFirst: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
-  PlayerMatSecond: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
   Timer: {fileID: 1229945368}
   EnemySpawnManagerScriptRef: {fileID: 8454403590880084662}
   SafeZone: {fileID: 0}
   GameUI: {fileID: 1164945649}
   WaveManagerRef: {fileID: 338366222}
-  ColorLogic: 0100000002000000
-  backgroundMenu: {fileID: 983234504}
 --- !u!4 &655102149
 Transform:
   m_ObjectHideFlags: 0
@@ -3533,7 +3529,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 167344762}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -7232,7 +7228,6 @@ RectTransform:
   m_Children:
   - {fileID: 795647639}
   - {fileID: 318367511}
-  - {fileID: 167344762}
   m_Father: {fileID: 983234502}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -8902,3 +8897,4 @@ SceneRoots:
   - {fileID: 1164945648}
   - {fileID: 391974472}
   - {fileID: 1375245734}
+  - {fileID: 942715661}

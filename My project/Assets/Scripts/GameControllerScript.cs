@@ -13,23 +13,16 @@ public class GameControllerScript : MonoBehaviour
     [Header("Tudo sobre o Player")]
     public Player Player; // Acessar o gameObject do tipo Player
 
-    [Header("Materiais que Inimigos/Player usam")]
-    public Material PlayerMatFirst, PlayerMatSecond;
-
     [Header("Elementos dentro do Level01")]
     public TimerScript Timer;
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
     public SafeZoneScript SafeZone;
     public GameUI GameUI;
 
-    private int ActualSceneIndex;
-
     public static GameControllerScript controller;
 
     private Coroutine ActualCoroutine;
 
-    private int EnemiesNumber; // Não está sendo usado
-    private int pontos; // Não está sendo usado
     private int totalEnemiesToKill;
 
     int inimigosMortos; // Contador de inimigos mortos
@@ -40,9 +33,6 @@ public class GameControllerScript : MonoBehaviour
 
     public WaveManager WaveManagerRef;
 
-    public int[] ColorLogic = { 1, 0 }; // Corrigido para 0 e 1, seguindo a lógica do Player.cs
-
-    public Image backgroundMenu; 
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -93,41 +83,23 @@ public class GameControllerScript : MonoBehaviour
     }
 
     void Update()
+{
+    // A checagem de IsGameActive já garante que estamos na cena de jogo e prontos.
+    // O ActualSceneIndex é redundante se você usa OnSceneLoaded e IsGameActive.
+    
+    if (IsGameActive)
     {
-        FindingActualScene();
+        // Esta função chama WaveManagerRef.CheckWinCondition, que por sua vez,
+        // chama WaveFinished() (a função que encerra a wave).
+        CountingEnemies(); 
 
-        if (ActualSceneIndex == 2)
-        {
-
-            if (IsGameActive)
-            {
-                CountingEnemies();
-
-                if (WinCondition)
-                {
-                    if (ActualCoroutine != null)
-                    {
-                        StopCoroutine(ActualCoroutine);
-                        Timer.StopTimer();
-
-                        GameOver();
-                        WinCondition = false;
-                        IsGameActive = false;
-                    }
-                }
-            }
-        }
-
-        if (cheatsEnabled && Input.GetKeyDown(KeyCode.F1))
-        {
-        ForceNextWaveCheat();
-        }
-
-        if(ActualSceneIndex == 3)
-        {
-            
-        }
     }
+
+    if (cheatsEnabled && Input.GetKeyDown(KeyCode.F1))
+    {
+        ForceNextWaveCheat();
+    }
+}
 
     public void DestroyAllActiveEnemies()
 {
@@ -234,30 +206,42 @@ public class GameControllerScript : MonoBehaviour
 
 
     IEnumerator NextWaveTransitionRoutine()
-    {
-        Debug.Log("Wave Finalizada! preparando para a próxima");
+{
+    Debug.Log("Wave Finalizada! Iniciando transição de 5s para a próxima Wave.");
+    
+    // ===================================================================
+    // 1. RESET CRÍTICO: Limpa todos os valores antes da pausa visual
+    // ===================================================================
 
-        // CORREÇÃO CRÍTICA: Zera a contagem de inimigos mortos para a nova wave
-        inimigosMortos = 0; 
-        GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
-        // Fim da Correção
+    // Zera a contagem de inimigos mortos para a nova wave e atualiza o HUD
+    inimigosMortos = 0; 
+    GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
 
-        yield return new WaitForSeconds(5f);
+    // CRÍTICO: Reseta a meta de inimigos. O WaveManager definirá a nova meta.
+    totalEnemiesToKill = 0; 
+    
+    // Reseta o Timer (zera o tempo na UI)
+    Timer.ResetTimer();
 
-        EnemySpawnManagerScriptRef.ResetSpawners();
-        Timer.ResetTimer();
+    // Desativa e reseta os spawners da wave anterior
+    EnemySpawnManagerScriptRef.ResetSpawners();
 
-        WaveManagerRef.StartNextWave();
+    // ===================================================================
+    // 2. PAUSA/TRANSIÇÃO VISUAL
+    // ===================================================================
+    yield return new WaitForSeconds(2f); // Pausa visual entre as waves
 
-        SafeZone.ActivateAndBeginShrinking();
-        Timer.StartTimer();
-        IsGameActive = true;
-    }
+    // ===================================================================
+    // 3. INICIA A PRÓXIMA WAVE E ATIVA O JOGO
+    // ===================================================================
 
-    private void FindingActualScene()
-    {
-        ActualSceneIndex = SceneManager.GetActiveScene().buildIndex;
-    }
+    // Inicia a próxima wave, que irá chamar SetTotalEnemiesToKill() com a nova meta.
+    WaveManagerRef.StartNextWave();
+
+    SafeZone.ActivateAndBeginShrinking();
+    Timer.StartTimer(); // Reinicia o Timer
+    IsGameActive = true;
+}
 
     public void GameOver()
     {
@@ -266,9 +250,26 @@ public class GameControllerScript : MonoBehaviour
     }
 
     public void EndGame()
+{
+    // Transição para a cena de Vitória/Créditos (Índice 3) COM FADE.
+    
+    // 2. CRÍTICO: INICIA A COROUTINE NO SceneFader.Instance
+    if (SceneFader.Instance != null)
     {
+        // O Fader agora roda a Coroutine em seu próprio objeto persistente.
+        SceneFader.Instance.StartCoroutine(SceneFader.Instance.FadeOutAndLoadScene(3));
+    }
+    else
+    {
+        Debug.LogError("ERRO FATAL: SceneFader.Instance é NULO! Carregando cena diretamente (SEM FADE).");
         SceneManager.LoadScene(3);
     }
+    
+    // 3. LIMPA O JOGO APÓS A COROUTINE SER INICIADA (Garante que o Fader sobreviva)
+    CleanUpGame();
+}
+
+
 
     public void CleanUpGame()
     {
@@ -283,19 +284,51 @@ public class GameControllerScript : MonoBehaviour
         inimigosMortos = 0;
     }
 
-    public void WaveFinished()
+    public void TimeExpired()
+{
+    if (IsGameActive)
     {
-        if (ActualCoroutine != null)
-        {
-            StopCoroutine(ActualCoroutine);
-            Timer.StopTimer();
-
-            WinCondition = false;
-            IsGameActive = false;
-
-            ActualCoroutine = StartCoroutine(NextWaveTransitionRoutine());
-        }
+        Debug.Log("Tempo esgotado! Game Over por tempo.");
+        // Para todas as operações e transiciona para a cena 4 (Game Over por Tempo)
+        CleanUpGame();
+        // Não usamos o Fade, apenas trocamos a cena (Assumindo que 4 é a tela de Game Over)
+        SceneManager.LoadScene(4);
     }
+}
+
+    public void WaveFinished()
+{
+    // 1. DESATIVA O JOGO E LIMPA ESTADOS (IMEDIATAMENTE)
+    IsGameActive = false;
+    WinCondition = false;
+    
+    // 2. PARA O TIMER (MUITO CRÍTICO!)
+    if (Timer != null)
+    {
+        // Isso define isRunning = false no TimerScript antes do próximo Update()
+        Timer.StopTimer(); 
+    }
+
+    // 3. PARA A COROUTINE ATUAL (A que está gerenciando a wave - First/NextWaveRoutine)
+    if (ActualCoroutine != null)
+    {
+        StopCoroutine(ActualCoroutine);
+        ActualCoroutine = null; // Limpa a referência
+    }
+
+    // 4. DECISÃO DE TRANSIÇÃO
+    if (WaveManagerRef != null && WaveManagerRef.IsFinalWaveCompleted()) 
+    {
+        Debug.Log("Última wave finalizada! Iniciando EndGame (Com Fade para Cena 3).");
+        EndGame(); 
+    }
+    else
+    {
+        Debug.Log("Wave finalizada! Iniciando transição para a próxima wave...");
+        // Inicia a nova rotina de transição
+        ActualCoroutine = StartCoroutine(NextWaveTransitionRoutine());
+    }
+}
 
     private void CountingEnemies()
     {

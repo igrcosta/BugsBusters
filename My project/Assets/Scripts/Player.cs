@@ -264,6 +264,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == false)
         {
             IsPaused = true;
+            DummyMode = true;
             Time.timeScale = 0;
 
             GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(true);
@@ -273,8 +274,9 @@ public class Player : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == true)
         {
             IsPaused = false;
+            DummyMode = false;
             Time.timeScale = 1;
-            GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(true);
+            GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(false);
             
         }
     }

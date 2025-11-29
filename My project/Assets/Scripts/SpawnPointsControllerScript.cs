@@ -26,6 +26,8 @@ public class SpawnPointsControllerScripts : MonoBehaviour
             {
                 Debug.LogError("GameController não encontrado na cena!");
                 }
+
+        Debug.Log($"[SpawnManager] Spawners encontrados na cena: {SpawnPoints.Length}");
     }
 
     public void ResetSpawners()
@@ -62,25 +64,35 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
         // ATIVAÇÃO E CONFIGURAÇÃO
         for (int i = 0; i < spawnersToUse; i++)
-        {
-            // Pega o índice aleatório e único
-            int spawnerIndex = availableIndices[i];
-            
-            GameObject selectedSpawner = SpawnPoints[spawnerIndex];
+{
+    // Pega o índice aleatório e único
+    int spawnerIndex = availableIndices[i];
+    
+    GameObject selectedSpawner = SpawnPoints[spawnerIndex];
 
-            // Ativa o Spawner
-            selectedSpawner.gameObject.SetActive(true);
+    // Ativa o Spawner
+    selectedSpawner.gameObject.SetActive(true);
 
-            // Configura o Script do Spawner
-            Spawner SpawnerScript = selectedSpawner.GetComponent<Spawner>();
-            
-            // Passa a lista de inimigos e as tentativas de spawn
-            SpawnerScript.SetupSpawner(spawnAttempts, enemyRates);
+    // Configura o Script do Spawner
+    Spawner SpawnerScript = selectedSpawner.GetComponent<Spawner>();
+    
+    // CRÍTICO: VERIFICA SE O SCRIPT FOI ENCONTRADO
+    if (SpawnerScript == null)
+    {
+        // Se o script Spawner não estiver no objeto, loga o erro e pula para o próximo spawner no loop.
+        Debug.LogError($"[SPAWNPOINTS] O Spawner do índice {spawnerIndex} ({selectedSpawner.name}) NÃO possui o componente Spawner. Pulando.");
+        // Não conta inimigos e nem inicia o spawn.
+        continue; 
+    }
 
-            currentWaveTotalEnemies += SpawnerScript.Enemycounter;
+    // Passa a lista de inimigos e as tentativas de spawn
+    SpawnerScript.SetupSpawner(spawnAttempts, enemyRates);
 
-            SpawnerScript.StartSpawning();
-        }
+    // CRÍTICO: Contagem segura
+    currentWaveTotalEnemies += spawnAttempts;
+
+    SpawnerScript.StartSpawning();
+}
 
         // Atualiza a contagem de inimigos
         GameControllerScript.controller.SetTotalEnemiesToKill(currentWaveTotalEnemies);

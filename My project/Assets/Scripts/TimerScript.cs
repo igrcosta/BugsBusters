@@ -51,17 +51,23 @@ public class TimerScript : MonoBehaviour
     private void Countdown()
     {
         if(remainingTime > 0)
-        {
-            remainingTime -= Time.deltaTime;
-        }
-        else if(remainingTime < 0)
+    {
+        remainingTime -= Time.deltaTime;
+        
+        // Se o tempo acabou neste frame, tratamos a condição
+        if (remainingTime <= 0) // Checagem se o tempo acabou AGORA
         {
             remainingTime = 0;
             timerText.color = Color.red;
-            GameControllerScript.controller.GameOver();
-            //quando o tempo zerar, o relógio vai ficar vermelho, e vai executar o método GameOver do gameController
+            
+            // 1. Chamar a transição de fim de tempo
+            GameControllerScript.controller.TimeExpired();
+            
+            // 2. Parar o loop do Update()
+            StopTimer();
         }
-        
+    }
+   
         int minutes = Mathf.FloorToInt(remainingTime / 60);
         int seconds = Mathf.FloorToInt(remainingTime % 60);
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
