@@ -13,11 +13,15 @@ public class GameControllerScript : MonoBehaviour
     [Header("Tudo sobre o Player")]
     public Player Player; // Acessar o gameObject do tipo Player
 
+    [Header("Tudo sobre o BOSS")]
+    public boss BossRef;
+
     [Header("Elementos dentro do Level01")]
     public TimerScript Timer;
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
     public SafeZoneScript SafeZone;
     public GameUI GameUI;
+ 
 
     public static GameControllerScript controller;
 
@@ -61,6 +65,8 @@ public class GameControllerScript : MonoBehaviour
             // Quando em HomeScene ou DeathScene, reseta
             HasWaveStarted = false;
         }
+
+        
     }
 
     private void Awake()
@@ -356,5 +362,11 @@ public class GameControllerScript : MonoBehaviour
     {
         totalEnemiesToKill = total;
         Debug.Log("Meta de inimigos para matar nesta wave: " + totalEnemiesToKill);
+    }
+
+    //Função para quando o player matar o boss
+    public void TheGameIsOver()
+    {
+        SceneManager.LoadScene(5);
     }
 }
