@@ -216,10 +216,12 @@ public class boss : MonoBehaviour
             // Define a velocidade para animação baseado no movimento real
             float currentMoveSpeed = direction.sqrMagnitude > 0.01f ? speed : 0f;
             animator.SetFloat("enemySpeed", currentMoveSpeed);
+
         }
         else // Se não está em tempo de movimento, para.
         {
             rb.linearVelocity = Vector3.zero;
+            animator.SetFloat("enemySpeed", 0);
         }
     }  
 

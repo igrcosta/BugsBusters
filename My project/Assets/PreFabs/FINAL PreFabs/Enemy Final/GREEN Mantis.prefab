@@ -1270,9 +1270,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8197206010559070688}
+  - component: {fileID: 5503443375085103543}
   - component: {fileID: 7745516734932526203}
   - component: {fileID: 7334137292502433941}
-  - component: {fileID: 5503443375085103543}
   - component: {fileID: 2062426034450449074}
   - component: {fileID: 2038880838496912339}
   - component: {fileID: 7851905652271226530}
@@ -1301,6 +1301,33 @@ Transform:
   - {fileID: 3763511853491475127}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!54 &5503443375085103543
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8829733417989069658}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!114 &7745516734932526203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1329,7 +1356,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a39323c63933a141a28c409a13437dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hp: 50
+  Hp: 40
   enemySpeed: 0.7
   stoppingDistance: 0.5
   redBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
@@ -1339,33 +1366,6 @@ MonoBehaviour:
   shotsPerBurst: 3
   cooldownTime: 2
   hitAudioSource: {fileID: 7851905652271226530}
---- !u!54 &5503443375085103543
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8829733417989069658}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 80
-  m_CollisionDetection: 0
 --- !u!95 &2062426034450449074
 Animator:
   serializedVersion: 7

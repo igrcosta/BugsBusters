@@ -1,9 +1,24 @@
 fileFormatVersion: 2
-guid: 6b893d22ba403094396acdad7c989315
+guid: 01a45979da4fa434a914a4f3bc1d5b0c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metalico
+    second: {fileID: 2100000, guid: 90772bfb31af9bb4d857ad629b995b91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Preto
+    second: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Vermelho
+    second: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -31,11 +46,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: ArmatureBoss|BossAttack
-      takeName: ArmatureBoss|BossAttack
-      internalID: -2336647529526047402
+      name: ArmatureBeetle|BeetleAttack
+      takeName: ArmatureBeetle|BeetleAttack
+      internalID: 5318876384348618552
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -60,38 +75,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: ArmatureBoss|BossFall
-      takeName: ArmatureBoss|BossFall
-      internalID: 2226206921476486666
-      firstFrame: 0
-      lastFrame: 30
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: ArmatureBoss|BossIdle
-      takeName: ArmatureBoss|BossIdle
-      internalID: -5014131696055578647
+      name: ArmatureBeetle|BeetleIdle
+      takeName: ArmatureBeetle|BeetleIdle
+      internalID: -4065535301627997992
       firstFrame: 0
       lastFrame: 30
       wrapMode: 0
@@ -118,40 +104,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: ArmatureBoss|BossWalk
-      takeName: ArmatureBoss|BossWalk
-      internalID: 3335381126148718144
+      name: ArmatureBeetle|BeetleWalk
+      takeName: ArmatureBeetle|BeetleWalk
+      internalID: 5081872027706176744
       firstFrame: 0
-      lastFrame: 19
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: ArmatureBoss|BossWalkSideways
-      takeName: ArmatureBoss|BossWalkSideways
-      internalID: 99404058696110308
-      firstFrame: 0
-      lastFrame: 20
+      lastFrame: 15
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -242,7 +199,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

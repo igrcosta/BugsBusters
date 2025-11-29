@@ -34,7 +34,8 @@ public class BettleEnemyScript : MonoBehaviour
 
     private Renderer myRenderer;
     private Rigidbody rb;
-    
+    private Animator animator; //pra animação funcionar
+
     // --- REFERÊNCIAS DINÂMICAS ---
     private Transform playerTargetTransform;
     private Component gameControllerRef;      
@@ -65,6 +66,7 @@ public class BettleEnemyScript : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();  //pra animação funcionar
         myRenderer = GetComponent<Renderer>();
 
         // Tenta encontrar o Player imediatamente
@@ -191,6 +193,10 @@ public class BettleEnemyScript : MonoBehaviour
             rb.linearVelocity.y,
             currentDirection.z * enemySpeed
         );
+
+        // Define a velocidade para animação baseado no movimento real
+        float currentMoveSpeed = currentDirection.sqrMagnitude > 0.01f ? enemySpeed : 0f;
+        animator.SetFloat("enemySpeed", currentMoveSpeed);
     }
     
     void HandleStoppingRotation()
@@ -200,6 +206,7 @@ public class BettleEnemyScript : MonoBehaviour
             Vector3 playerPosition = playerTargetTransform.position;
             transform.LookAt(new Vector3(playerPosition.x, transform.position.y, playerPosition.z));
         }
+        animator.SetFloat("enemySpeed", 0); //pra forçar a parada da animação de andar 
     }
     
     // ====================================================================

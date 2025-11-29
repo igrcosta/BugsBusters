@@ -64,7 +64,6 @@ public class Enemy1 : MonoBehaviour
         if (playerTargetTransform != null)
         {
             currentState = EnemyState.Chasing;
-            //animator.SetBool("isFalling", true); //não vou usar esse mais
         }
         else
         {
@@ -125,15 +124,13 @@ public class Enemy1 : MonoBehaviour
         if (!hasLanded && collision.gameObject.CompareTag("Ground"))
         {
             hasLanded = true;
-            //animator.SetBool("isFalling", false);
-            //.SetTrigger("FallImpact"); //não vou usar esses mais
 
             rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
             rb.angularVelocity = Vector3.zero;
             currentDirection = Vector3.zero;
         }
 
-        
+
     }
 
     private void ResetVelocity()
