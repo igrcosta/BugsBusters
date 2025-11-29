@@ -133,8 +133,7 @@ public class Enemy1 : MonoBehaviour
 
     }
 
-    private void ResetVelocity()
-    {
+    private void ResetVelocity()    {
         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
     }
 
