@@ -39,6 +39,8 @@ public class Player : MonoBehaviour
     private TutorialController tutorialControllerRef;
     private TutorialManager tutorialManagerRef;
 
+    public Image backgroundMenu;
+
     [Header("Som de Dano")]
     [SerializeField] private AudioSource hitAudioSource;
 
@@ -113,6 +115,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0) return;
         // 🚨 CHECAGEM DE SEGURANÇA PARA CC
         if (cc == null) return; 
         
@@ -120,7 +123,7 @@ public class Player : MonoBehaviour
         Movement();
         HandleColorSwitchInput();
 
-        Pause();
+        //Pause();
     }
 
     void ApplyGravity()
@@ -259,7 +262,7 @@ public class Player : MonoBehaviour
         // PlayerCabecaTransform.localRotation = correctRotation;
     }
 
-    public void Pause()
+    /*public void Pause()
     {
         if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == false)
         {
@@ -277,5 +280,5 @@ public class Player : MonoBehaviour
             GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(true);
             
         }
-    }
+    }*/
 }

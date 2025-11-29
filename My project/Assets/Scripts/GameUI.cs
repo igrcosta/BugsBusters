@@ -20,7 +20,7 @@ public class GameUI : MonoBehaviour
         if (player != null)
         {
             float healthPercent = (float)player.CurrentHealth / 100f;
-            
+
             // Note: Você está aplicando a interpolação (Lerp) e depois sobrescrevendo imediatamente.
             // Para ter a animação suave, você deve usar SOMENTE o Lerp:
             // healthBarFillImage.fillAmount = Mathf.Lerp(healthBarFillImage.fillAmount, healthPercent, Time.deltaTime * speed);
@@ -32,7 +32,7 @@ public class GameUI : MonoBehaviour
 
     private void Awake()
     {
-        if(GameControllerScript.controller != null)
+        if (GameControllerScript.controller != null)
         {
             // Registra o Canvas do jogo para o GameController
             GameControllerScript.controller.GameUI = this;

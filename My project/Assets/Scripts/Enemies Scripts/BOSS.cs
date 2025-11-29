@@ -410,6 +410,7 @@ public class boss : MonoBehaviour
 
             Health -= bulletDamage;
 
+
             if (Health <= 0)
             {
                 //Die();
