@@ -5,7 +5,7 @@ using System.Collections;
 public class boss : MonoBehaviour
 {
     [Header ("Stats")]
-    private bool IsVulnerable = true;
+    public bool IsVulnerable = true;
     [SerializeField] public int MaxHealth = 1000;
     [SerializeField] public int Health = 100;
     [SerializeField] int BulletsDamage = 10;
@@ -17,7 +17,7 @@ public class boss : MonoBehaviour
 
     [SerializeField] float ShootBreathing = 1f;
 
-    [SerializeField] float PhasesTransitionTime = 2f;
+    [SerializeField] float PhasesTransitionTime = 1.5f;
 
     private Animator animator; //pra animação funcionar
 
@@ -64,6 +64,8 @@ public class boss : MonoBehaviour
 
     private bool IsMovementTime = true;
 
+    private Coroutine ActualShootingRef;
+
     void Start()
     {
         //colocar aqui as referências das coisas que ele vai usar, que nem os 8 shootpoints, etc
@@ -93,61 +95,281 @@ public class boss : MonoBehaviour
         //vou ter que colocar no fim de cada fase uma verificação pra ver a vida do boss, se atingir ao oq quero, passar pro próximo
 
         PlayerChasing();
-    }
 
+        GameControllerScript.controller.GameUI.BossBarCondition();
+    }
+    
+    // ====================== ATENÇÃO =======================
+    //             fases do boss === INÍCIO
+    //=======================================================
+
+    #region Primeira Fase
     IEnumerator FirstPhase()
     {
-        Coroutine ActualShootingRef;
-
         Debug.Log("Comecei a primeira fase!");
 
         while(Health >= 670)
         {
-             //1. ciclo de tiros vermelhos, definindo a cor dele pra vermelho
+            //1. ciclo de tiros vermelhos, definindo a cor dele pra vermelho
 
-             IsVulnerable = true;
+            IsVulnerable = false;
+            MovingAndShootingRed();
 
-             IsMovementTime = true;
-             SetPhaseColor(BulletColor.Red);
-             ActualShootingRef = StartCoroutine(SecondShooting());
-             yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(5f);
 
-             //2. Parada depois de um tempo andando e atirando
-             StopCoroutine(ActualShootingRef);
-             IsMovementTime = false;
-             IsVulnerable = false;
+            //2. Parada depois de um tempo andando e atirando
 
-             //3. tiros VERMELHOS de transição (INVULNERÁVEL)
- 
-             SingleShot(REDBigBullet);
-             yield return new WaitForSeconds(ShootBreathing);
-             SingleShot(REDBigBullet);
-             yield return new WaitForSeconds(ShootBreathing+1f);
+            StoppingtoShoot();
 
-             //4. ciclo de tiros verdes definindo antes a cor do boss pra verde
-             SetPhaseColor(BulletColor.Green);
-             IsVulnerable = true;
-             ActualShootingRef = StartCoroutine(FirstShooting());
-             IsMovementTime = true;
+            //3. tiros VERMELHOS de transição (VULNERÁVEL)
 
-             yield return new WaitForSeconds(5f);
+            InvokeRepeating("RedTransitionShooting", 0.1f, 1f);
+            yield return new WaitForSeconds(2.4f);
+            CancelInvoke("RedTransitionShooting");
+            yield return new WaitForSeconds(0.5f);
 
-             //5. Depois de um tempo andando e atirando, paramos o tiro e paramos o movimento dele
+            //4. ciclo de tiros verdes definindo antes a cor do boss pra verde
+            
+            IsVulnerable = false;
+            MovingAndShootingGreen();
 
-             StopCoroutine(ActualShootingRef);
-             IsMovementTime = false;
-             IsVulnerable = false;
+            yield return new WaitForSeconds(5f);
 
-             //6. tiros de transição
+            //5. Depois de um tempo andando e atirando, paramos o tiro e paramos o movimento dele
 
-             SingleShot(GREENBigBullet);
-             yield return new WaitForSeconds(ShootBreathing);
-             SingleShot(GREENBigBullet);
-             yield return new WaitForSeconds(ShootBreathing+1.5f);
+            StoppingtoShoot();
+            
+            //6. tiros VERDES de transição (VULNERÁVEL)
+
+            InvokeRepeating("GreenTransitionShooting", 0.1f, 1f);
+            yield return new WaitForSeconds(2.4f);
+            CancelInvoke("GreenTransitionShooting");
+            yield return new WaitForSeconds(0.5f);
         }
         StopCoroutine("FirstPhase");
         IsVulnerable = false;
         StartCoroutine("SecondPhase");
+    }
+    #endregion
+
+    #region Segunda Fase
+    IEnumerator SecondPhase()
+    {
+        Debug.Log("Comecei a SEGUNDA fase pq sou lendário!");
+        yield return new WaitForSeconds(PhasesTransitionTime);
+
+        while(Health > 330)
+        {
+            //vermelho, verde,
+
+            //anda um cadim (VULNERÁVEL AQUI)
+
+            //vermelho, verde, verde
+
+            //anda um cadim de outra cor (VULNERÁVEL AQUI)
+
+            IsVulnerable = false;
+            IsMovementTime = false;
+
+            StartCoroutine("SummonREDShockwave");
+            //essa coroutina já se para sozinha, rlx
+
+            yield return new WaitForSeconds(1f);
+
+            StartCoroutine("SummonGREENShockwave");
+            //essa coroutina já se para sozinha, rlx
+
+            yield return new WaitForSeconds(1.5f);
+
+            IsVulnerable = true;
+            MovingAndShootingGreen();
+            yield return new WaitForSeconds(5f);
+
+            StoppingtoShockwave();
+
+            yield return new WaitForSeconds(1f);
+
+            StartCoroutine("SummonREDShockwave");
+
+            yield return new WaitForSeconds(1f);
+
+            StartCoroutine("SummonGREENShockwave");
+
+            yield return new WaitForSeconds(0.6f);
+
+            StartCoroutine("SummonGREENShockwave");
+
+            yield return new WaitForSeconds(1.8f);
+
+            IsVulnerable = true;
+            MovingAndShootingRed();
+            yield return new WaitForSeconds(5f);
+
+            StoppingtoShockwave();
+        }
+        StopCoroutine("SecondPhase");
+        IsVulnerable = false;
+        StartCoroutine("LastPhase");
+    }
+    #endregion
+
+    #region ÚLTIMA Fase
+    IEnumerator LastPhase()
+    {
+        Debug.Log("Comecei a ULTIMA fase pq sou lendário!");
+        yield return new WaitForSeconds(PhasesTransitionTime);
+
+
+        while (Health <= 330)
+        {
+
+            // vermelho, vermelho, verde
+
+            //para para spawnar inimigos (VULNERÁVEL AQUI)
+
+            //vermelho, verde, vermelho, verde (de forma rápida)
+
+            StoppingtoShockwave();
+
+            yield return new WaitForSeconds(1f);
+
+            StartCoroutine("SummonREDShockwave");
+
+            yield return new WaitForSeconds(1.2f);
+
+            StartCoroutine("SummonREDShockwave");
+
+            yield return new WaitForSeconds(1.1f);
+
+            StartCoroutine("SummonGREENShockwave");
+
+            yield return new WaitForSeconds(1.4f);
+            
+            IsVulnerable = true;
+            MovingAndShootingGreen();
+            SpawnEnemies();
+
+            yield return new WaitForSeconds(7f);
+
+            StoppingtoShockwave();
+
+            yield return new WaitForSeconds(1f);
+
+            StartCoroutine("SummonREDShockwave");
+
+            yield return new WaitForSeconds(1.1f);
+
+            StartCoroutine("SummonGREENShockwave");
+
+            yield return new WaitForSeconds(1.1f);
+
+            StartCoroutine("SummonREDShockwave");
+
+            yield return new WaitForSeconds(1f);
+
+            StartCoroutine("SummonGREENShockwave");
+
+            yield return new WaitForSeconds(1f);
+
+            IsVulnerable = true;
+            MovingAndShootingRed();
+            SpawnEnemies();
+
+            yield return new WaitForSeconds(10f);
+        }
+        
+        yield return null;
+        StopCoroutine("LastPhase");
+    }
+
+    #endregion
+
+    // ====================== ATENÇÃO =======================
+    //                fases do boss === FIM
+    //=======================================================
+
+    //FUNÇÕES PARA DIMINUIR O CÓDIGO DAS FASES: INÍCIO
+
+    #region Funções das fases
+
+    void MovingAndShootingRed()
+    {
+        SetPhaseColor(BulletColor.Red);
+        ActualShootingRef = StartCoroutine(SecondShooting());
+        IsMovementTime = true;
+    }
+    void MovingAndShootingGreen()
+    {
+        SetPhaseColor(BulletColor.Green);
+        IsMovementTime = true;
+        ActualShootingRef = StartCoroutine(FirstShooting());
+    }
+
+    //a função de parar para atirar mantêm a última cor aplicada, cuidado com isso
+
+    void StoppingtoShoot()
+    {
+        StopCoroutine(ActualShootingRef);
+        IsMovementTime = false;
+        IsVulnerable = true;
+    }
+
+    void SpawnREDShockwave()
+    {
+        Instantiate(REDShockwave, ExplosionPoint.position, ExplosionPoint.rotation);
+    }
+
+    void SpawnGREENShockwave()
+    {
+        Instantiate(GREENShockwave, ExplosionPoint.position, ExplosionPoint.rotation);
+    }
+
+    IEnumerator SummonREDShockwave()
+    {
+        SetPhaseColor(BulletColor.Red);
+        yield return new WaitForSeconds(0.8f); 
+        SpawnREDShockwave();
+        yield return new WaitForSeconds(1.5f); 
+        yield break;
+    }
+    
+    IEnumerator SummonGREENShockwave()
+    {
+        SetPhaseColor(BulletColor.Green);
+        yield return new WaitForSeconds(0.8f); 
+        SpawnGREENShockwave();
+        yield return new WaitForSeconds(1.5f); 
+        yield break;
+    }
+
+    void StoppingtoShockwave()
+    {
+        IsVulnerable = false;
+        StopCoroutine(ActualShootingRef);
+        IsMovementTime = false;
+    }
+
+    void RedTransitionShooting()
+    {
+        GameObject bulletToShoot = REDBigBullet;
+
+        Instantiate(bulletToShoot,Front.position, Front.rotation);
+        Instantiate(bulletToShoot,Right.position, Right.rotation);
+        Instantiate(bulletToShoot,Left.position, Left.rotation);
+        Instantiate(bulletToShoot,FrontandLeft.position, FrontandLeft.rotation);
+        Instantiate(bulletToShoot,FrontandRight.position, FrontandRight.rotation);
+    }
+
+
+    void GreenTransitionShooting()
+    {
+        GameObject bulletToShoot = GREENBigBullet;
+
+        Instantiate(bulletToShoot,Front.position, Front.rotation);
+        Instantiate(bulletToShoot,Right.position, Right.rotation);
+        Instantiate(bulletToShoot,Left.position, Left.rotation);
+        Instantiate(bulletToShoot,FrontandLeft.position, FrontandLeft.rotation);
+        Instantiate(bulletToShoot,FrontandRight.position, FrontandRight.rotation);
     }
 
     IEnumerator FirstShooting()
@@ -180,15 +402,6 @@ public class boss : MonoBehaviour
 
             yield return new WaitForSeconds(FireRate);
         }
-    }
-
-    void SingleShot(GameObject bulletPrefab)
-    {
-        Instantiate(bulletPrefab,Front.position, Front.rotation);
-        Instantiate(bulletPrefab,Right.position, Right.rotation);
-        Instantiate(bulletPrefab,Left.position, Left.rotation);
-        Instantiate(bulletPrefab,FrontandLeft.position, FrontandLeft.rotation);
-        Instantiate(bulletPrefab,FrontandRight.position, FrontandRight.rotation);
     }
 
     void PlayerChasing()
@@ -230,169 +443,14 @@ public class boss : MonoBehaviour
         }
     }  
 
-
-    IEnumerator SecondPhase()
-    {
-        Debug.Log("Comecei a SEGUNDA fase pq sou lendário!");
-        yield return new WaitForSeconds(PhasesTransitionTime);
-
-        while(Health > 330)
-        {
-            IsVulnerable = false;
-            SetPhaseColor(BulletColor.Red);
-        yield return new WaitForSeconds(0.7f);
-        SpawnREDShockwave();
-
-        yield return new WaitForSeconds(0.8f);
-        SetPhaseColor(BulletColor.Green);
-        yield return new WaitForSeconds(0.5f);
-        SpawnGREENShockwave();
-
-        yield return new WaitForSeconds(1f);
-        IsVulnerable = true;
-
-        SetPhaseColor(BulletColor.Red);
-        yield return new WaitForSeconds(0.5f);
-        IsVulnerable = false;
-        SpawnREDShockwave();
-        yield return new WaitForSeconds(0.7f);
-        SpawnREDShockwave();
-
-        yield return new WaitForSeconds(0.5f);
-
-        IsMovementTime = true;
-        IsVulnerable = true;
-
-        yield return new WaitForSeconds(5f);
-
-        IsMovementTime = false;
-
-        SetPhaseColor(BulletColor.Green);
-        yield return new WaitForSeconds(0.7f);
-        IsVulnerable = false;
-        SpawnGREENShockwave();
-
-        yield return new WaitForSeconds(0.8f);
-        SetPhaseColor(BulletColor.Red);
-        yield return new WaitForSeconds(0.5f);
-        SpawnREDShockwave();
-
-        IsVulnerable = true;
-        yield return new WaitForSeconds(1f);
-        
-
-        SetPhaseColor(BulletColor.Green);
-        IsVulnerable = false;
-        yield return new WaitForSeconds(0.5f);
-        SpawnGREENShockwave();
-        yield return new WaitForSeconds(0.7f);
-        SpawnGREENShockwave();
-
-        yield return new WaitForSeconds(0.5f);
-        IsMovementTime = true;
-        IsVulnerable = true;
-        SetPhaseColor(BulletColor.Red);
-
-        yield return new WaitForSeconds(5f);
-
-        IsMovementTime = false;
-        IsVulnerable = false;
-
-        }
-        StopCoroutine("SecondPhase");
-        StartCoroutine("LastPhase");
-    }
-
-    void SpawnREDShockwave()
-    {
-        Instantiate(REDShockwave, ExplosionPoint.position, ExplosionPoint.rotation);
-    }
-
-    void SpawnGREENShockwave()
-    {
-        Instantiate(GREENShockwave, ExplosionPoint.position, ExplosionPoint.rotation);
-    }
-    IEnumerator LastPhase()
-    {
-        Debug.Log("Comecei a ULTIMA fase pq sou lendário!");
-
-        Coroutine FinalShootingRef;
-
-        while (Health <= 330)
-        {
-            IsMovementTime = false;
-            IsVulnerable = false;
-            SetPhaseColor(BulletColor.Green);
-
-            yield return new WaitForSeconds(0.7f);
-            SpawnGREENShockwave();
-
-            IsVulnerable = true;
-            yield return new WaitForSeconds(1f);
-
-            SetPhaseColor(BulletColor.Red);
-            yield return new WaitForSeconds(0.4f);
-            IsVulnerable = false;
-            SpawnREDShockwave();
-
-            yield return new WaitForSeconds(1.5f);
-            SetPhaseColor(BulletColor.Green);
-
-            yield return new WaitForSeconds(0.5f);
-
-            IsMovementTime = true;
-            IsVulnerable = true;
-            FinalShootingRef = StartCoroutine(FirstShooting());
-
-            yield return new WaitForSeconds(5f);
-
-            StopCoroutine(FinalShootingRef);
-            IsMovementTime = false;
-            IsVulnerable = false;
-
-            yield return new WaitForSeconds(1f);
-            SpawnEnemies();
-            yield return new WaitForSeconds(1.5f);
-            SetPhaseColor(BulletColor.Red);
-
-            yield return new WaitForSeconds(0.5f);
-
-            IsVulnerable = false;
-            SetPhaseColor(BulletColor.Red);
-            yield return new WaitForSeconds(0.7f);
-            SpawnREDShockwave();
-
-            yield return new WaitForSeconds(0.5f);
-            SpawnREDShockwave();
-
-            yield return new WaitForSeconds(0.8f);
-            SetPhaseColor(BulletColor.Green);
-            yield return new WaitForSeconds(0.3f);
-            SpawnGREENShockwave();
-
-            yield return new WaitForSeconds(0.5f);
-
-            IsMovementTime = true;
-            IsVulnerable = true;
-            FinalShootingRef = StartCoroutine(FirstShooting());
-
-            yield return new WaitForSeconds(5f);
-
-            StopCoroutine(FinalShootingRef);
-            IsMovementTime = false;
-            IsVulnerable = false;
-
-        }
-        
-        yield return null;
-        StopCoroutine("LastPhase");
-    }
-
     void SpawnEnemies()
     {
         Instantiate(GREENSmallEnemy, RightPoint.position, RightPoint.rotation);
         Instantiate(REDSmallEnemy, LeftPoint.position, LeftPoint.rotation);
     }
+    #endregion
+
+    //FUNÇÕES PARA DIMINUIR O CÓDIGO DAS FASES: FIM
 
     //LÓGICA DE COR E DANO APLICADA DAQUI PRA BAIXO
 

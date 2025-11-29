@@ -79,6 +79,20 @@ public class GameUI : MonoBehaviour
         //iniciamos a coroutina para diminuir a barra vermelha de vida um pouco depois da barra vermelha e de forma gradual
     }
 
+    public void BossBarCondition()
+    {
+        BossRef = GameControllerScript.controller.BossRef;
+
+        if (BossRef.IsVulnerable)
+        {
+            BossGreenBar.enabled = true;
+        }
+        else
+        {
+            BossGreenBar.enabled = false;
+        }
+    }
+
     IEnumerator DecreasingRedBar(Vector3 newScale)
     {
         yield return new WaitForSeconds(0.5f);
