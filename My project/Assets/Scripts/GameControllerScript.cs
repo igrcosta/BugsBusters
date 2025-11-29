@@ -19,7 +19,6 @@ public class GameControllerScript : MonoBehaviour
     [Header("Elementos dentro do Level01")]
     public TimerScript Timer;
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
-    public SafeZoneScript SafeZone;
     public GameUI GameUI;
  
 
@@ -56,7 +55,6 @@ public class GameControllerScript : MonoBehaviour
             if (!HasWaveStarted)
             {
                 HasWaveStarted = true;
-                SafeZone.DisableAndReset();
                 ActualCoroutine = StartCoroutine(FirstWaveRoutine());
             }
         }
@@ -153,7 +151,7 @@ public class GameControllerScript : MonoBehaviour
     IEnumerator FirstWaveRoutine()
     {
         // Garante que todas as referências essenciais (exceto Player, que se registra) existam
-        while (Timer == null || SafeZone == null || GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
+        while (Timer == null || GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
         {
             yield return new WaitForEndOfFrame();
         }
@@ -203,7 +201,6 @@ public class GameControllerScript : MonoBehaviour
     WaveManagerRef.StartNextWave();
 
     // 4. Ativa elementos do jogo
-    SafeZone.ActivateAndBeginShrinking();
     Timer.StartTimer();
     IsGameActive = true;
     
@@ -244,7 +241,6 @@ public class GameControllerScript : MonoBehaviour
     // Inicia a próxima wave, que irá chamar SetTotalEnemiesToKill() com a nova meta.
     WaveManagerRef.StartNextWave();
 
-    SafeZone.ActivateAndBeginShrinking();
     Timer.StartTimer(); // Reinicia o Timer
     IsGameActive = true;
 }

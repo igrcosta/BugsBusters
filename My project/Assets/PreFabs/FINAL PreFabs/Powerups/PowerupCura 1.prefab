@@ -9,7 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6031312641274399106}
+  - component: {fileID: -5274664438298746614}
   - component: {fileID: 7876268175068900951}
+  - component: {fileID: 6070891363866607209}
   m_Layer: 0
   m_Name: PowerupCura 1
   m_TagString: Untagged
@@ -34,6 +36,21 @@ Transform:
   - {fileID: 5125987325423946935}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-5274664438298746614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203580331934755173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4029dcdaba3d8c4e9da67608fb57868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quantidadeCura: 25
+  tempoDeRespawn: 30
+  PickupSFX: {fileID: 8300000, guid: 7e08ae7a9518f2b4ba7cc1d49014807e, type: 3}
 --- !u!65 &7876268175068900951
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -55,6 +72,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.15986043, y: 0.16845092, z: 0.13752556}
   m_Center: {x: 0, y: 0.09449421, z: 0}
+--- !u!54 &6070891363866607209
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203580331934755173}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6231680948112353889
 GameObject:
   m_ObjectHideFlags: 0

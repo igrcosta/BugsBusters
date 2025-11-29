@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentColor: 0
-  myRenderer: {fileID: 0}
+  myRenderer: {fileID: 5483953025600100170}
   greenMaterial: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
   redMaterial: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
 --- !u!1 &2847469737653576133
@@ -565,5 +565,10 @@ PrefabInstance:
 --- !u!4 &4307784400768609029 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 276d3930260543d40802eb82d870154c, type: 3}
+  m_PrefabInstance: {fileID: 4342290739216338158}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &5483953025600100170 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8095220686842747812, guid: 276d3930260543d40802eb82d870154c, type: 3}
   m_PrefabInstance: {fileID: 4342290739216338158}
   m_PrefabAsset: {fileID: 0}

@@ -6,6 +6,9 @@ public class HealingItemScript : MonoBehaviour
     public float tempoDeRespawn = 10f;
 
     private SpawnerItem spawnerPai;
+
+    [Header("Som de Pickup")]
+    public AudioClip PickupSFX;
     
     public void SpawnerConfigure(SpawnerItem spawner)
     {
@@ -20,6 +23,8 @@ public class HealingItemScript : MonoBehaviour
             if (playerSaude != null)
             {
                 playerSaude.Curar((int)quantidadeCura);
+                GlobalAudioPlayer.Instance.PlayPickupSound(PickupSFX);
+                //já que o objeto vai pro vasco, isso resolve o problema de não se ouvir nada
             }
 
             gameObject.SetActive(false);
