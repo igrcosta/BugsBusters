@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 923cdaf42c95ef94599d3fa64485ab76
+guid: 276d3930260543d40802eb82d870154c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,18 +7,33 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: laranja
-    second: {fileID: 2100000, guid: d8eb6769f73eb464189fd9fce1aec403, type: 2}
+      name: Amarelo claro
+    second: {fileID: 2100000, guid: 364da21220c512d4288ca87847c3d105, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: preto
+      name: Metalico
+    second: {fileID: 2100000, guid: 90772bfb31af9bb4d857ad629b995b91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metalico02
+    second: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Neon
     second: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: vermelho
-    second: {fileID: 2100000, guid: fba5289721abaa14284adb70205eb5fe, type: 2}
+      name: Preto
+    second: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Vermelho
+    second: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

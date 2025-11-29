@@ -836,8 +836,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.12147649, y: 0.09376489, z: 0.14079922}
-  m_Center: {x: 0, y: 0.046070527, z: -0.020399585}
+  m_Size: {x: 0.12147649, y: 0.1258064, z: 0.14079922}
+  m_Center: {x: 0, y: 0.05169947, z: -0.020399585}
 --- !u!54 &980700633813281511
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -881,7 +881,7 @@ MonoBehaviour:
   enemySpeed: 0.5
   stopAndShootDistance: 0.7
   redBulletPrefab: {fileID: 1119065107945223968, guid: f459cec4dd62aaa439fcb8bf97b7522d, type: 3}
-  greenBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
+  greenBulletPrefab: {fileID: 1119065107945223968, guid: f4f5460a194324c42a6974e95d20d5d9, type: 3}
   firePoint: {fileID: 7446069353083022901}
   prepTime: 1.5
   cooldownTime: 5
