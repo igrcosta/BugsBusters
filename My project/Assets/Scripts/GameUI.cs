@@ -11,9 +11,12 @@ public class GameUI : MonoBehaviour
     [Min(0.1f)]
     private float speed = 2;
 
-    public Image pauseMenu;
+    public GameObject pauseMenu;
 
     [SerializeField] Text InimigosMortosText; // NOVO: Referência para o componente Text na HUD
+    [Header ("Barra de vida PLAYER")]
+    public GameObject HPContainer;
+    public GameObject HPHeart;
 
     [Header("Barras de vida do boss")]
 

@@ -268,8 +268,8 @@ public class Player : MonoBehaviour
             Time.timeScale = 0;
 
             GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(true);
-            
-            
+            GameControllerScript.controller.GameUI.HPContainer.SetActive(false);
+            GameControllerScript.controller.GameUI.HPHeart.SetActive(false);
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && IsPaused == true)
         {
@@ -277,6 +277,8 @@ public class Player : MonoBehaviour
             DummyMode = false;
             Time.timeScale = 1;
             GameControllerScript.controller.GameUI.pauseMenu.gameObject.SetActive(false);
+            GameControllerScript.controller.GameUI.HPContainer.SetActive(true);
+            GameControllerScript.controller.GameUI.HPHeart.SetActive(true);
             
         }
     }
