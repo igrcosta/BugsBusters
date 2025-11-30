@@ -131,7 +131,7 @@ MonoBehaviour:
   bulletColor: 0
   isFiredByPlayer: 0
   PLayerDamage: 10
-  EnemyDamage: 5
+  EnemyDamage: 25
 --- !u!54 &2559818959485414610
 Rigidbody:
   m_ObjectHideFlags: 0

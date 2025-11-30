@@ -13,6 +13,9 @@ public class GameControllerScript : MonoBehaviour
     [Header("Tudo sobre o Player")]
     public Player Player; // Acessar o gameObject do tipo Player
 
+    [Header ("Infos para transição de waves")]
+    [SerializeField] Vector3 InterwavePosition = new Vector3(0.553f, 0.018f, -11.597f);
+
     [Header("Tudo sobre o BOSS")]
     public boss BossRef;
 
@@ -210,39 +213,55 @@ public class GameControllerScript : MonoBehaviour
 
     IEnumerator NextWaveTransitionRoutine()
 {
-    Debug.Log("Wave Finalizada! Iniciando transição de 5s para a próxima Wave.");
+    Debug.Log("Wave Finalizada! Iniciando PAUSA de 5 segundos.");
     
     // ===================================================================
-    // 1. RESET CRÍTICO: Limpa todos os valores antes da pausa visual
+    // 1. LIMPEZA E PREPARAÇÃO DO ESTADO DE PAUSA (IMEDIATA)
     // ===================================================================
-
-    // Zera a contagem de inimigos mortos para a nova wave e atualiza o HUD
+    
+    // Zera o contador de mortes e o HUD
     inimigosMortos = 0; 
     GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
-
-    // CRÍTICO: Reseta a meta de inimigos. O WaveManager definirá a nova meta.
-    ResetTotalEnemiesToKill();
     
-    // Reseta o Timer (zera o tempo na UI)
-    Timer.ResetTimer();
-
-    // Desativa e reseta os spawners da wave anterior
+    // Reseta a meta de inimigos (a nova wave irá recontar)
+    ResetTotalEnemiesToKill(); 
+    
+    // Desativa e reseta os spawners da wave anterior (para que nada spawne)
     EnemySpawnManagerScriptRef.ResetSpawners();
 
-    // ===================================================================
-    // 2. PAUSA/TRANSIÇÃO VISUAL
-    // ===================================================================
-    yield return new WaitForSeconds(2f); // Pausa visual entre as waves
+    // NOVO: Exclui todos os inimigos restantes da cena
+    DestroyAllActiveEnemies();
 
+    // NOVO: Teleporta o Player para a posição de "respiro"
+    TeleportPlayerToInterwavePosition();
+    
+    // O Timer continua rodando (Timer.StopTimer() foi chamado em WaveFinished())
+
+    // ===================================================================
+    // 2. PAUSA/TRANSIÇÃO VISUAL: DURAÇÃO DO "MOMENTO DE RESPIRAR"
+    // ===================================================================
+    
+    // Agora o player tem 5 segundos de pausa. O Timer não está rodando, mas o tempo passa.
+    yield return new WaitForSeconds(5f); 
+
+    // O Timer.ResetTimer() não é necessário aqui, pois você quer manter o tempo total.
+    // Se você usa o Timer para o tempo *restante* de jogo, ele deve ser reiniciado/continuado.
+    // Vamos assumir que você quer continuar o tempo de jogo (o TimerScript deve ter sido pausado em WaveFinished()).
+    
     // ===================================================================
     // 3. INICIA A PRÓXIMA WAVE E ATIVA O JOGO
     // ===================================================================
 
-    // Inicia a próxima wave, que irá chamar SetTotalEnemiesToKill() com a nova meta.
+    // Inicia a próxima wave
     WaveManagerRef.StartNextWave();
 
-    Timer.StartTimer(); // Reinicia o Timer
+    // NOVO: RestartTimer() é mais adequado do que StartTimer() aqui, se o seu TimerScript
+    // tiver uma lógica de 'continuação' após uma pausa, mas StartTimer() funciona para 
+    // reiniciar a contagem. Se o Timer já estava rodando, ele continua a rodar.
+    Timer.StartTimer(); // Reinicia o Timer (ou continua, se ele só foi pausado)
     IsGameActive = true;
+    
+    Debug.Log("Fim da Pausa. Wave seguinte iniciada!");
 }
 
     public void GameOver()
@@ -380,4 +399,18 @@ public int GetTotalEnemiesToKill()
     {
         SceneManager.LoadScene(5);
     }
+
+    public void TeleportPlayerToInterwavePosition()
+{
+    if (Player != null)
+    {
+        // Define a posição diretamente
+        Player.transform.position = InterwavePosition;
+        Debug.Log("Player teletransportado para posição de transição.");
+    }
+    else
+    {
+        Debug.LogWarning("Player é nulo. Não foi possível teletransportar.");
+    }
+}
 }

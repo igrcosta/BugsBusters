@@ -130,8 +130,8 @@ MonoBehaviour:
   bulletAudio: {fileID: 4830042920502507137}
   bulletColor: 1
   isFiredByPlayer: 1
-  PLayerDamage: 10
-  EnemyDamage: 5
+  PlayerDamage: 10
+  EnemyDamage: 10
 --- !u!54 &2559818959485414610
 Rigidbody:
   m_ObjectHideFlags: 0

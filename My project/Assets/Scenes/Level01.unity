@@ -2234,28 +2234,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waves:
-  - numberOfSpawnersToActivate: 2
-    enemyRates:
-    - enemyPrefab: {fileID: 8829733417989069658, guid: 9e95a6a78bc14e8429eb7da012fa28e0, type: 3}
-      spawnWeight: 50
-    - enemyPrefab: {fileID: 8829733417989069658, guid: 6c544f4c38478004c88e253a58c4d42c, type: 3}
-      spawnWeight: 50
-    spawnAttemptsPerSpawner: 5
   - numberOfSpawnersToActivate: 4
     enemyRates:
-    - enemyPrefab: {fileID: 8829733417989069658, guid: 6c544f4c38478004c88e253a58c4d42c, type: 3}
-      spawnWeight: 15
     - enemyPrefab: {fileID: 8829733417989069658, guid: 9e95a6a78bc14e8429eb7da012fa28e0, type: 3}
-      spawnWeight: 15
-    - enemyPrefab: {fileID: 2798812565783371171, guid: 94b1228d97c29f04ba5249132fd8a891, type: 3}
-      spawnWeight: 10
-    - enemyPrefab: {fileID: 5255655054801715502, guid: 9fb20652f364ef948a50ef05feed0299, type: 3}
-      spawnWeight: 10
-    - enemyPrefab: {fileID: 5590033882022118572, guid: 2e67932efc619a640b3d39ed92b04f10, type: 3}
-      spawnWeight: 25
+      spawnWeight: 35
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 6c544f4c38478004c88e253a58c4d42c, type: 3}
+      spawnWeight: 35
     - enemyPrefab: {fileID: 3586323193611423016, guid: 5e02cff251f48f0448a90d5fe7280246, type: 3}
-      spawnWeight: 25
-    spawnAttemptsPerSpawner: 2
+      spawnWeight: 15
+    - enemyPrefab: {fileID: 5590033882022118572, guid: 2e67932efc619a640b3d39ed92b04f10, type: 3}
+      spawnWeight: 15
+    spawnAttemptsPerSpawner: 3
+  - numberOfSpawnersToActivate: 6
+    enemyRates:
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 6c544f4c38478004c88e253a58c4d42c, type: 3}
+      spawnWeight: 10
+    - enemyPrefab: {fileID: 8829733417989069658, guid: 9e95a6a78bc14e8429eb7da012fa28e0, type: 3}
+      spawnWeight: 10
+    - enemyPrefab: {fileID: 2798812565783371171, guid: 94b1228d97c29f04ba5249132fd8a891, type: 3}
+      spawnWeight: 20
+    - enemyPrefab: {fileID: 5255655054801715502, guid: 9fb20652f364ef948a50ef05feed0299, type: 3}
+      spawnWeight: 20
+    - enemyPrefab: {fileID: 5590033882022118572, guid: 2e67932efc619a640b3d39ed92b04f10, type: 3}
+      spawnWeight: 20
+    - enemyPrefab: {fileID: 3586323193611423016, guid: 5e02cff251f48f0448a90d5fe7280246, type: 3}
+      spawnWeight: 20
+    spawnAttemptsPerSpawner: 3
   spawnController: {fileID: 8454403590880084662}
 --- !u!4 &338366223
 Transform:
@@ -2738,7 +2742,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.252
+      value: -1.2471695
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2746,23 +2750,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.993
+      value: -2.0025663
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.04508836
+      value: -0.6937452
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.04508836
+      value: 0.6937452
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.70566785
+      value: -0.13681263
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.70566785
+      value: -0.13681263
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2774,7 +2778,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 547.312
+      value: 382.312
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5fb45d3c81ad9b4449a6328d5e4e380a, type: 3}
       propertyPath: m_Name
@@ -3303,6 +3307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cheatsEnabled: 1
   Player: {fileID: 358944596}
+  InterwavePosition: {x: 0.553, y: 0.018, z: -11.597}
   BossRef: {fileID: 0}
   Timer: {fileID: 1229945368}
   EnemySpawnManagerScriptRef: {fileID: 8454403590880084662}

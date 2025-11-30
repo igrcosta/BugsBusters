@@ -111,7 +111,7 @@ public class boss : MonoBehaviour
     {
         Debug.Log("Comecei a primeira fase!");
 
-        while(Health >= 670)
+        while(Health >= 800)
         {
             //1. ciclo de tiros vermelhos, definindo a cor dele pra vermelho
 
@@ -161,7 +161,7 @@ public class boss : MonoBehaviour
         Debug.Log("Comecei a SEGUNDA fase pq sou lendário!");
         yield return new WaitForSeconds(PhasesTransitionTime);
 
-        while(Health > 330)
+        while(Health > 400)
         {
             //vermelho, verde,
 
@@ -223,7 +223,7 @@ public class boss : MonoBehaviour
         yield return new WaitForSeconds(PhasesTransitionTime);
 
 
-        while (Health <= 330)
+        while (Health <= 400)
         {
 
             // vermelho, vermelho, verde

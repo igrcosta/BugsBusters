@@ -1364,7 +1364,7 @@ MonoBehaviour:
   firePoint: {fileID: 3763511853491475127}
   fireRate: 0.5
   shotsPerBurst: 3
-  cooldownTime: 2
+  cooldownTime: 1
   hitAudioSource: {fileID: 7851905652271226530}
   enemyRenderer: {fileID: 1103402570556764057}
   damageMaterial: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}

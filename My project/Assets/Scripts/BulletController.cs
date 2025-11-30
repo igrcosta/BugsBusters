@@ -12,7 +12,7 @@ public class BulletController : MonoBehaviour
     public BulletColor bulletColor;
     public bool isFiredByPlayer = true;
 
-    public int PLayerDamage = 10;
+    public int PlayerDamage = 10;
     public int EnemyDamage  = 5;
 
 
@@ -49,7 +49,7 @@ public class BulletController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         string hitTag = other.tag;
-        int damageToApply = isFiredByPlayer ? PLayerDamage : EnemyDamage;
+        int damageToApply = isFiredByPlayer ? PlayerDamage : EnemyDamage;
 
         // --- REGRAS DE IGNORAR ---
         if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy")) 

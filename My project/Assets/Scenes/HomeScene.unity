@@ -399,8 +399,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBarFillImage: {fileID: 0}
   speed: 2
-  pauseMenu: {fileID: 1795245642}
+  pauseMenu: {fileID: 0}
   InimigosMortosText: {fileID: 0}
+  HPContainer: {fileID: 0}
+  HPHeart: {fileID: 0}
+  BossGreenBar: {fileID: 0}
+  BossRedBar: {fileID: 0}
 --- !u!82 &83836855
 AudioSource:
   m_ObjectHideFlags: 0
@@ -414,7 +418,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: ae1fb9cf575c0634a91334a31068148f, type: 3}
   m_Resource: {fileID: 8300000, guid: ae1fb9cf575c0634a91334a31068148f, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1716,7 +1720,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4d433c47e6f30c41bc8a8fc07036ec9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SongSlider: {fileID: 1490253360}
+  mixer: {fileID: 0}
+  sfxVol: {fileID: 0}
+  musicVol: {fileID: 0}
+  masterVol: {fileID: 0}
 --- !u!114 &1490253360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2149,15 +2156,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cheatsEnabled: 1
   Player: {fileID: 0}
-  PlayerMatFirst: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
-  PlayerMatSecond: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
+  BossRef: {fileID: 0}
   Timer: {fileID: 0}
   EnemySpawnManagerScriptRef: {fileID: 0}
-  SafeZone: {fileID: 0}
   GameUI: {fileID: 0}
   WaveManagerRef: {fileID: 0}
-  ColorLogic: 0100000002000000
-  backgroundMenu: {fileID: 1795245642}
 --- !u!4 &1998411764
 Transform:
   m_ObjectHideFlags: 0

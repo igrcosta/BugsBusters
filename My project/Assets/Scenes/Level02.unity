@@ -3099,6 +3099,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cheatsEnabled: 1
   Player: {fileID: 358944596}
+  InterwavePosition: {x: 0.553, y: 0.018, z: -11.597}
   BossRef: {fileID: 0}
   Timer: {fileID: 1229945368}
   EnemySpawnManagerScriptRef: {fileID: 8454403590880084662}
@@ -5399,16 +5400,24 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: Health
-      value: 1000
+      value: 1200
       objectReference: {fileID: 0}
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: LeftPoint
       value: 
       objectReference: {fileID: 1475407249}
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
+      propertyPath: MaxHealth
+      value: 1200
+      objectReference: {fileID: 0}
+    - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: RightPoint
       value: 
       objectReference: {fileID: 1019068605}
+    - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
+      propertyPath: IsVulnerable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: PhasesTransitionTime
       value: 1.5
