@@ -1340,6 +1340,10 @@ MonoBehaviour:
   shotsPerBurst: 3
   cooldownTime: 2
   hitAudioSource: {fileID: 7851905652271226530}
+  enemyRenderer: {fileID: 1103402570556764057}
+  damageMaterial: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 90772bfb31af9bb4d857ad629b995b91, type: 2}
+  flashDuration: 0.1
 --- !u!114 &-5473595435507039105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1436,7 +1440,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 634c66ab4e785e74d90fd06369bd6053, type: 3}
   m_Resource: {fileID: 8300000, guid: 634c66ab4e785e74d90fd06369bd6053, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.762
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -65,6 +65,9 @@ public class SmallEnemy : MonoBehaviour
 
     private Rigidbody rb;
 
+    [Header("Som de Dano")]
+    [SerializeField] private AudioSource hitAudioSource;
+
    
 
     // --- REFERÊNCIAS DINÂMICAS ---
@@ -409,6 +412,7 @@ else if (distance > safeReturnDistance && explosionCoroutine != null)
        
 
         Hp -= bulletDamage;
+        hitAudioSource.Play();
 
 
         if (Hp <= 0)

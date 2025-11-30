@@ -29,6 +29,9 @@ public class BettleEnemyScript : MonoBehaviour
     [Header("Cor e Componentes")]
     [Tooltip("Defina a cor fixa deste prefab (RED ou GREEN).")]
     [SerializeField] private BulletColor InitialColor;
+    
+    [Header("Som de Dano")]
+    [SerializeField] private AudioSource hitAudioSource;
 
     private ColorHandler colorHandler;
 
@@ -273,6 +276,9 @@ public class BettleEnemyScript : MonoBehaviour
     public void TakingDamage(int bulletDamage)
     {
         Hp -= bulletDamage;
+
+        hitAudioSource.Play();
+
         if (Hp <= 0)
         {
             Die();

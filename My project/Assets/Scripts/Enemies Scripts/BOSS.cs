@@ -54,6 +54,9 @@ public class boss : MonoBehaviour
     [SerializeField] private Color greenLightColor = Color.green; //cor verde de luz
     [SerializeField] private Color redLightColor = Color.red; // cor vermelha de luz
 
+    [Header("Som de Dano")]
+    [SerializeField] private AudioSource hitAudioSource;
+
     private ColorHandler bossColorHandler;
 
     //referências e var chatas
@@ -476,6 +479,8 @@ public class boss : MonoBehaviour
             GameControllerScript.controller.GameUI.UpdateBossBar();
 
             Health -= bulletDamage;
+
+            hitAudioSource.Play();
 
             if (Health <= 0)
             {

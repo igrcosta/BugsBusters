@@ -1366,6 +1366,10 @@ MonoBehaviour:
   shotsPerBurst: 3
   cooldownTime: 2
   hitAudioSource: {fileID: 7851905652271226530}
+  enemyRenderer: {fileID: 1103402570556764057}
+  damageMaterial: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 90772bfb31af9bb4d857ad629b995b91, type: 2}
+  flashDuration: 0.1
 --- !u!95 &2062426034450449074
 Animator:
   serializedVersion: 7

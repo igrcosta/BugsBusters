@@ -44,6 +44,16 @@ public class Enemy1 : MonoBehaviour
     private EnemyState currentState = EnemyState.Chasing;
     private Vector3 currentDirection = Vector3.zero;
 
+    [Header("FEEDBACK VISUAL")]
+    [SerializeField] private Renderer enemyRenderer; // O componente Renderer (MeshRenderer ou SkinnedMeshRenderer)
+    [SerializeField] private Material damageMaterial; // O material 'mPreto'
+    [SerializeField] private Material originalMaterial; // O material 'mCromado' (Para atribuir no Inspector)
+    [SerializeField] private float flashDuration = 0.1f; // Duração do piscar (0.1s é um bom padrão) 
+
+    private Material[] originalMaterialsArray; // Array para guardar a lista completa de materiais
+    private int materialIndexToReplace = -1;  // O índice onde 'mCromado' está no array
+    private Coroutine flashCoroutine; // Referência para controlar o piscar
+
 
     // ====================================================================
     // 2. INICIALIZAÇÃO E ENCONTRO DE ALVO
@@ -59,6 +69,29 @@ public class Enemy1 : MonoBehaviour
         animator = GetComponent<Animator>();  //pra animação funcionar
         myColorHandler = GetComponent<ColorHandler>();
 
+        if (enemyRenderer == null)
+        {
+            enemyRenderer = GetComponentInChildren<Renderer>(); // Busca no próprio objeto ou nos filhos
+        }
+
+        if (enemyRenderer != null && originalMaterial != null)
+        {
+            originalMaterialsArray = enemyRenderer.materials;
+            for (int i = 0; i < originalMaterialsArray.Length; i++)
+            {
+                // Compara a referência do material atribuído no Inspector
+                if (originalMaterialsArray[i] == originalMaterial) 
+                {
+                    materialIndexToReplace = i;
+                    break;
+                }
+            }
+            if (materialIndexToReplace == -1)
+            {
+                Debug.LogWarning("Material 'mCromado' não encontrado no Renderer. O feedback visual não funcionará.");
+            }
+        }
+
         FindTargetAndController();
 
         if (playerTargetTransform != null)
@@ -70,6 +103,8 @@ public class Enemy1 : MonoBehaviour
             Debug.LogError("Player não encontrado! Inimigo desativado.");
             enabled = false;
         }
+
+
     }
 
     void FindTargetAndController()
@@ -133,7 +168,8 @@ public class Enemy1 : MonoBehaviour
 
     }
 
-    private void ResetVelocity()    {
+    private void ResetVelocity()
+    {
         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
     }
 
@@ -281,6 +317,12 @@ public class Enemy1 : MonoBehaviour
     {
         Hp -= bulletDamage;
 
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine); // Para o piscar anterior
+        }
+        flashCoroutine = StartCoroutine(FlashDamageRoutine());
+
        
         if (hitAudioSource != null)
             hitAudioSource.Play();
@@ -292,6 +334,32 @@ public class Enemy1 : MonoBehaviour
         {
             Die();
         }
+    }
+
+    // corotina para piscar
+
+    IEnumerator FlashDamageRoutine()
+    {
+        // 1. Verificações de segurança
+        if (materialIndexToReplace == -1 || damageMaterial == null || enemyRenderer == null)
+        {
+            flashCoroutine = null;
+            yield break;
+        }
+    
+        // 2. Troca para o material de dano ('mPreto')
+        Material[] currentMaterials = enemyRenderer.materials;
+        currentMaterials[materialIndexToReplace] = damageMaterial;
+        enemyRenderer.materials = currentMaterials;
+
+        // 3. Espera o tempo de piscar
+        yield return new WaitForSeconds(flashDuration);
+
+        // 4. Retorna para o material original ('mCromado')
+        currentMaterials[materialIndexToReplace] = originalMaterialsArray[materialIndexToReplace];
+        enemyRenderer.materials = currentMaterials;
+
+        flashCoroutine = null;
     }
 
     // ====================================================================
