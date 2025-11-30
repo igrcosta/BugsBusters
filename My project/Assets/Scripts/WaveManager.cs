@@ -52,14 +52,17 @@ public class WaveManager : MonoBehaviour
         // -------------------------------------------------------------------
     }
 
-    public void CheckWinCondition(int totalEnemiesKilled, int totalEnemiesToKill)
+    public void CheckWinCondition(int totalEnemiesKilled) // Remove 'totalEnemiesToKill'
+{
+    // A meta (totalEnemiesToKill) será acessada diretamente do GameController.
+    int totalEnemiesToKill = GameControllerScript.controller.GetTotalEnemiesToKill(); 
+    
+    if (totalEnemiesKilled >= totalEnemiesToKill && totalEnemiesToKill > 0)
     {
-        if (totalEnemiesKilled >= totalEnemiesToKill && totalEnemiesToKill > 0)
-        {
-            // Se esta wave terminou, informa ao GameController.
-            GameControllerScript.controller.WaveFinished();
-        }
+        // Se esta wave terminou, informa ao GameController.
+        GameControllerScript.controller.WaveFinished();
     }
+}
 
     private void Start()
     {

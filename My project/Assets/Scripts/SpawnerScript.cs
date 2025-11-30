@@ -41,39 +41,45 @@ public class Spawner : MonoBehaviour
     //ter pausas no meio desse processo, o que queremos pro nosso spawner
 
     IEnumerator SpawningCycle()
+{
+    int i = 0;
+
+    if (currentEnemyRates == null || currentEnemyRates.Count == 0)
     {
-        int i = 0;
-
-        if (currentEnemyRates == null || currentEnemyRates.Count == 0)
-        {
-            Debug.LogError("FUDEU");
-            SpawningCycleVar = null;
-            yield break;
-        }
-
-        while(i < Enemycounter)
-        {
-            i++;
-
-            GameObject enemyToSpawn = GetRandomEnemyPrefab();
-
-            if (enemyToSpawn == null)
-            {
-                Debug.LogWarning("deu o carai mermo");
-            }
-            else
-            {
-                Instantiate(enemyToSpawn, transform.position, transform.rotation);
-                //instancia um prefab do inimigo na posição do nosso spawner
-
-                yield return new WaitForSeconds(SpawnCoolDown);
-                //espera alguns segundos definidos pelo SpawnCoolDown
-            }
-        }
+        Debug.LogError("[Spawner] Lista de inimigos para spawnar é nula/vazia.");
         SpawningCycleVar = null;
-        //assim que chegar no final, a Coroutine vai parar, mas recomendam colocar um:
-        //yield break;
+        yield break;
     }
+
+    while(i < Enemycounter)
+    {
+        i++;
+
+        GameObject enemyToSpawn = GetRandomEnemyPrefab();
+
+        if (enemyToSpawn == null)
+        {
+            Debug.LogWarning("[Spawner] Tentativa falhou (Prefab Nulo ou sem chance). Tentativa: " + i);
+            // IMPORTANTE: Se falhar, NÃO REGISTRAMOS o inimigo na contagem total.
+        }
+        else
+        {
+            Instantiate(enemyToSpawn, transform.position, transform.rotation);
+            
+            // CRÍTICO: Registra o spawn REAL no GameController.
+            if (GameControllerScript.controller != null)
+            {
+                GameControllerScript.controller.RegisterNewEnemySpawn();
+            }
+
+            yield return new WaitForSeconds(SpawnCoolDown);
+        }
+    }
+    SpawningCycleVar = null;
+    Debug.Log($"[Spawner] Ciclo de spawn de {Enemycounter} tentativas concluído.");
+    // yield break; não é estritamente necessário no final, mas é boa prática.
+}
+
 
     private GameObject GetRandomEnemyPrefab()
     {

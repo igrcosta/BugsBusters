@@ -221,7 +221,7 @@ public class GameControllerScript : MonoBehaviour
     GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
 
     // CRÍTICO: Reseta a meta de inimigos. O WaveManager definirá a nova meta.
-    totalEnemiesToKill = 0; 
+    ResetTotalEnemiesToKill();
     
     // Reseta o Timer (zera o tempo na UI)
     Timer.ResetTimer();
@@ -333,14 +333,15 @@ public class GameControllerScript : MonoBehaviour
 }
 
     private void CountingEnemies()
+{
+    // Não precisa mais checar IsGameActive aqui, pois o Update já faz isso.
+    if (WaveManagerRef != null)
     {
-        // Se o jogo está ativo e a contagem total foi definida...
-        if (IsGameActive && totalEnemiesToKill > 0)
-        {
-            // ...checa se a wave acabou.
-            WaveManagerRef.CheckWinCondition(inimigosMortos, totalEnemiesToKill);
-        }
+        // ...checa se a wave acabou, passando SOMENTE o contador de mortos.
+        // O WaveManager agora acessa a meta real (totalEnemiesToKill) no GC.
+        WaveManagerRef.CheckWinCondition(inimigosMortos); 
     }
+}
 
     public void AumentarNumerodeInimigosMortos()
     {
@@ -354,11 +355,25 @@ public class GameControllerScript : MonoBehaviour
         Debug.Log("Spawner registrado no GameController.");
     }
 
-    public void SetTotalEnemiesToKill(int total)
-    {
-        totalEnemiesToKill = total;
-        Debug.Log("Meta de inimigos para matar nesta wave: " + totalEnemiesToKill);
-    }
+    public void RegisterNewEnemySpawn()
+{
+    totalEnemiesToKill++;
+    // Você pode querer atualizar o HUD com a meta, se ele mostrar isso.
+    // Ex: GameUI.AlterarMetaInimigos(totalEnemiesToKill);
+    Debug.Log("Inimigo spawnado registrado. Meta atual: " + totalEnemiesToKill);
+}
+
+public void ResetTotalEnemiesToKill()
+{
+    totalEnemiesToKill = 0;
+    // Opcional: GameUI.AlterarMetaInimigos(0);
+    Debug.Log("Meta de inimigos zerada para a próxima wave.");
+}
+
+public int GetTotalEnemiesToKill()
+{
+    return totalEnemiesToKill;
+}
 
     //Função para quando o player matar o boss
     public void TheGameIsOver()

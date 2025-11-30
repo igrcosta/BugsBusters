@@ -41,9 +41,6 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
     public void Activation(int numSpawnersToActivate, int spawnAttempts, List<EnemySpawnRate> enemyRates)
     {
-        int currentWaveTotalEnemies = 0;
-        //int para contar o total de inimigos que vão spawnar, assim o player só ganha se matar esse número
-
         // Garante que não tentamos ativar mais spawners do que existem
         int spawnersToUse = Mathf.Min(numSpawnersToActivate, SpawnPoints.Length);
 
@@ -64,7 +61,7 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
         // ATIVAÇÃO E CONFIGURAÇÃO
         for (int i = 0; i < spawnersToUse; i++)
-{
+        {
     // Pega o índice aleatório e único
     int spawnerIndex = availableIndices[i];
     
@@ -88,14 +85,10 @@ public class SpawnPointsControllerScripts : MonoBehaviour
     // Passa a lista de inimigos e as tentativas de spawn
     SpawnerScript.SetupSpawner(spawnAttempts, enemyRates);
 
-    // CRÍTICO: Contagem segura
-    currentWaveTotalEnemies += spawnAttempts;
 
     SpawnerScript.StartSpawning();
 }
 
-        // Atualiza a contagem de inimigos
-        GameControllerScript.controller.SetTotalEnemiesToKill(currentWaveTotalEnemies);
-
+       
     }
 }
