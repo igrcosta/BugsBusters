@@ -70,27 +70,49 @@ public class Enemy1 : MonoBehaviour
         myColorHandler = GetComponent<ColorHandler>();
 
         if (enemyRenderer == null)
-        {
-            enemyRenderer = GetComponentInChildren<Renderer>(); // Busca no próprio objeto ou nos filhos
-        }
+{
+    enemyRenderer = GetComponentInChildren<Renderer>(); 
+}
 
-        if (enemyRenderer != null && originalMaterial != null)
+if (enemyRenderer != null && originalMaterial != null)
+{
+    // CRÍTICO: 1. Prepara o nome do material de referência (limpa e minúsculo)
+    // O nome do Asset é o nome do Material que você arrastou para o Inspector.
+    string originalMaterialName = originalMaterial.name.Trim().ToLower();
+    
+    // 2. Pega os materiais compartilhados para inspecionar
+    Material[] sharedMaterials = enemyRenderer.sharedMaterials;
+
+    // 3. Busca pelo índice
+    for (int i = 0; i < sharedMaterials.Length; i++)
+    {
+        if (sharedMaterials[i] != null) 
         {
-            originalMaterialsArray = enemyRenderer.materials;
-            for (int i = 0; i < originalMaterialsArray.Length; i++)
+            // Pega o nome do material no slot do Renderer (limpa e minúsculo)
+            string currentMaterialName = sharedMaterials[i].name.Trim().ToLower();
+            
+            // Compara. Se o nome do slot contiver o nome do seu Asset (mCromado)
+            if (currentMaterialName.Contains(originalMaterialName)) 
             {
-                // Compara a referência do material atribuído no Inspector
-                if (originalMaterialsArray[i] == originalMaterial) 
-                {
-                    materialIndexToReplace = i;
-                    break;
-                }
-            }
-            if (materialIndexToReplace == -1)
-            {
-                Debug.LogWarning("Material 'mCromado' não encontrado no Renderer. O feedback visual não funcionará.");
+                materialIndexToReplace = i;
+                break;
             }
         }
+    }
+    
+    // 4. Finalização e Log
+    if (materialIndexToReplace != -1)
+    {
+        // Armazenamos a cópia da instância de materiais para restauração (para uso no FlashDamageRoutine)
+        originalMaterialsArray = enemyRenderer.materials;
+        Debug.Log($"Material '{originalMaterialName}' encontrado no índice {materialIndexToReplace}. Feedback pronto.");
+    }
+    else
+    {
+        // Se o nome não for encontrado, este Log será ativado.
+        Debug.LogWarning($"Material '{originalMaterialName}' não encontrado no Renderer. O feedback visual não funcionará. Materiais no Renderer: {string.Join(", ", System.Array.ConvertAll(sharedMaterials, m => m.name))}");
+    }
+}
 
         FindTargetAndController();
 
@@ -317,11 +339,12 @@ public class Enemy1 : MonoBehaviour
     {
         Hp -= bulletDamage;
 
-        if (flashCoroutine != null)
-        {
-            StopCoroutine(flashCoroutine); // Para o piscar anterior
-        }
         flashCoroutine = StartCoroutine(FlashDamageRoutine());
+
+        // if (flashCoroutine != null)
+        // {
+        //     StopCoroutine(flashCoroutine); // Para o piscar anterior
+        // }
 
        
         if (hitAudioSource != null)
@@ -340,26 +363,31 @@ public class Enemy1 : MonoBehaviour
 
     IEnumerator FlashDamageRoutine()
     {
-        // 1. Verificações de segurança
+        // Verificações de segurança
         if (materialIndexToReplace == -1 || damageMaterial == null || enemyRenderer == null)
         {
             flashCoroutine = null;
             yield break;
         }
+
+        // CRÍTICO 1: Pega uma CÓPIA dos materiais atuais (o que é feito com .materials)
+        Material[] materialsToModify = enemyRenderer.materials;
     
+        // CRÍTICO 2: Armazena o material que será substituído ANTES de modificá-lo
+        Material materialToRestore = materialsToModify[materialIndexToReplace];
+
         // 2. Troca para o material de dano ('mPreto')
-        Material[] currentMaterials = enemyRenderer.materials;
-        currentMaterials[materialIndexToReplace] = damageMaterial;
-        enemyRenderer.materials = currentMaterials;
+        materialsToModify[materialIndexToReplace] = damageMaterial;
+        enemyRenderer.materials = materialsToModify;
 
         // 3. Espera o tempo de piscar
         yield return new WaitForSeconds(flashDuration);
 
-        // 4. Retorna para o material original ('mCromado')
-        currentMaterials[materialIndexToReplace] = originalMaterialsArray[materialIndexToReplace];
-        enemyRenderer.materials = currentMaterials;
+        // 4. Retorna para o material original que armazenamos (materialToRestore)
+        materialsToModify[materialIndexToReplace] = materialToRestore; 
+        enemyRenderer.materials = materialsToModify;
 
-        flashCoroutine = null;
+       flashCoroutine = null;
     }
 
     // ====================================================================

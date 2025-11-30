@@ -691,6 +691,10 @@ MonoBehaviour:
   prepTime: 1.5
   cooldownTime: 5
   InitialColor: 1
+  enemyRenderer: {fileID: 7441431556017645338}
+  damageMaterial: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 90772bfb31af9bb4d857ad629b995b91, type: 2}
+  flashDuration: 0.1
   hitAudioSource: {fileID: 2984566723913031135}
 --- !u!114 &450507823123534494
 MonoBehaviour:

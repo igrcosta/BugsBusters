@@ -116,6 +116,10 @@ MonoBehaviour:
   explosionVisualPrefab: {fileID: 1033600852879337965, guid: 86825e6e821a25140be666d28f1ddcd2, type: 3}
   rotationSpeed: 10
   hitAudioSource: {fileID: 2797256509929041189}
+  enemyRenderer: {fileID: 5483953025600100170}
+  damageMaterial: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 58e2ca0320ae33849b799e5a211b7e7d, type: 2}
+  flashDuration: 0.1
 --- !u!114 &8011144967777980827
 MonoBehaviour:
   m_ObjectHideFlags: 0

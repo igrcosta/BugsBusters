@@ -29,6 +29,16 @@ public class BettleEnemyScript : MonoBehaviour
     [Header("Cor e Componentes")]
     [Tooltip("Defina a cor fixa deste prefab (RED ou GREEN).")]
     [SerializeField] private BulletColor InitialColor;
+
+    [Header("FEEDBACK VISUAL")]
+    [SerializeField] private Renderer enemyRenderer; // Para o Skinned Mesh Renderer do besouro
+    [SerializeField] private Material damageMaterial; // O material 'mPreto'
+    [SerializeField] private Material originalMaterial; // O material 'mCromado'
+    [SerializeField] private float flashDuration = 0.1f; // Duração do piscar
+
+    private Material[] originalMaterialsArray; 
+    private int materialIndexToReplace = -1;  // O índice onde 'mCromado' está
+    private Coroutine flashCoroutine; // Referência para controlar o piscar
     
     [Header("Som de Dano")]
     [SerializeField] private AudioSource hitAudioSource;
@@ -71,6 +81,48 @@ public class BettleEnemyScript : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();  //pra animação funcionar
         myRenderer = GetComponent<Renderer>();
+
+        if (enemyRenderer == null)
+{
+    enemyRenderer = GetComponentInChildren<Renderer>(); 
+}
+
+if (enemyRenderer != null && originalMaterial != null)
+{
+    // CRÍTICO: 1. Prepara o nome do material de referência (limpa e minúsculo)
+    string originalMaterialName = originalMaterial.name.Trim().ToLower();
+    
+    // 2. Pega os materiais compartilhados para inspecionar
+    Material[] sharedMaterials = enemyRenderer.sharedMaterials;
+
+    // 3. Busca pelo índice
+    for (int i = 0; i < sharedMaterials.Length; i++)
+    {
+        if (sharedMaterials[i] != null) 
+        {
+            // Pega o nome do material no slot do Renderer (limpa e minúsculo)
+            string currentMaterialName = sharedMaterials[i].name.Trim().ToLower();
+            
+            // Compara. Se o nome do slot contiver o nome do seu Asset (mCromado)
+            if (currentMaterialName.Contains(originalMaterialName)) 
+            {
+                materialIndexToReplace = i;
+                break;
+            }
+        }
+    }
+    
+    // 4. Finalização e Log
+    if (materialIndexToReplace != -1)
+    {
+        originalMaterialsArray = enemyRenderer.materials;
+        Debug.Log($"BettleEnemy: Material '{originalMaterialName}' encontrado no índice {materialIndexToReplace}. Feedback pronto.");
+    }
+    else
+    {
+        Debug.LogWarning($"BettleEnemy: Material '{originalMaterialName}' não encontrado no Renderer. O feedback visual não funcionará.");
+    }
+}
 
         // Tenta encontrar o Player imediatamente
         FindTargetAndController();
@@ -269,6 +321,33 @@ public class BettleEnemyScript : MonoBehaviour
         Destroy(newBullet);
     }
 }
+
+IEnumerator FlashDamageRoutine()
+{
+    // 1. Verificações de segurança
+    if (materialIndexToReplace == -1 || damageMaterial == null || enemyRenderer == null)
+    {
+        flashCoroutine = null;
+        yield break;
+    }
+    
+    // 2. Troca para o material de dano ('mPreto')
+    // Cria uma cópia dos materiais
+    Material[] currentMaterials = enemyRenderer.materials;
+    
+    // Aplica o material de Dano
+    currentMaterials[materialIndexToReplace] = damageMaterial;
+    enemyRenderer.materials = currentMaterials;
+
+    // 3. Espera o tempo de piscar
+    yield return new WaitForSeconds(flashDuration);
+
+    // 4. Retorna para o material original
+    currentMaterials[materialIndexToReplace] = originalMaterialsArray[materialIndexToReplace];
+    enemyRenderer.materials = currentMaterials;
+
+    flashCoroutine = null;
+}
     // ====================================================================
     // 5. LÓGICA DE DANO/MORTE
     // ====================================================================
@@ -276,6 +355,11 @@ public class BettleEnemyScript : MonoBehaviour
     public void TakingDamage(int bulletDamage)
     {
         Hp -= bulletDamage;
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine); // Para o piscar anterior
+        }
+        flashCoroutine = StartCoroutine(FlashDamageRoutine());
 
         hitAudioSource.Play();
 

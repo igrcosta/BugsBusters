@@ -68,6 +68,16 @@ public class SmallEnemy : MonoBehaviour
     [Header("Som de Dano")]
     [SerializeField] private AudioSource hitAudioSource;
 
+    [Header("FEEDBACK VISUAL")]
+    [SerializeField] private Renderer enemyRenderer; // Para o Skinned Mesh Renderer
+    [SerializeField] private Material damageMaterial; // O material 'mPreto'
+    [SerializeField] private Material originalMaterial; // O material 'NeonVermelho'
+    [SerializeField] private float flashDuration = 0.1f; // Duração do piscar
+
+    private Material[] originalMaterialsArray; 
+    private int materialIndexToReplace = -1;  // O índice onde 'NeonVermelho' está
+    private Coroutine flashCoroutine; // Referência para controlar o piscar
+
    
 
     // --- REFERÊNCIAS DINÂMICAS ---
@@ -112,11 +122,44 @@ public void SetManager(TutorialManager manager)
 
 
     void Start()
-
     {
-
         StartCoroutine(WaitForInitialization());
+        
+        if (enemyRenderer == null)
+        {
+            enemyRenderer = GetComponentInChildren<Renderer>(); 
+        }
 
+        if (enemyRenderer != null && originalMaterial != null)
+        {
+            string originalMaterialName = originalMaterial.name.Trim().ToLower();
+            Material[] sharedMaterials = enemyRenderer.sharedMaterials;
+
+            for (int i = 0; i < sharedMaterials.Length; i++)
+            {
+                if (sharedMaterials[i] != null) 
+                {
+                    string currentMaterialName = sharedMaterials[i].name.Trim().ToLower();
+                    
+                    // CRÍTICO: Agora busca "NeonVermelho"
+                    if (currentMaterialName.Contains(originalMaterialName)) 
+                    {
+                        materialIndexToReplace = i;
+                        break;
+                    }
+                }
+            }
+            
+            if (materialIndexToReplace != -1)
+            {
+                originalMaterialsArray = enemyRenderer.materials;
+                Debug.Log($"SmallEnemy: Material '{originalMaterialName}' encontrado no índice {materialIndexToReplace}. Feedback pronto.");
+            }
+            else
+            {
+                Debug.LogWarning($"SmallEnemy: Material '{originalMaterialName}' não encontrado no Renderer. O feedback visual não funcionará.");
+            }
+        }
     }
 
    
@@ -414,6 +457,12 @@ else if (distance > safeReturnDistance && explosionCoroutine != null)
         Hp -= bulletDamage;
         hitAudioSource.Play();
 
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+        }
+        flashCoroutine = StartCoroutine(FlashDamageRoutine());
+
 
         if (Hp <= 0)
 
@@ -480,6 +529,32 @@ else if (distance > safeReturnDistance && explosionCoroutine != null)
         
         // Todos os outros objetos, incluindo o Boss, são ignorados (não recebem repulsão nem dano).
     }
+}
+
+IEnumerator FlashDamageRoutine()
+{
+    // 1. Verificações de segurança
+    if (materialIndexToReplace == -1 || damageMaterial == null || enemyRenderer == null)
+    {
+        flashCoroutine = null;
+        yield break;
+    }
+    
+    // 2. Troca para o material de dano ('mPreto')
+    Material[] currentMaterials = enemyRenderer.materials;
+    
+    // Aplica o material de Dano
+    currentMaterials[materialIndexToReplace] = damageMaterial;
+    enemyRenderer.materials = currentMaterials;
+
+    // 3. Espera o tempo de piscar
+    yield return new WaitForSeconds(flashDuration);
+
+    // 4. Retorna para o material original ('NeonVermelho')
+    currentMaterials[materialIndexToReplace] = originalMaterialsArray[materialIndexToReplace];
+    enemyRenderer.materials = currentMaterials;
+
+    flashCoroutine = null;
 }
 
    
