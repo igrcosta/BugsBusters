@@ -3363,6 +3363,10 @@ PrefabInstance:
       propertyPath: DummyMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7763229328672349264, guid: a321bb665ee2e0442b8da9b64354df80, type: 3}
+      propertyPath: invincibilityDuration
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

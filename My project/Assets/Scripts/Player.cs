@@ -24,6 +24,13 @@ public class Player : MonoBehaviour
     public int CurrentHealth => currentHealth;
     [SerializeField] float speed = 10f; // 💡 GARANTIR UM VALOR PADRÃO
 
+    [Header("Invencibilidade e Feedback")]
+    [SerializeField] private float invincibilityDuration = 2.0f; // 2 segundos
+    [SerializeField] private Color damageFlashColor = Color.white; // Cor do piscar (Branco)
+    [SerializeField] private float flashInterval = 0.1f; // Intervalo de tempo do piscar
+    private bool isInvincible = false;
+    private Coroutine flashCoroutine; // Para controlar o piscar
+
     [Header("Luz do Player")]
     [SerializeField] private Light playerSpotlight; 
     [SerializeField] private Color greenLightColor = Color.green;
@@ -216,17 +223,81 @@ public class Player : MonoBehaviour
     
     public void TakingDamage(int damageAmount)
     {
-        currentHealth -= damageAmount;
-
-        if (hitAudioSource != null)
-            hitAudioSource.Play();
-
-        Debug.Log("Player recebeu " + damageAmount + " de dano. Vida restante:  " + currentHealth);
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+    if (isInvincible) 
+    {
+        Debug.Log("Player invencível. Dano ignorado.");
+        return; // Ignora o dano se estiver invencível
     }
+    
+    // 1. Aplica Dano
+    currentHealth -= damageAmount;
+
+    // 2. Feedback de Áudio
+    if (hitAudioSource != null)
+        hitAudioSource.Play();
+
+    Debug.Log("Player recebeu " + damageAmount + " de dano. Vida restante:  " + currentHealth);
+    
+    // 3. Verifica Morte
+    if (currentHealth <= 0)
+    {
+        Die();
+    }
+    else
+    {
+        // 4. Inicia Invencibilidade e Piscar da Luz
+        StartCoroutine(InvincibilityRoutine());
+    }
+    }
+
+    IEnumerator InvincibilityRoutine()
+{
+    isInvincible = true;
+    
+    // Inicia o piscar da luz
+    if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+    flashCoroutine = StartCoroutine(LightFlashRoutine(invincibilityDuration, damageFlashColor));
+
+    // Espera o tempo de invencibilidade
+    yield return new WaitForSeconds(invincibilityDuration);
+    
+    // Garante que o piscar parou e a cor foi restaurada
+    if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+    flashCoroutine = null; 
+    
+    // Restaura a cor final (se a coroutine falhar)
+    UpdatePlayerSpotlightColor();
+
+    isInvincible = false;
+    Debug.Log("Invencibilidade do Player terminou.");
+}
+
+IEnumerator LightFlashRoutine(float duration, Color flashColor)
+{
+    if (playerSpotlight == null) 
+    {
+        flashCoroutine = null;
+        yield break;
+    }
+    
+    float startTime = Time.time;
+    Color originalColor = playerSpotlight.color; // Pega a cor atual do Player (Verde ou Vermelho)
+    
+    while (Time.time < startTime + duration)
+    {
+        // Alterna para a cor de dano (Ex: Branco)
+        playerSpotlight.color = flashColor;
+        yield return new WaitForSeconds(flashInterval);
+
+        // Retorna para a cor original
+        playerSpotlight.color = originalColor;
+        yield return new WaitForSeconds(flashInterval);
+    }
+    
+    // Garante que a cor final seja a correta (original)
+    UpdatePlayerSpotlightColor();
+    flashCoroutine = null;
+}
     
     public void Curar(float quantidade)
     {
@@ -282,4 +353,6 @@ public class Player : MonoBehaviour
             
         }
     }
+
+
 }
