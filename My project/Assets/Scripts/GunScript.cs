@@ -11,6 +11,9 @@ public class GunScript : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] Transform firePoint;
 
+    [SerializeField] private float fireRate = 0.25f; //tempo entre tiro
+    private float nextFireTime = 0f;
+
     private Player Player;
     private ColorHandler playerColorHandler;
 
@@ -103,8 +106,9 @@ public class GunScript : MonoBehaviour
         }
         
         // 7. VERIFICA O CLIQUE E ATIRA
-        if (Input.GetMouseButtonDown(0)) 
+        if (Input.GetMouseButton(0) && Time.time >= nextFireTime) 
         {
+            nextFireTime = Time.time + fireRate;
             Atirar();
         }
     }
