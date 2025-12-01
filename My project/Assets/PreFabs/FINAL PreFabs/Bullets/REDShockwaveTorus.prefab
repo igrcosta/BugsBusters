@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c0fbc04b2fdca47b0e0f343f6b91b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GrowingSpeed: 0.01
+  GrowingSpeed: 2
   Damage: 10
   Lifetime: 5
   ShockwaveColor: 0

@@ -32,7 +32,7 @@ public class Shockwaves : MonoBehaviour
     {
         while(ActualScale != FinalScale)
         {
-            ActualScale+=GrowingVector;
+            ActualScale+=GrowingVector * Time.deltaTime;
             transform.localScale = ActualScale;
             yield return null;
         }
