@@ -1040,7 +1040,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: GLitched Tv
+  m_text: Glitched PC
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 34880c361bd99094291cdffa93543772, type: 2}
   m_sharedMaterial: {fileID: -6948614829266733036, guid: 34880c361bd99094291cdffa93543772, type: 2}
@@ -5422,9 +5422,13 @@ PrefabInstance:
       propertyPath: PhasesTransitionTime
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6571455024408347061, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: eae9aac0f9a0ace4293d6e78b407a98c, type: 2}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.0008122921
+      value: 0.309
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5432,11 +5436,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.580322
+      value: -9.742
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.09850482
+      value: 0.0056375214
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalRotation.x
@@ -5444,7 +5448,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.99513656
+      value: 0.9999841
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalRotation.z
@@ -5456,7 +5460,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 168.694
+      value: 179.354
       objectReference: {fileID: 0}
     - target: {fileID: 6934893428181585632, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -5754,7 +5758,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -807.2512, y: -417.30295}
+  m_AnchoredPosition: {x: -807.2512, y: -417}
   m_SizeDelta: {x: 308.85693, y: 205.905}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1409605081
