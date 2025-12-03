@@ -185,7 +185,7 @@ public class Player : MonoBehaviour
     void HandleColorSwitchInput()
     {
         // 💡 NOVO: Verifica o input.
-        if (!DummyMode && (Input.GetKeyDown(KeyCode.LeftShift)))
+        if (!DummyMode && (Input.GetKeyDown(KeyCode.LeftShift)) || !DummyMode && Input.GetMouseButtonDown(1))
         {
              if (playerColorHandler == null) return;
     
