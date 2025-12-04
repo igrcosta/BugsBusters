@@ -158,6 +158,9 @@ MonoBehaviour:
   CameraTarget: {fileID: 4191397789481340734}
   maxHealth: 100
   speed: 1.2
+  invincibilityDuration: 2
+  damageFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashInterval: 0.1
   playerSpotlight: {fileID: 7961757613423383327}
   greenLightColor: {r: 0, g: 1, b: 0, a: 1}
   redLightColor: {r: 1, g: 0, b: 0, a: 1}
@@ -355,8 +358,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   REDBulletPrefab: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
   GREENBulletPrefab: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
+  REDBIGBULLET: {fileID: 1119065107945223968, guid: f459cec4dd62aaa439fcb8bf97b7522d, type: 3}
+  GREENBIGBULLET: {fileID: 1119065107945223968, guid: f4f5460a194324c42a6974e95d20d5d9, type: 3}
+  redNormalBullet: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  greenNormalBullet: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
+  PowerUpEffectSeconds: 5
   mainCamera: {fileID: 0}
   firePoint: {fileID: 4521833106155336577}
+  fireRate: 0.25
   rotationXOffset: 0
   rotationZOffset: 0
 --- !u!1 &3705301821028806395

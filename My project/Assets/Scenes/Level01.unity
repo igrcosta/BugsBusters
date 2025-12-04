@@ -6868,7 +6868,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1737042347}
-  - component: {fileID: 1737042346}
+  - component: {fileID: 1737042348}
   m_Layer: 0
   m_Name: ItemSpawnManager
   m_TagString: Untagged
@@ -6876,24 +6876,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1737042346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1737042345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6cc1e4c091e49e4684a77f2b1d5fe4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 203580331934755173, guid: 344a516ab74684640b0907be86e1ecb2, type: 3}
-  spawnPoints:
-  - {fileID: 1008087840}
-  - {fileID: 310154393}
-  - {fileID: 1832918243}
-  - {fileID: 475177522}
 --- !u!4 &1737042347
 Transform:
   m_ObjectHideFlags: 0
@@ -6913,6 +6895,26 @@ Transform:
   - {fileID: 475177522}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1737042348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737042345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f2cea29f84c2ce4e8379a28b127e48e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  availablePowerUps:
+  - {fileID: 11400000, guid: 8a72bca07e05b1d49b4df29fa31b9a83, type: 2}
+  - {fileID: 11400000, guid: a0f0ae65694ac9448bd48171c3683405, type: 2}
+  spawnPoints:
+  - {fileID: 1008087840}
+  - {fileID: 310154393}
+  - {fileID: 1832918243}
+  - {fileID: 475177522}
 --- !u!1 &1741963388
 GameObject:
   m_ObjectHideFlags: 0

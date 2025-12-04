@@ -11,14 +11,23 @@ public class SprayPowerUp : MonoBehaviour
     [Header("Som de Pickup")]
     public AudioClip PickupSFX;
 
+    // VARIÁVEIS DE SPAWN: Configuradas pelo PowerUpSpawner
+    private PowerUpSpawner spawnerPai;
+    private int spawnIndex; 
+    private float respawnTime;
+
     private GunScript PlayerGun;
 
     private Player PlayerRef;
 
-    void Start()
+    // NOVO: Método para configurar as variáveis de spawn
+    public void ConfigureSpawn(PowerUpSpawner spawner, int index, float time)
     {
-        gameObject.SetActive(true);
+        spawnerPai = spawner;
+        spawnIndex = index;
+        respawnTime = time;
     }
+    
     void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player"))
