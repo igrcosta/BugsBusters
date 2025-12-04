@@ -251,7 +251,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8795981186680157561}
+  - component: {fileID: 7020756925747126150}
   - component: {fileID: 1964678885337745044}
+  - component: {fileID: 6552668375637738067}
   m_Layer: 0
   m_Name: PowerupInseticida
   m_TagString: Untagged
@@ -276,6 +278,24 @@ Transform:
   - {fileID: 1725751072326258307}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7020756925747126150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7852018748914009274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5408367fe0cc44884bdee991b3008b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  REDBIGBullet: {fileID: 1119065107945223968, guid: f459cec4dd62aaa439fcb8bf97b7522d, type: 3}
+  GREENBIGBullet: {fileID: 1119065107945223968, guid: f4f5460a194324c42a6974e95d20d5d9, type: 3}
+  redBullet: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
+  greenBullet: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
+  PickupSFX: {fileID: 8300000, guid: 7e08ae7a9518f2b4ba7cc1d49014807e, type: 3}
+  EffectSeconds: 5
 --- !u!65 &1964678885337745044
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -291,12 +311,39 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.10040655, y: 0.18638167, z: 0.1234732}
   m_Center: {x: 0, y: 0.09226601, z: 0}
+--- !u!54 &6552668375637738067
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7852018748914009274}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1187155939627428200
 PrefabInstance:
   m_ObjectHideFlags: 0
