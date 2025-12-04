@@ -135,6 +135,16 @@ public class GameControllerScript : MonoBehaviour
         Debug.Log($"Destruiu {enemiesDestroyed} inimigos ativos na cena.");
     }
 
+    public void BossGameCheat()
+    {
+        if (cheatsEnabled && Input.GetKey(KeyCode.F4))
+        {
+            StopAllCoroutines();
+
+            SceneManager.LoadScene(3);
+        }
+    }
+
     public void ForceNextWaveCheat()
     {
         if (IsGameActive)
