@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &23383998
 RectTransform:
   m_ObjectHideFlags: 0
@@ -187,8 +187,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294963283
-  m_fontColor: {r: 0.3254902, g: 0.9411765, b: 1, a: 1}
+    rgba: 4278197247
+  m_fontColor: {r: 1, g: 0.10734462, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2533,8 +2533,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294963283
-  m_fontColor: {r: 0.3254902, g: 0.9411765, b: 1, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8231,8 +8231,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294963283
-  m_fontColor: {r: 0.3254902, g: 0.9411765, b: 1, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -9092,7 +9092,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.4, y: 0.000015258789}
+  m_AnchoredPosition: {x: -26.2, y: 0.000015258789}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1498784311
@@ -9115,7 +9115,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Only different colors
+  m_text: Only different
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 34880c361bd99094291cdffa93543772, type: 2}
   m_sharedMaterial: {fileID: -6948614829266733036, guid: 34880c361bd99094291cdffa93543772, type: 2}
@@ -10673,7 +10673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1741153437
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11001,8 +11001,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294963283
-  m_fontColor: {r: 0.3254902, g: 0.9411765, b: 1, a: 1}
+    rgba: 4278386432
+  m_fontColor: {r: 0, g: 1, b: 0.007030964, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
