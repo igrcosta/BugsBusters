@@ -312,7 +312,7 @@ IEnumerator LightFlashRoutine(float duration, Color flashColor)
     private void Die()
     {
         Debug.Log("Player morreu!");
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(4);
         Destroy(gameObject);
     }
 

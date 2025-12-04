@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using System.Collections;
+using System;
 
 public class BulletController : MonoBehaviour
 {
@@ -8,17 +10,21 @@ public class BulletController : MonoBehaviour
     [SerializeField] private float lifetime = 7f;
     [SerializeField] private AudioSource bulletAudio;
 
+    [SerializeField] private int alpha = 255;
+
     private AudioSource audioSource;
     public BulletColor bulletColor;
     public bool isFiredByPlayer = true;
 
     public int PlayerDamage = 10;
-    public int EnemyDamage  = 5;
+    public int EnemyDamage = 5;
 
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+
+        // GetComponent<MeshRenderer>().material.color = new Vector4 (6,255,94,alpha);
     }
     void Start()
     {
@@ -52,9 +58,9 @@ public class BulletController : MonoBehaviour
         int damageToApply = isFiredByPlayer ? PlayerDamage : EnemyDamage;
 
         // --- REGRAS DE IGNORAR ---
-        if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy")) 
+        if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy"))
         {
-            return; 
+            return;
         }
 
         // --- LÓGICA DE DANO IKARUGA (Agora com ColorHandler em ColorData ajudando)
@@ -68,6 +74,7 @@ public class BulletController : MonoBehaviour
             //chamamos função universal de dano que o handler trata
 
             Destroy(gameObject);
+
             //destrói a bala
             return;
             //já que n é um método void, retorna nada

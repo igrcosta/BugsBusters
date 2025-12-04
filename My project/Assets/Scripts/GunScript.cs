@@ -1,11 +1,22 @@
 using UnityEngine;
+using System.Collections;
+//System.Collections é pra coroutines
 
 public class GunScript : MonoBehaviour
 {
     private Vector3 targetPoint; // Ponto de mira horizontal (alvo)
     [Header("Prefabs de Bala por Cor")]
-    [SerializeField] GameObject REDBulletPrefab;
-    [SerializeField] GameObject GREENBulletPrefab;
+    [SerializeField] public GameObject REDBulletPrefab;
+    [SerializeField] public GameObject GREENBulletPrefab;
+
+    [Header("Tudo sobre Power Up Bolado")]
+    [SerializeField] public GameObject REDBIGBULLET;
+    [SerializeField] public GameObject GREENBIGBULLET;
+
+    [SerializeField] public GameObject redNormalBullet;
+    [SerializeField] public GameObject greenNormalBullet;
+
+    [SerializeField] public float PowerUpEffectSeconds = 5f;
     
     [Header("VARIÁVEIS SERIALIZADAS")]
     [SerializeField] private Camera mainCamera;
@@ -163,5 +174,32 @@ public class GunScript : MonoBehaviour
         
 
         bulletScript.isFiredByPlayer = true;
+    }
+
+    public IEnumerator PowerUpEffect()
+    {
+        TurnIntoBIGBULLETS();
+
+        Debug.Log("Minhas bolas estão maiores!");
+        
+        yield return new WaitForSeconds(PowerUpEffectSeconds); 
+
+        Debug.Log("Minhas bolas estão menores :(");
+
+        TurnIntoNormalBullets();
+
+        yield break;
+    }
+
+    public void TurnIntoBIGBULLETS()
+    {
+        REDBulletPrefab = REDBIGBULLET;
+        GREENBulletPrefab = GREENBIGBULLET;
+    }
+
+    public void TurnIntoNormalBullets()
+    {
+        REDBulletPrefab = redNormalBullet;
+        GREENBulletPrefab = greenNormalBullet;
     }
 }
