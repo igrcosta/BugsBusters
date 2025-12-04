@@ -6,7 +6,7 @@ public class WaveManager : MonoBehaviour
 {
     [Header("Configuração de Waves")]
     [SerializeField]
-    private List<WaveConfig> waves;
+    private List<WaveConfig> waves; // Assume-se que WaveConfig é uma classe serializável
 
     [Header("Referências")]
     public SpawnPointsControllerScripts spawnController;
@@ -14,28 +14,31 @@ public class WaveManager : MonoBehaviour
     private int currentWaveIndex = 0;
 
     // Método chamado pelo GameController para iniciar a próxima wave
-    public void StartNextWave()
+    // Retorna o índice da wave que está sendo iniciada (baseado em 0)
+    public int StartNextWave() // <--- TIPO DE RETORNO ALTERADO PARA INT
     {
         if (spawnController == null)
         {
             Debug.LogError("WaveManager: Referência ao SpawnPointsController está faltando.");
-            return;
+            return -1; // Retorna -1 para indicar erro
         }
 
         if (currentWaveIndex >= waves.Count)
         {
             Debug.Log("Todas as waves foram concluídas neste nível. O GameController cuidará da transição final.");
-            return;
+            return -1; // Indica que não há mais waves
         }
         
+        int waveIndexToStart = currentWaveIndex; // Pega o índice ANTES de incrementar
+
         // Restaurando a lógica de configuração e ativação da wave.
-        WaveConfig currentWave = waves[currentWaveIndex];
+        WaveConfig currentWave = waves[waveIndexToStart];
         
         // Garante que a lista de inimigos está configurada antes de passar.
         if (currentWave.enemyRates == null || currentWave.enemyRates.Count == 0)
         {
-            Debug.LogError($"WaveManager: Wave {currentWaveIndex + 1} não tem EnemyRates configurados. Verifique o Inspector!");
-            return;
+            Debug.LogError($"WaveManager: Wave {waveIndexToStart + 1} não tem EnemyRates configurados. Verifique o Inspector!");
+            return -1;
         }
 
         // 1. Ativa o controlador de spawn com as configurações da wave atual.
@@ -45,24 +48,27 @@ public class WaveManager : MonoBehaviour
             currentWave.enemyRates
         );
         
-        Debug.Log($"Wave {currentWaveIndex + 1} iniciada! Total de Waves: {waves.Count}.");
+        Debug.Log($"Wave {waveIndexToStart + 1} iniciada! Total de Waves: {waves.Count}.");
         
         // 2. Incrementa o índice para preparar a próxima chamada.
         currentWaveIndex++;
-        // -------------------------------------------------------------------
+        
+        return waveIndexToStart; // Retorna o índice da wave iniciada
     }
 
-    public void CheckWinCondition(int totalEnemiesKilled) // Remove 'totalEnemiesToKill'
-{
-    // A meta (totalEnemiesToKill) será acessada diretamente do GameController.
-    int totalEnemiesToKill = GameControllerScript.controller.GetTotalEnemiesToKill(); 
-    
-    if (totalEnemiesKilled >= totalEnemiesToKill && totalEnemiesToKill > 0)
+    // Chamado pelo GameController no Update
+    public void CheckWinCondition(int totalEnemiesKilled)
     {
-        // Se esta wave terminou, informa ao GameController.
-        GameControllerScript.controller.WaveFinished();
+        // A meta (totalEnemiesToKill) é acessada diretamente do GameController.
+        int totalEnemiesToKill = GameControllerScript.controller.GetTotalEnemiesToKill(); 
+        
+        // A wave termina quando o número de inimigos mortos atinge ou excede a meta
+        if (totalEnemiesKilled >= totalEnemiesToKill && totalEnemiesToKill > 0)
+        {
+            // Se esta wave terminou, informa ao GameController.
+            GameControllerScript.controller.WaveFinished();
+        }
     }
-}
 
     private void Start()
     {

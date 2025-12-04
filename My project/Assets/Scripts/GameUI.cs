@@ -59,7 +59,7 @@ public class GameUI : MonoBehaviour
     {
         if (InimigosMortosText != null)
         {
-            InimigosMortosText.text = "Inimigos Mortos: " + kills;
+            InimigosMortosText.text = "Enemies Defeated: " + kills;
         }
     }
 
