@@ -20,7 +20,6 @@ public class GameControllerScript : MonoBehaviour
     public boss BossRef;
 
     [Header("Elementos dentro do Level01")]
-    public TimerScript Timer;
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
     public GameUI GameUI;
  
@@ -135,7 +134,6 @@ public class GameControllerScript : MonoBehaviour
         if (ActualCoroutine != null)
         {
             StopCoroutine(ActualCoroutine);
-            Timer.StopTimer(); // Garante que o timer pare
         }
         
         // 2. Reseta estados de transição
@@ -154,7 +152,7 @@ public class GameControllerScript : MonoBehaviour
     IEnumerator FirstWaveRoutine()
     {
         // Garante que todas as referências essenciais (exceto Player, que se registra) existam
-        while (Timer == null || GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
+        while (GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
         {
             yield return new WaitForEndOfFrame();
         }
@@ -177,8 +175,6 @@ public class GameControllerScript : MonoBehaviour
         yield return null;
         // espera um frame pro jogo poder começar já com inimigos spawnados
 
-        Timer.StartTimer();
-
         Player.EnableInputs();
 
         IsGameActive = true;
@@ -196,15 +192,13 @@ public class GameControllerScript : MonoBehaviour
     inimigosMortos = 0; 
     GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
 
-    // 2. Reseta Spawners e Timer
+    // 2. Reseta Spawners
     EnemySpawnManagerScriptRef.ResetSpawners();
-    Timer.ResetTimer();
 
     // 3. Inicia a Próxima Wave
     WaveManagerRef.StartNextWave();
 
     // 4. Ativa elementos do jogo
-    Timer.StartTimer();
     IsGameActive = true;
     
     yield return null; // Finaliza a coroutine
@@ -234,8 +228,6 @@ public class GameControllerScript : MonoBehaviour
 
     // NOVO: Teleporta o Player para a posição de "respiro"
     TeleportPlayerToInterwavePosition();
-    
-    // O Timer continua rodando (Timer.StopTimer() foi chamado em WaveFinished())
 
     // ===================================================================
     // 2. PAUSA/TRANSIÇÃO VISUAL: DURAÇÃO DO "MOMENTO DE RESPIRAR"
@@ -258,7 +250,6 @@ public class GameControllerScript : MonoBehaviour
     // NOVO: RestartTimer() é mais adequado do que StartTimer() aqui, se o seu TimerScript
     // tiver uma lógica de 'continuação' após uma pausa, mas StartTimer() funciona para 
     // reiniciar a contagem. Se o Timer já estava rodando, ele continua a rodar.
-    Timer.StartTimer(); // Reinicia o Timer (ou continua, se ele só foi pausado)
     IsGameActive = true;
     
     Debug.Log("Fim da Pausa. Wave seguinte iniciada!");
@@ -322,13 +313,6 @@ public class GameControllerScript : MonoBehaviour
     // 1. DESATIVA O JOGO E LIMPA ESTADOS (IMEDIATAMENTE)
     IsGameActive = false;
     WinCondition = false;
-    
-    // 2. PARA O TIMER (MUITO CRÍTICO!)
-    if (Timer != null)
-    {
-        // Isso define isRunning = false no TimerScript antes do próximo Update()
-        Timer.StopTimer(); 
-    }
 
     // 3. PARA A COROUTINE ATUAL (A que está gerenciando a wave - First/NextWaveRoutine)
     if (ActualCoroutine != null)
