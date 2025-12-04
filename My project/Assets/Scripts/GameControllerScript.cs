@@ -107,6 +107,14 @@ public class GameControllerScript : MonoBehaviour
         {
             ForceNextWaveCheat();
         }
+        
+        if (cheatsEnabled && Input.GetKey(KeyCode.L))
+        {
+            StopAllCoroutines();
+
+            SceneManager.LoadScene(3);
+        }
+
     }
 
     /// <summary>
@@ -133,16 +141,6 @@ public class GameControllerScript : MonoBehaviour
             enemiesDestroyed++;
         }
         Debug.Log($"Destruiu {enemiesDestroyed} inimigos ativos na cena.");
-    }
-
-    public void BossGameCheat()
-    {
-        if (cheatsEnabled && Input.GetKey(KeyCode.F4))
-        {
-            StopAllCoroutines();
-
-            SceneManager.LoadScene(3);
-        }
     }
 
     public void ForceNextWaveCheat()

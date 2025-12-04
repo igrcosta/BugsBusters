@@ -7674,7 +7674,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1.05
-  m_Text: 'Inimigos Mortos:'
+  m_Text: 'Enemies Defeated:'
 --- !u!222 &1980406128
 CanvasRenderer:
   m_ObjectHideFlags: 0
