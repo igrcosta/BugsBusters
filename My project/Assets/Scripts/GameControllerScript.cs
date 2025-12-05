@@ -121,8 +121,11 @@ public class GameControllerScript : MonoBehaviour
 
         if (cheatsEnabled && Input.GetKey(KeyCode.J))
         {
-            StopAllCoroutines();
-            SceneManager.LoadScene(2);
+            TutorialManager tutorial = FindObjectOfType<TutorialManager>();
+        if (tutorial != null)
+        {
+            tutorial.SkipTutorialCheat();
+        }
         }
     }
 
@@ -174,6 +177,27 @@ public class GameControllerScript : MonoBehaviour
     else
     {
         Debug.Log("Cheat Ignorado: Jogo não está ativo ou WaveManager faltando.");
+    }
+}
+    public void ForceStartFirstWave()
+{
+    // Esta função é chamada pelo cheat do Tutorial Manager.
+    // Ela garante que a rotina da primeira wave seja iniciada mesmo que o OnSceneLoaded já tenha ocorrido.
+    
+    if (ActualCoroutine != null)
+    {
+        StopCoroutine(ActualCoroutine);
+    }
+
+    if (!HasWaveStarted)
+    {
+        HasWaveStarted = true;
+        ActualCoroutine = StartCoroutine(FirstWaveRoutine());
+        Debug.Log("GameController: Primeira Wave forçada pelo cheat de skip do tutorial.");
+    }
+    else
+    {
+        Debug.LogWarning("GameController: Tentativa de forçar a primeira wave, mas o jogo já está ativo.");
     }
 }
 
