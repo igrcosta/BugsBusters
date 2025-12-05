@@ -32,6 +32,10 @@ public class GameControllerScript : MonoBehaviour
     [Header("Elementos dentro do Level01")]
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
     public GameUI GameUI;
+
+    [Header("Efeitos Visuais")]
+    public Animator warningSymbolAnimator;
+    public AudioSource transitionAudioSource;
  
 
     public static GameControllerScript controller;
@@ -167,6 +171,8 @@ public class GameControllerScript : MonoBehaviour
 
     IEnumerator FirstWaveRoutine()
     {
+        SetWarningPulse(true);
+
         while (GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
         {
             yield return new WaitForEndOfFrame();
@@ -183,6 +189,7 @@ public class GameControllerScript : MonoBehaviour
         Player.DisableInputs();
 
         yield return new WaitForSeconds(3f);
+        SetWarningPulse(false);
 
         // NOVO: Pega o índice e calcula a meta
         int currentWaveIndex = WaveManagerRef.StartNextWave();
@@ -231,8 +238,10 @@ public class GameControllerScript : MonoBehaviour
         // 1. LIMPEZA E PREPARAÇÃO DO ESTADO DE PAUSA (IMEDIATA)
         // ===================================================================
         
-        // Zera o contador de mortes e o HUD
+        // Zera o contador de mortes só para script
         inimigosMortos = 0; 
+
+        SetWarningPulse(true);
         
         EnemySpawnManagerScriptRef.ResetSpawners();
 
@@ -245,6 +254,8 @@ public class GameControllerScript : MonoBehaviour
         // ===================================================================
         
         yield return new WaitForSeconds(5f); 
+
+        SetWarningPulse(false);
 
         // ===================================================================
         // 3. INICIA A PRÓXIMA WAVE E ATIVA O JOGO
@@ -296,15 +307,37 @@ public class GameControllerScript : MonoBehaviour
         inimigosMortos = 0;
     }
 
-    public void TimeExpired()
+    private void SetWarningPulse(bool isActive)
+{
+    if (warningSymbolAnimator != null)
     {
-        if (IsGameActive)
+        warningSymbolAnimator.SetBool("IsPulsing", isActive);
+        warningSymbolAnimator.gameObject.SetActive(true);
+        
+        if (!isActive)
         {
-            Debug.Log("Tempo esgotado! Game Over por tempo.");
-            CleanUpGame();
-            SceneManager.LoadScene(4);
+            warningSymbolAnimator.gameObject.SetActive(false);
         }
     }
+
+    // Parte do Áudio
+    if (transitionAudioSource != null)
+    {
+        if (isActive)
+        {
+            // Se o bool for ativado, toca o som (ele irá fazer loop por causa da configuração no Editor)
+            if (!transitionAudioSource.isPlaying) // Evita tocar o som se já estiver tocando
+            {
+                transitionAudioSource.Play();
+            }
+        }
+        else
+        {
+            // Se o bool for desativado, para o som
+            transitionAudioSource.Stop();
+        }
+    }
+}
     
     public void WaveFinished()
     {

@@ -5966,7 +5966,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -7963,10 +7963,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1453487272}
   m_HandleRect: {fileID: 1624936778}
   m_Direction: 0
-  m_MinValue: -80
-  m_MaxValue: 0
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.0001
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -9870,10 +9870,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1766697459}
   m_HandleRect: {fileID: 947739882}
   m_Direction: 0
-  m_MinValue: -80
-  m_MaxValue: 0
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.0001
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -10092,6 +10092,8 @@ MonoBehaviour:
   BossRef: {fileID: 0}
   EnemySpawnManagerScriptRef: {fileID: 0}
   GameUI: {fileID: 1592733943}
+  warningSymbolAnimator: {fileID: 0}
+  transitionAudioSource: {fileID: 0}
   WaveManagerRef: {fileID: 0}
 --- !u!4 &1699432340
 Transform:
@@ -11128,10 +11130,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1280017896}
   m_HandleRect: {fileID: 2091348760}
   m_Direction: 0
-  m_MinValue: -80
-  m_MaxValue: 0
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.0001
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

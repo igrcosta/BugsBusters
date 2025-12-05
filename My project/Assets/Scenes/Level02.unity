@@ -1506,10 +1506,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 2098248743}
   m_HandleRect: {fileID: 99677554}
   m_Direction: 0
-  m_MinValue: -80
-  m_MaxValue: 0
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.0001
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -2381,10 +2381,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1382286155}
   m_HandleRect: {fileID: 1074276281}
   m_Direction: 0
-  m_MinValue: -80
-  m_MaxValue: 0
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.0001
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -3237,6 +3237,8 @@ MonoBehaviour:
   BossRef: {fileID: 0}
   EnemySpawnManagerScriptRef: {fileID: 8454403590880084662}
   GameUI: {fileID: 1164945649}
+  warningSymbolAnimator: {fileID: 0}
+  transitionAudioSource: {fileID: 0}
   WaveManagerRef: {fileID: 338366222}
 --- !u!4 &655102149
 Transform:
@@ -6811,10 +6813,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 311071128}
   m_HandleRect: {fileID: 1939192884}
   m_Direction: 0
-  m_MinValue: -80
-  m_MaxValue: 0
+  m_MinValue: 0.0001
+  m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.0001
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
