@@ -107,7 +107,7 @@ public class GameControllerScript : MonoBehaviour
             CountingEnemies(); 
         }
 
-        if (cheatsEnabled && Input.GetKeyDown(KeyCode.F1))
+        if (cheatsEnabled && Input.GetKeyDown(KeyCode.K))
         {
             ForceNextWaveCheat();
         }
@@ -119,6 +119,11 @@ public class GameControllerScript : MonoBehaviour
             SceneManager.LoadScene(3);
         }
 
+        if (cheatsEnabled && Input.GetKey(KeyCode.J))
+        {
+            StopAllCoroutines();
+            SceneManager.LoadScene(2);
+        }
     }
 
     /// <summary>
@@ -148,26 +153,29 @@ public class GameControllerScript : MonoBehaviour
     }
 
     public void ForceNextWaveCheat()
+{
+    if (IsGameActive && WaveManagerRef != null) 
     {
-        if (IsGameActive)
-        {
-            Debug.LogWarning("CHEATER: Forçando transição INSTANTÂNEA para a próxima Wave (F1).");
+        Debug.LogWarning("CHEATER: Forçando transição INSTANTÂNEA para a próxima Wave (F1).");
 
-            if (ActualCoroutine != null)
-            {
-                StopCoroutine(ActualCoroutine);
-            }
-            
-            WinCondition = false;
-            IsGameActive = false; 
-            
-            ActualCoroutine = StartCoroutine(InstantNextWaveRoutine());
-        }
-        else
+        // 1. Para qualquer rotina de transição que possa estar rodando
+        if (ActualCoroutine != null)
         {
-            Debug.Log("Cheat Ignorado: Jogo não está ativo.");
+            StopCoroutine(ActualCoroutine);
         }
+        
+        // 2. Desliga o jogo
+        WinCondition = false;
+        IsGameActive = false; 
+        
+        // 3. Inicia a rotina instantânea
+        ActualCoroutine = StartCoroutine(InstantNextWaveRoutine());
     }
+    else
+    {
+        Debug.Log("Cheat Ignorado: Jogo não está ativo ou WaveManager faltando.");
+    }
+}
 
     IEnumerator FirstWaveRoutine()
     {
@@ -207,27 +215,50 @@ public class GameControllerScript : MonoBehaviour
     }
 
     IEnumerator InstantNextWaveRoutine()
+{
+    Debug.LogWarning("CHEATER: Transição Instantânea para a próxima Wave!");
+    
+    // 1. Limpeza
+    DestroyAllActiveEnemies(); 
+    
+    // 2. Não zere inimigosMortos (mantendo a contagem cumulativa no HUD)
+    // O contador de mortes fica com o valor atual (cumulativo).
+
+    // 3. Avance o índice da wave e pegue a nova meta
+    EnemySpawnManagerScriptRef.ResetSpawners(); 
+
+    // CHAVE: Chamamos StartNextWave() apenas para: 
+    // a) Fazer o WaveManager avançar o índice interno.
+    // b) Obter a WaveConfig para a próxima wave.
+    int currentWaveIndex = WaveManagerRef.StartNextWave(); 
+    
+    // 4. Calcula e DEFINE A NOVA META
+    if (currentWaveIndex != -1)
     {
-        Debug.LogWarning("CHEATER: Transição Instantânea para a próxima Wave!");
+        totalEnemiesToKill = CalculateNewEnemyGoal(currentWaveIndex);
         
-        DestroyAllActiveEnemies(); 
-
-        inimigosMortos = 0; 
-        GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
-
-        EnemySpawnManagerScriptRef.ResetSpawners();
-
-        // NOVO: Pega o índice e calcula a meta
-        int currentWaveIndex = WaveManagerRef.StartNextWave();
-        if (currentWaveIndex != -1)
-        {
-            totalEnemiesToKill = CalculateNewEnemyGoal(currentWaveIndex); // <--- DEFINE A META
-        }
-
-        IsGameActive = true;
+        // NOVO: A lógica do cheat muda. O GameController forçará o spawn do número exato.
         
-        yield return null;
+        // O SpawnManager agora PRECISA DE UM MÉTODO para spawnar o total de inimigos.
+        EnemySpawnManagerScriptRef.ForceInstantWaveSpawn(totalEnemiesToKill); // <--- CHAMA O NOVO MÉTODO
+        
+        // Se este método for chamado, a meta para a próxima wave já foi atendida 
+        // em termos de 'inimigos para spawnar', mas não 'inimigos mortos'.
+        
+        Debug.Log($"Wave {currentWaveIndex + 1} forçada! Meta de Mortes: {totalEnemiesToKill}.");
     }
+    else
+    {
+         // Se não há mais waves, encerra o jogo
+         EndGame();
+         yield break;
+    }
+
+    // 5. Ativa o jogo
+    IsGameActive = true;
+    
+    yield return null;
+}
 
 
     IEnumerator NextWaveTransitionRoutine()

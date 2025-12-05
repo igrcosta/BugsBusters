@@ -10,6 +10,14 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
     private GameObject SpawnerSelected;
 
+    [Header("Parâmetros Internos do Spawner")]
+    private bool isSpawningGradually = false; // Flag para controlar o loop normal
+
+    // Armazena as taxas de spawn da wave atual para uso do cheat.
+private List<EnemySpawnRate> currentEnemyRates; 
+// Lista dos spawners ativos na wave atual, para que possamos spawnar neles.
+private List<GameObject> activeSpawners;
+
     //tive que colocar no Awake ao invés do Start, para o sistema de waves já ter referência de forma antecipada
     void Awake()
     {
@@ -30,6 +38,40 @@ public class SpawnPointsControllerScripts : MonoBehaviour
         Debug.Log($"[SpawnManager] Spawners encontrados na cena: {SpawnPoints.Length}");
     }
 
+    private GameObject SelectEnemyPrefabToSpawn()
+{
+    if (currentEnemyRates == null || currentEnemyRates.Count == 0)
+    {
+        Debug.LogError("currentEnemyRates está nulo ou vazio. Não é possível spawnar inimigo!");
+        return null;
+    }
+
+    // Calcula o peso total (soma de todas as taxas)
+    float totalWeight = 0f;
+    foreach (var rate in currentEnemyRates)
+    {
+       totalWeight += rate.spawnWeight; 
+    }
+
+    if (totalWeight <= 0) return null;
+
+    // Sorteia um valor aleatório
+    float randomPoint = Random.Range(0f, totalWeight);
+
+    // Itera para encontrar o inimigo correspondente ao ponto sorteado
+    foreach (var rate in currentEnemyRates)
+    {
+        if (randomPoint < rate.spawnWeight)
+        {
+            // Assume que EnemySpawnRate tem uma propriedade 'enemyPrefab'
+            return rate.enemyPrefab; 
+        }
+        randomPoint -= rate.spawnWeight;
+    }
+    
+    return null; // Caso de erro
+}
+
     public void ResetSpawners()
     {
         for(int u = 0; u < SpawnPoints.Length;u++)
@@ -39,8 +81,75 @@ public class SpawnPointsControllerScripts : MonoBehaviour
         }
     }
 
+    public void StopSpawning()
+{
+    isSpawningGradually = false;
+    // Se você usa uma Coroutine para o spawn gradual, pare ela aqui.
+    // Ex: if (spawnRoutine != null) StopCoroutine(spawnRoutine);
+}
+
+public void ForceInstantWaveSpawn(int countToSpawn)
+{
+    Debug.Log($"[SPAWN CHEAT] Forçando spawn instantâneo de {countToSpawn} inimigos.");
+    
+    // 1. Desliga o spawn gradual do Controller (caso ele estivesse ativo)
+    StopSpawning(); 
+    
+    // 2. Desliga os scripts Spawner individuais para garantir que eles não criem mais nada.
+    if (activeSpawners != null)
+    {
+        foreach (GameObject spawnerObject in activeSpawners)
+        {
+            Spawner SpawnerScript = spawnerObject.GetComponent<Spawner>();
+            if (SpawnerScript != null)
+            {
+                // CHAMA O NOVO MÉTODO NO SCRIPT INDIVIDUAL
+                SpawnerScript.StopSpawning(); 
+            }
+        }
+    }
+
+    // Verifica se há spawners e rates
+    if (activeSpawners == null || activeSpawners.Count == 0 || currentEnemyRates == null)
+    {
+        Debug.LogError("[SPAWN CHEAT] Não há Spawners ativos ou Enemy Rates definidos. Impossível forçar o spawn.");
+        return;
+    }
+
+    // 3. Itera para spawnar o número exato de inimigos
+    for (int i = 0; i < countToSpawn; i++)
+    {
+        // A. Escolhe o prefab do inimigo (usa a função corrigida)
+        GameObject enemyPrefab = SelectEnemyPrefabToSpawn();
+        
+        if (enemyPrefab != null)
+        {
+            // B. Escolhe um SpawnPoint ativo aleatório
+            int randomIndex = Random.Range(0, activeSpawners.Count);
+            GameObject selectedSpawner = activeSpawners[randomIndex];
+            
+            // C. Instancia
+            Instantiate(enemyPrefab, selectedSpawner.transform.position, selectedSpawner.transform.rotation);
+
+            // D. CRÍTICO: Registra o spawn no GameController (assim ele sabe que a meta de spawn foi atendida)
+            // É importante que o GameController saiba que esses inimigos FORAM SPAWNADOS, 
+            // mesmo que o Spawner individual não tenha feito isso no ciclo gradual.
+            if (GameControllerScript.controller != null)
+            {
+                 GameControllerScript.controller.RegisterNewEnemySpawn();
+            }
+        }
+    }
+}
+
+
     public void Activation(int numSpawnersToActivate, int spawnAttempts, List<EnemySpawnRate> enemyRates)
     {
+
+        currentEnemyRates = enemyRates;
+
+        activeSpawners = new List<GameObject>();
+
         // Garante que não tentamos ativar mais spawners do que existem
         int spawnersToUse = Mathf.Min(numSpawnersToActivate, SpawnPoints.Length);
 
@@ -69,6 +178,8 @@ public class SpawnPointsControllerScripts : MonoBehaviour
 
     // Ativa o Spawner
     selectedSpawner.gameObject.SetActive(true);
+
+    activeSpawners.Add(selectedSpawner);
 
     // Configura o Script do Spawner
     Spawner SpawnerScript = selectedSpawner.GetComponent<Spawner>();

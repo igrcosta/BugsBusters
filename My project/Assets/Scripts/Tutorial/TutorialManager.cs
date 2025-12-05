@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 // Enum para rastrear o estado atual do tutorial.
 public enum TutorialState
@@ -264,4 +265,6 @@ public class TutorialManager : MonoBehaviour
         
         // O Time.timeScale será restaurado para 1f automaticamente dentro de ShowCanvas.
     }
+
+    
 }
