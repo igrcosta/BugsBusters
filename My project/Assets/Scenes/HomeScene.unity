@@ -1535,15 +1535,15 @@ RectTransform:
   m_GameObject: {fileID: 1201739546}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.959527, y: 2.5127594, z: 0.38866314}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.51, y: 0.51, z: 0.51}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1538748283}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -446, y: 2}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -453, y: 2}
+  m_SizeDelta: {x: 660, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1201739548
 MonoBehaviour:
@@ -1565,7 +1565,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a5cc9425ee0c22744b72c76ead59e3fe, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d5e89ea651855f442871f84b8a8a6300, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2830,7 +2830,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 124, y: -23}
+  m_AnchoredPosition: {x: 146, y: -23}
   m_SizeDelta: {x: 685.46265, y: 110.446}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1922848860
@@ -2969,8 +2969,9 @@ MonoBehaviour:
   cheatsEnabled: 1
   Player: {fileID: 0}
   InterwavePosition: {x: 0.553, y: 0.018, z: -11.597}
+  initialEnemyKillGoal: 20
+  enemyGoalIncrement: 10
   BossRef: {fileID: 0}
-  Timer: {fileID: 0}
   EnemySpawnManagerScriptRef: {fileID: 0}
   GameUI: {fileID: 0}
   WaveManagerRef: {fileID: 0}

@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 1964678885337745044}
   - component: {fileID: 6552668375637738067}
   m_Layer: 0
-  m_Name: PowerupInseticida
+  m_Name: PowerupPesticide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
