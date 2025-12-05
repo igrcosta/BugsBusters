@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Spray_Config
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 7852018748914009274, guid: 857cb1361358f9f43b57c7c1001f9386, type: 3}
-  spawnWeight: 40
-  respawnTime: 15
+  spawnWeight: 50
+  respawnTime: 10
   effectValue: 10
