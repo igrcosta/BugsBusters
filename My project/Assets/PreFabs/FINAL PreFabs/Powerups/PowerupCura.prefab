@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -5274664438298746614}
   - component: {fileID: 7876268175068900951}
   - component: {fileID: 6070891363866607209}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PowerupCura
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,7 +49,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quantidadeCura: 25
-  tempoDeRespawn: 30
   PickupSFX: {fileID: 8300000, guid: 7e08ae7a9518f2b4ba7cc1d49014807e, type: 3}
 --- !u!65 &7876268175068900951
 BoxCollider:
@@ -110,7 +109,7 @@ GameObject:
   - component: {fileID: 451371453435839496}
   - component: {fileID: 773468150311425915}
   - component: {fileID: 5909538009882218510}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -291,6 +290,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 700ecb1b6921db7448c46f94ea3c5096, type: 3}
       propertyPath: m_Name
       value: PowerupCura
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 700ecb1b6921db7448c46f94ea3c5096, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -103,4 +103,14 @@ public class Spawner : MonoBehaviour
         }
         return null; // Caso de fallback
     }
+
+    public void StopSpawning()
+{
+    if (SpawningCycleVar != null)
+    {
+        StopCoroutine(SpawningCycleVar);
+        SpawningCycleVar = null;
+        Debug.Log("[Spawner] Ciclo de spawn interrompido.");
+    }
+}
 }

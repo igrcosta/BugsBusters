@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Heal_Config
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 203580331934755173, guid: 344a516ab74684640b0907be86e1ecb2, type: 3}
-  spawnWeight: 40
+  spawnWeight: 50
   respawnTime: 10
   effectValue: 25

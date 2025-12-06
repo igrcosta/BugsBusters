@@ -1263,6 +1263,8 @@ MonoBehaviour:
   BossRef: {fileID: 0}
   EnemySpawnManagerScriptRef: {fileID: 0}
   GameUI: {fileID: 0}
+  warningSymbolAnimator: {fileID: 0}
+  transitionAudioSource: {fileID: 0}
   WaveManagerRef: {fileID: 0}
 --- !u!4 &2004146255
 Transform:
@@ -1305,11 +1307,11 @@ AudioSource:
   m_GameObject: {fileID: 2044118368}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -5525963066543815528, guid: a190a94e1ab6d2a4b86d3df896d5fd93, type: 2}
   m_audioClip: {fileID: 8300000, guid: 2330663bc863b8f44813076ebb347094, type: 3}
   m_Resource: {fileID: 8300000, guid: 2330663bc863b8f44813076ebb347094, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0

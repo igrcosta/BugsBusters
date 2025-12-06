@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2726900795798866309}
   - component: {fileID: 6999009191526279418}
   - component: {fileID: 1908871242304639212}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 992140996764194425}
   - component: {fileID: 2298699911954170054}
   - component: {fileID: 4213270346871442086}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 7020756925747126150}
   - component: {fileID: 1964678885337745044}
   - component: {fileID: 6552668375637738067}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PowerupPesticide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,6 @@ MonoBehaviour:
   redBullet: {fileID: 1119065107945223968, guid: 45765fa910671d046b247e5b85fd4c8d, type: 3}
   greenBullet: {fileID: 1119065107945223968, guid: 6c359039b5cf90e40ae76abe728af651, type: 3}
   PickupSFX: {fileID: 8300000, guid: 7e08ae7a9518f2b4ba7cc1d49014807e, type: 3}
-  EffectSeconds: 5
 --- !u!65 &1964678885337745044
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -407,6 +406,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 923cdaf42c95ef94599d3fa64485ab76, type: 3}
       propertyPath: m_Name
       value: PowerupInseticida
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 923cdaf42c95ef94599d3fa64485ab76, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

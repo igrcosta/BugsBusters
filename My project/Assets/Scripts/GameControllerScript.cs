@@ -32,6 +32,10 @@ public class GameControllerScript : MonoBehaviour
     [Header("Elementos dentro do Level01")]
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
     public GameUI GameUI;
+
+    [Header("Efeitos Visuais")]
+    public Animator warningSymbolAnimator;
+    public AudioSource transitionAudioSource;
  
 
     public static GameControllerScript controller;
@@ -103,7 +107,7 @@ public class GameControllerScript : MonoBehaviour
             CountingEnemies(); 
         }
 
-        if (cheatsEnabled && Input.GetKeyDown(KeyCode.F1))
+        if (cheatsEnabled && Input.GetKeyDown(KeyCode.K))
         {
             ForceNextWaveCheat();
         }
@@ -115,6 +119,14 @@ public class GameControllerScript : MonoBehaviour
             SceneManager.LoadScene(3);
         }
 
+        if (cheatsEnabled && Input.GetKey(KeyCode.J))
+        {
+            TutorialManager tutorial = FindObjectOfType<TutorialManager>();
+        if (tutorial != null)
+        {
+            tutorial.SkipTutorialCheat();
+        }
+        }
     }
 
     /// <summary>
@@ -144,29 +156,55 @@ public class GameControllerScript : MonoBehaviour
     }
 
     public void ForceNextWaveCheat()
+{
+    if (IsGameActive && WaveManagerRef != null) 
     {
-        if (IsGameActive)
-        {
-            Debug.LogWarning("CHEATER: Forçando transição INSTANTÂNEA para a próxima Wave (F1).");
+        Debug.LogWarning("CHEATER: Forçando transição INSTANTÂNEA para a próxima Wave (F1).");
 
-            if (ActualCoroutine != null)
-            {
-                StopCoroutine(ActualCoroutine);
-            }
-            
-            WinCondition = false;
-            IsGameActive = false; 
-            
-            ActualCoroutine = StartCoroutine(InstantNextWaveRoutine());
-        }
-        else
+        // 1. Para qualquer rotina de transição que possa estar rodando
+        if (ActualCoroutine != null)
         {
-            Debug.Log("Cheat Ignorado: Jogo não está ativo.");
+            StopCoroutine(ActualCoroutine);
         }
+        
+        // 2. Desliga o jogo
+        WinCondition = false;
+        IsGameActive = false; 
+        
+        // 3. Inicia a rotina instantânea
+        ActualCoroutine = StartCoroutine(InstantNextWaveRoutine());
     }
+    else
+    {
+        Debug.Log("Cheat Ignorado: Jogo não está ativo ou WaveManager faltando.");
+    }
+}
+    public void ForceStartFirstWave()
+{
+    // Esta função é chamada pelo cheat do Tutorial Manager.
+    // Ela garante que a rotina da primeira wave seja iniciada mesmo que o OnSceneLoaded já tenha ocorrido.
+    
+    if (ActualCoroutine != null)
+    {
+        StopCoroutine(ActualCoroutine);
+    }
+
+    if (!HasWaveStarted)
+    {
+        HasWaveStarted = true;
+        ActualCoroutine = StartCoroutine(FirstWaveRoutine());
+        Debug.Log("GameController: Primeira Wave forçada pelo cheat de skip do tutorial.");
+    }
+    else
+    {
+        Debug.LogWarning("GameController: Tentativa de forçar a primeira wave, mas o jogo já está ativo.");
+    }
+}
 
     IEnumerator FirstWaveRoutine()
     {
+        SetWarningPulse(true);
+
         while (GameUI == null || EnemySpawnManagerScriptRef == null || WaveManagerRef == null)
         {
             yield return new WaitForEndOfFrame();
@@ -183,6 +221,7 @@ public class GameControllerScript : MonoBehaviour
         Player.DisableInputs();
 
         yield return new WaitForSeconds(3f);
+        SetWarningPulse(false);
 
         // NOVO: Pega o índice e calcula a meta
         int currentWaveIndex = WaveManagerRef.StartNextWave();
@@ -200,27 +239,50 @@ public class GameControllerScript : MonoBehaviour
     }
 
     IEnumerator InstantNextWaveRoutine()
+{
+    Debug.LogWarning("CHEATER: Transição Instantânea para a próxima Wave!");
+    
+    // 1. Limpeza
+    DestroyAllActiveEnemies(); 
+    
+    // 2. Não zere inimigosMortos (mantendo a contagem cumulativa no HUD)
+    // O contador de mortes fica com o valor atual (cumulativo).
+
+    // 3. Avance o índice da wave e pegue a nova meta
+    EnemySpawnManagerScriptRef.ResetSpawners(); 
+
+    // CHAVE: Chamamos StartNextWave() apenas para: 
+    // a) Fazer o WaveManager avançar o índice interno.
+    // b) Obter a WaveConfig para a próxima wave.
+    int currentWaveIndex = WaveManagerRef.StartNextWave(); 
+    
+    // 4. Calcula e DEFINE A NOVA META
+    if (currentWaveIndex != -1)
     {
-        Debug.LogWarning("CHEATER: Transição Instantânea para a próxima Wave!");
+        totalEnemiesToKill = CalculateNewEnemyGoal(currentWaveIndex);
         
-        DestroyAllActiveEnemies(); 
-
-        inimigosMortos = 0; 
-        GameUI.AlterarInimigosMortosnaHUD(inimigosMortos);
-
-        EnemySpawnManagerScriptRef.ResetSpawners();
-
-        // NOVO: Pega o índice e calcula a meta
-        int currentWaveIndex = WaveManagerRef.StartNextWave();
-        if (currentWaveIndex != -1)
-        {
-            totalEnemiesToKill = CalculateNewEnemyGoal(currentWaveIndex); // <--- DEFINE A META
-        }
-
-        IsGameActive = true;
+        // NOVO: A lógica do cheat muda. O GameController forçará o spawn do número exato.
         
-        yield return null;
+        // O SpawnManager agora PRECISA DE UM MÉTODO para spawnar o total de inimigos.
+        EnemySpawnManagerScriptRef.ForceInstantWaveSpawn(totalEnemiesToKill); // <--- CHAMA O NOVO MÉTODO
+        
+        // Se este método for chamado, a meta para a próxima wave já foi atendida 
+        // em termos de 'inimigos para spawnar', mas não 'inimigos mortos'.
+        
+        Debug.Log($"Wave {currentWaveIndex + 1} forçada! Meta de Mortes: {totalEnemiesToKill}.");
     }
+    else
+    {
+         // Se não há mais waves, encerra o jogo
+         EndGame();
+         yield break;
+    }
+
+    // 5. Ativa o jogo
+    IsGameActive = true;
+    
+    yield return null;
+}
 
 
     IEnumerator NextWaveTransitionRoutine()
@@ -231,8 +293,10 @@ public class GameControllerScript : MonoBehaviour
         // 1. LIMPEZA E PREPARAÇÃO DO ESTADO DE PAUSA (IMEDIATA)
         // ===================================================================
         
-        // Zera o contador de mortes e o HUD
+        // Zera o contador de mortes só para script
         inimigosMortos = 0; 
+
+        SetWarningPulse(true);
         
         EnemySpawnManagerScriptRef.ResetSpawners();
 
@@ -245,6 +309,8 @@ public class GameControllerScript : MonoBehaviour
         // ===================================================================
         
         yield return new WaitForSeconds(5f); 
+
+        SetWarningPulse(false);
 
         // ===================================================================
         // 3. INICIA A PRÓXIMA WAVE E ATIVA O JOGO
@@ -296,15 +362,37 @@ public class GameControllerScript : MonoBehaviour
         inimigosMortos = 0;
     }
 
-    public void TimeExpired()
+    private void SetWarningPulse(bool isActive)
+{
+    if (warningSymbolAnimator != null)
     {
-        if (IsGameActive)
+        warningSymbolAnimator.SetBool("IsPulsing", isActive);
+        warningSymbolAnimator.gameObject.SetActive(true);
+        
+        if (!isActive)
         {
-            Debug.Log("Tempo esgotado! Game Over por tempo.");
-            CleanUpGame();
-            SceneManager.LoadScene(4);
+            warningSymbolAnimator.gameObject.SetActive(false);
         }
     }
+
+    // Parte do Áudio
+    if (transitionAudioSource != null)
+    {
+        if (isActive)
+        {
+            // Se o bool for ativado, toca o som (ele irá fazer loop por causa da configuração no Editor)
+            if (!transitionAudioSource.isPlaying) // Evita tocar o som se já estiver tocando
+            {
+                transitionAudioSource.Play();
+            }
+        }
+        else
+        {
+            // Se o bool for desativado, para o som
+            transitionAudioSource.Stop();
+        }
+    }
+}
     
     public void WaveFinished()
     {

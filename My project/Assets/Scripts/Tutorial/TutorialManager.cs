@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 // Enum para rastrear o estado atual do tutorial.
 public enum TutorialState
@@ -33,12 +34,15 @@ public class TutorialManager : MonoBehaviour
     // NOVO: Prefab específico para a Posição 2 da Fase 2 (Spawn Point 2_2)
     public GameObject enemyPrefabPhase2_Pos2; 
     public GameObject powerUpPrefab; // O prefab do Power-up de vida
+
+    public GameObject BuffPrefab;
     
     [Header("Pontos de Spawn (Transform de Posição)")]
     public Transform spawnPoint1; // Fase 1: firstposition
     public Transform spawnPoint2_1; // Fase 2: Pos1
     public Transform spawnPoint2_2; // Fase 2: Pos2
     public Transform spawnPoint3; // Fase 3: Ponto de spawn para o Power-up (Pos3)
+    public Transform spawnPoint3_1; //Fase3: ponto para spawn do outro power-up
 
     // --- Variáveis de Controle ---
     private TutorialState currentState = TutorialState.PHASE_1_START;
@@ -178,8 +182,11 @@ public class TutorialManager : MonoBehaviour
         if (powerUpPrefab != null && spawnPoint3 != null)
         {
              // Usa o Instantiate padrão, pois é um item e não precisa do SetManager
-             Instantiate(powerUpPrefab, spawnPoint3.position, Quaternion.identity);
-             Debug.Log("Power-up spawnado na Pos3.");
+             Instantiate(powerUpPrefab, spawnPoint3.position, spawnPoint3.rotation);
+
+             Instantiate(BuffPrefab, spawnPoint3_1.position, spawnPoint3_1.rotation);
+
+             Debug.Log("Power-ups spawnados na Pos3 e Pos4.");
         }
         else
         {
@@ -264,4 +271,45 @@ public class TutorialManager : MonoBehaviour
         
         // O Time.timeScale será restaurado para 1f automaticamente dentro de ShowCanvas.
     }
+
+    public void SkipTutorialCheat()
+{
+    Debug.LogWarning("CHEATER: Ignorando tutorial e forçando início da Wave 1.");
+    
+    // 1. Garante que o jogo não está pausado (CRUCIAL!)
+    Time.timeScale = 1f;
+
+    // 2. Limpa os Canvases (caso estivessem ativos)
+    if (canvasPhase1 != null) canvasPhase1.SetActive(false);
+    if (canvasPhase2 != null) canvasPhase2.SetActive(false);
+    if (canvasPhase3 != null) canvasPhase3.SetActive(false);
+
+    // 3. Desativa as paredes (para liberar o Player)
+    if (wallPhase1 != null) wallPhase1.SetActive(false);
+    if (wallPhase2 != null) wallPhase2.SetActive(false);
+
+    // 4. Limpa inimigos restantes (se houver)
+    GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+    foreach (GameObject enemy in enemies)
+    {
+        Destroy(enemy);
+    }
+    
+    // 5. CHAVE: Força o GameController a iniciar a Primeira Wave.
+    if (GameControllerScript.controller != null)
+    {
+        // Precisamos de um método público no GameController para iniciar a primeira wave 
+        // IGNORANDO a lógica de 'OnSceneLoaded'.
+        GameControllerScript.controller.ForceStartFirstWave(); 
+    }
+    else
+    {
+        Debug.LogError("GameController não encontrado. O cheat de skip falhou ao iniciar a wave.");
+    }
+    
+    // 6. Destrói o Tutorial Manager (ele não é mais necessário)
+    Destroy(gameObject); 
+}
+
+    
 }
