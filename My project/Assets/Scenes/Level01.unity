@@ -755,6 +755,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rug
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e92e4104106227040859e7d478f840a8, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1252,7 +1256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 162107013}
   - component: {fileID: 162107014}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BoxCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2510,6 +2514,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8d1196d000c18f042b2820f5de7ef6c8, type: 3}
       propertyPath: m_Name
       value: ToyTrain
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8d1196d000c18f042b2820f5de7ef6c8, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6143,7 +6151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1588241588}
   - component: {fileID: 1588241589}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BoxCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
