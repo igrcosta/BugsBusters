@@ -3237,8 +3237,6 @@ MonoBehaviour:
   BossRef: {fileID: 0}
   EnemySpawnManagerScriptRef: {fileID: 8454403590880084662}
   GameUI: {fileID: 1164945649}
-  warningSymbolAnimator: {fileID: 0}
-  transitionAudioSource: {fileID: 0}
   WaveManagerRef: {fileID: 338366222}
 --- !u!4 &655102149
 Transform:
@@ -4678,6 +4676,8 @@ MonoBehaviour:
   healthBarFillImage: {fileID: 517263158}
   speed: 2
   pauseMenu: {fileID: 1368092271}
+  warningSymbolAnimator: {fileID: 0}
+  transitionAudioSource: {fileID: 0}
   InimigosMortosText: {fileID: 1980406127}
   HPContainer: {fileID: 369466401}
   HPHeart: {fileID: 0}
@@ -5655,7 +5655,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: Health
-      value: 1200
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: LeftPoint
@@ -5663,7 +5663,7 @@ PrefabInstance:
       objectReference: {fileID: 1475407249}
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: MaxHealth
-      value: 1200
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: -4144214869813790264, guid: e3c16405859dc11448ef119b1c5d9908, type: 3}
       propertyPath: RightPoint
