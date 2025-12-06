@@ -3384,8 +3384,6 @@ MonoBehaviour:
   BossRef: {fileID: 0}
   EnemySpawnManagerScriptRef: {fileID: 8454403590880084662}
   GameUI: {fileID: 1164945649}
-  warningSymbolAnimator: {fileID: 1757226650}
-  transitionAudioSource: {fileID: 1757226654}
   WaveManagerRef: {fileID: 338366222}
 --- !u!4 &655102149
 Transform:
@@ -4862,6 +4860,8 @@ MonoBehaviour:
   healthBarFillImage: {fileID: 517263158}
   speed: 2
   pauseMenu: {fileID: 1067138286}
+  warningSymbolAnimator: {fileID: 1757226650}
+  transitionAudioSource: {fileID: 1757226654}
   InimigosMortosText: {fileID: 1980406127}
   HPContainer: {fileID: 369466401}
   HPHeart: {fileID: 0}

@@ -32,10 +32,6 @@ public class GameControllerScript : MonoBehaviour
     [Header("Elementos dentro do Level01")]
     public SpawnPointsControllerScripts EnemySpawnManagerScriptRef;
     public GameUI GameUI;
-
-    [Header("Efeitos Visuais")]
-    public Animator warningSymbolAnimator;
-    public AudioSource transitionAudioSource;
  
 
     public static GameControllerScript controller;
@@ -48,6 +44,15 @@ public class GameControllerScript : MonoBehaviour
     private bool HasWaveStarted = false;
     private bool WinCondition = false;
     private bool IsGameActive = false;
+
+    public static int LastLevelSceneIndex = 1;
+
+    public static void RegisterLevelCheckpoint(int sceneIndex)
+{
+    // Armazenamos o índice da cena para onde o Retry deve retornar.
+    LastLevelSceneIndex = sceneIndex;
+    Debug.Log($"[Checkpoint] Checkpoint de Retry registrado: Cena Index {sceneIndex}");
+}
 
     public WaveManager WaveManagerRef;
 
@@ -65,9 +70,15 @@ public class GameControllerScript : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if(scene.buildIndex == 1)
+        {
+            RegisterLevelCheckpoint(scene.buildIndex);
+        }
         // Só faz a checagem se estiver na MainScene (índice 1) (Erika: MainScene agora é Level01, indice 2)
         if (scene.buildIndex == 2)
         {
+            RegisterLevelCheckpoint(scene.buildIndex);
+
             // Garantimos que a wave só tenta começar uma vez.
             if (!HasWaveStarted)
             {
@@ -79,6 +90,10 @@ public class GameControllerScript : MonoBehaviour
         {
             // Quando em HomeScene ou DeathScene, reseta
             HasWaveStarted = false;
+        }
+        if(scene.buildIndex == 3)
+        {
+            RegisterLevelCheckpoint(scene.buildIndex);
         }
     }
 
@@ -221,6 +236,7 @@ public class GameControllerScript : MonoBehaviour
         Player.DisableInputs();
 
         yield return new WaitForSeconds(3f);
+
         SetWarningPulse(false);
 
         // NOVO: Pega o índice e calcula a meta
@@ -333,7 +349,6 @@ public class GameControllerScript : MonoBehaviour
 
     public void GameOver()
     {
-        CleanUpGame();
         SceneManager.LoadScene(2);
     }
 
@@ -352,6 +367,20 @@ public class GameControllerScript : MonoBehaviour
         CleanUpGame();
     }
 
+    public static void ReturnToMenuAndCleanup()
+{
+    // O Singleton se autodestrói e carrega o Menu.
+    if (controller != null)
+    {
+        controller.CleanUpGame();
+        SceneManager.LoadScene(0);
+    }
+    else
+    {
+        SceneManager.LoadScene(0);
+    }
+}
+
     public void CleanUpGame()
     {
         Destroy(gameObject);
@@ -364,32 +393,36 @@ public class GameControllerScript : MonoBehaviour
 
     private void SetWarningPulse(bool isActive)
 {
-    if (warningSymbolAnimator != null)
+    // Usa a referência que foi registrada pelo GameUI.Awake()
+    if (GameUI != null && GameUI.warningSymbolAnimator != null)
     {
-        warningSymbolAnimator.SetBool("IsPulsing", isActive);
-        warningSymbolAnimator.gameObject.SetActive(true);
+        GameUI.warningSymbolAnimator.SetBool("IsPulsing", isActive);
+        GameUI.warningSymbolAnimator.gameObject.SetActive(true);
         
         if (!isActive)
         {
-            warningSymbolAnimator.gameObject.SetActive(false);
+            GameUI.warningSymbolAnimator.gameObject.SetActive(false);
         }
+    }
+    else
+    {
+        Debug.LogError("GameUI ou Animator de Warning é nulo. O alerta não pode ser exibido.");
+        return; 
     }
 
     // Parte do Áudio
-    if (transitionAudioSource != null)
+    if (GameUI.transitionAudioSource != null)
     {
         if (isActive)
         {
-            // Se o bool for ativado, toca o som (ele irá fazer loop por causa da configuração no Editor)
-            if (!transitionAudioSource.isPlaying) // Evita tocar o som se já estiver tocando
+            if (!GameUI.transitionAudioSource.isPlaying)
             {
-                transitionAudioSource.Play();
+                GameUI.transitionAudioSource.Play();
             }
         }
         else
         {
-            // Se o bool for desativado, para o som
-            transitionAudioSource.Stop();
+            GameUI.transitionAudioSource.Stop();
         }
     }
 }

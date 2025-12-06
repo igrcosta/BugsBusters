@@ -12,6 +12,9 @@ public class GameUI : MonoBehaviour
     private float speed = 2;
 
     public GameObject pauseMenu;
+    [Header("Efeitos Visuais")]
+    public Animator warningSymbolAnimator;
+    public AudioSource transitionAudioSource;
 
     [SerializeField] Text InimigosMortosText; // NOVO: Referência para o componente Text na HUD
     [Header ("Barra de vida PLAYER")]

@@ -5,8 +5,18 @@ public class CanvasController : MonoBehaviour
 {
     public void Retry()
     {
-        SceneManager.LoadScene(1);
+        int lastScene = GameControllerScript.LastLevelSceneIndex;
+
+        GameControllerScript.controller.CleanUpGame();
+
+        SceneManager.LoadScene(lastScene);
     }
+
+    public void MenuGame()
+{
+    // Limpa o estado e volta para o Menu (Índice 0)
+    GameControllerScript.ReturnToMenuAndCleanup(); 
+}
 
     public void ExitGame()
     {
@@ -19,10 +29,5 @@ public class CanvasController : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
-    }
-
-    public void MenuGame()
-    {
-        SceneManager.LoadScene(0);
     }
 }
