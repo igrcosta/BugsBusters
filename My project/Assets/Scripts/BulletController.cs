@@ -1,60 +1,85 @@
 using UnityEngine;
+using UnityEngine.Audio;
+using System.Collections;
+using System;
 
 public class BulletController : MonoBehaviour
 {
-
-    //variáveis da forma como o tiro vai se comportar
+    // variáveis da forma como o tiro vai se comportar
     [SerializeField] private float bulletSpeed = 20f;
-    [SerializeField] private float lifetime = 3f;
+    [SerializeField] private float lifetime = 7f;
+    [SerializeField] private AudioSource bulletAudio;
 
+    [SerializeField] private int alpha = 255;
+
+    private AudioSource audioSource;
+    public BulletColor bulletColor;
     public bool isFiredByPlayer = true;
-    //esse bool vai verificar à quem pertence a bala atirada, Player atirou, true, inimigo atirou, false
 
-    public AffinityColorENUM bulletColor;
-    //cor atual do tiro em questão, seja tanto do inimigo quanto do player
+    public int PlayerDamage = 10;
+    public int EnemyDamage = 5;
 
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+
+        // GetComponent<MeshRenderer>().material.color = new Vector4 (6,255,94,alpha);
+    }
     void Start()
     {
+        if (!isFiredByPlayer && audioSource != null)
+        {
+            audioSource.enabled = false;
+        }
+        // depois do tempo de lifetime, a bala que possui esse script será destruída
         Destroy(gameObject, lifetime);
-        //depois do tempo de lifetime, a bala que possui esse script será destruída
     }
+
+    public void Initialize(bool fromPlayer)
+    {
+        isFiredByPlayer = fromPlayer;
+
+        // Toca som só se for bala do player
+        if (isFiredByPlayer && bulletAudio != null)
+            bulletAudio.Play();
+    }
+
 
     void Update()
     {
+        // Movimentação da bala
         transform.Translate(transform.forward * bulletSpeed * Time.deltaTime, Space.World);
-        //Utilizamos esse transform.Translate por causa da caixa "Is Kinematic" que marcamos
-        //no rigidbody da bala, estamos marcando que vamos fazer a movimentação desse gameObject
-        //via script, assim o rigidBody não vai dar conflito na movimentação
-
-
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        //string que vai detectar qual foi a tag do objeto que recebeu o hit
         string hitTag = other.tag;
+        int damageToApply = isFiredByPlayer ? PlayerDamage : EnemyDamage;
 
-        if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy")) 
+        // --- REGRAS DE IGNORAR ---
+        if ((isFiredByPlayer && hitTag == "Player") || (!isFiredByPlayer && hitTag == "Enemy"))
         {
-            //se o mesmo gameobject que atirou, foi o mesmo que recebeu hit
             return;
-            //ignora o resto do código e a bala continua (se for um Trigger)
         }
 
-        //lógica de dano abaixo (colocar esquema de cores depois)
+        // --- LÓGICA DE DANO IKARUGA (Agora com ColorHandler em ColorData ajudando)
+        ColorHandler targetHandler = other.GetComponent<ColorHandler>();
+        //pegamos o componente que vai tomar o tiro e buscamos o componente que lida com seus cores
 
-        if (!isFiredByPlayer && hitTag == "Player")
+        //se ele encontrou algm que tenha o handler de cor...
+        if (targetHandler != null)
         {
-            Debug.Log("Player tomou dano de bala " + bulletColor);
-        }
+            targetHandler.HandleHit(damageToApply, bulletColor);
+            //chamamos função universal de dano que o handler trata
 
-        else if (isFiredByPlayer && hitTag == "Enemy")
-        {
-            //lógica de cores deve ser aplicada aqui
-            Debug.Log("ENEMY tomou dano de bala " + bulletColor);
-        }
+            Destroy(gameObject);
 
-        //se encostou, bala destruída
+            //destrói a bala
+            return;
+            //já que n é um método void, retorna nada
+        }
+        // Se encostou em qualquer outra coisa (parede, etc.), destrói a bala
         Destroy(gameObject);
     }
 }

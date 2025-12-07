@@ -1,9 +1,44 @@
 fileFormatVersion: 2
-guid: e43fdf155a870e341bb4d6e8073c3555
+guid: 743ab50bab71eb847b72eae0663fe7a9
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: amarelo
+    second: {fileID: 2100000, guid: bc0733a4089992646ae00b265a797db8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: amareloClaro
+    second: {fileID: 2100000, guid: 364da21220c512d4288ca87847c3d105, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: azul
+    second: {fileID: 2100000, guid: d7fa594852048344183e2a6704b8ec7b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: laranja
+    second: {fileID: 2100000, guid: d8eb6769f73eb464189fd9fce1aec403, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: marrom
+    second: {fileID: 2100000, guid: f61b037eb63cfd04295d8cb8323f6641, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: verde
+    second: {fileID: 2100000, guid: 6cf6bf938ffc193469a73167da3db23f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vermelho
+    second: {fileID: 2100000, guid: fba5289721abaa14284adb70205eb5fe, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

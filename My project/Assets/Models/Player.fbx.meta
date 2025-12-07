@@ -1,9 +1,24 @@
 fileFormatVersion: 2
-guid: 1676b747b387f4245836ce872f1c8753
+guid: 4c81346a391e7584a9d3681a9a02d0cb
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metalico
+    second: {fileID: 2100000, guid: 90772bfb31af9bb4d857ad629b995b91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Neon
+    second: {fileID: 2100000, guid: 1c7ad960c5c03384e83ef7ec2c5f6502, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Preto
+    second: {fileID: 2100000, guid: b066d7904f0879f4ca7cfb1716954100, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

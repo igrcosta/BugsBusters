@@ -6,6 +6,14 @@ TagManager:
   tags:
   - Enemy
   - Bullet
+  - Spawner
+  - HUD
+  - SafeZone
+  - UIController
+  - Ground
+  - PlayerModel
+  - TriggerWall
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -13,10 +21,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Enemies
+  - Bullets
+  - SafeZone
+  - Floor
   - 
   - 
   - 
