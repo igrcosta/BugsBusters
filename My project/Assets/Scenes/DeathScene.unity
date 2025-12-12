@@ -250,7 +250,7 @@ GameObject:
   - component: {fileID: 295638356}
   - component: {fileID: 295638355}
   m_Layer: 5
-  m_Name: QuitButton
+  m_Name: MainMenu Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -322,7 +322,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 83836853}
         m_TargetAssemblyTypeName: CanvasController, Assembly-CSharp
-        m_MethodName: ExitGame
+        m_MethodName: MenuGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -791,7 +791,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Quit
+  m_text: Main Menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 34880c361bd99094291cdffa93543772, type: 2}
   m_sharedMaterial: {fileID: -6948614829266733036, guid: 34880c361bd99094291cdffa93543772, type: 2}
@@ -883,7 +883,7 @@ GameObject:
   - component: {fileID: 1493242472}
   - component: {fileID: 1493242471}
   m_Layer: 5
-  m_Name: MenuJogo
+  m_Name: RetryButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -955,7 +955,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 83836853}
         m_TargetAssemblyTypeName: CanvasController, Assembly-CSharp
-        m_MethodName: MenuGame
+        m_MethodName: Retry
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1200,7 +1200,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Menu
+  m_text: Retry
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 34880c361bd99094291cdffa93543772, type: 2}
   m_sharedMaterial: {fileID: -6948614829266733036, guid: 34880c361bd99094291cdffa93543772, type: 2}
