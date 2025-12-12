@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hp: 10
-  enemySpeed: 1.6
+  enemySpeed: 1.3
   explosionRadius: 0.5
   safeReturnDistance: 1
   explosionTimer: 0.4

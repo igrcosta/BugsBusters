@@ -118,7 +118,7 @@ public class boss : MonoBehaviour
             IsVulnerable = false;
             MovingAndShootingRed();
 
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(4f);
 
             //2. Parada depois de um tempo andando e atirando
 
@@ -127,7 +127,7 @@ public class boss : MonoBehaviour
             //3. tiros VERMELHOS de transição (VULNERÁVEL)
 
             InvokeRepeating("RedTransitionShooting", 0.1f, 1f);
-            yield return new WaitForSeconds(2.4f);
+            yield return new WaitForSeconds(5f);
             CancelInvoke("RedTransitionShooting");
             yield return new WaitForSeconds(0.5f);
 
@@ -136,7 +136,7 @@ public class boss : MonoBehaviour
             IsVulnerable = false;
             MovingAndShootingGreen();
 
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(4f);
 
             //5. Depois de um tempo andando e atirando, paramos o tiro e paramos o movimento dele
 
@@ -145,7 +145,7 @@ public class boss : MonoBehaviour
             //6. tiros VERDES de transição (VULNERÁVEL)
 
             InvokeRepeating("GreenTransitionShooting", 0.1f, 1f);
-            yield return new WaitForSeconds(2.4f);
+            yield return new WaitForSeconds(5f);
             CancelInvoke("GreenTransitionShooting");
             yield return new WaitForSeconds(0.5f);
         }
@@ -182,7 +182,7 @@ public class boss : MonoBehaviour
             StartCoroutine("SummonGREENShockwave");
             //essa coroutina já se para sozinha, rlx
 
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(2f);
 
             IsVulnerable = true;
             MovingAndShootingGreen();
@@ -202,7 +202,7 @@ public class boss : MonoBehaviour
 
             StartCoroutine("SummonGREENShockwave");
 
-            yield return new WaitForSeconds(1.8f);
+            yield return new WaitForSeconds(2f);
 
             IsVulnerable = true;
             MovingAndShootingRed();

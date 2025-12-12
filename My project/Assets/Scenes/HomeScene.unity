@@ -459,7 +459,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: ae1fb9cf575c0634a91334a31068148f, type: 3}
   m_Resource: {fileID: 8300000, guid: ae1fb9cf575c0634a91334a31068148f, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.6
+  m_Volume: 0.4
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1595,7 +1595,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 83836853}
         m_TargetAssemblyTypeName: CanvasController, Assembly-CSharp
-        m_MethodName: Retry
+        m_MethodName: BeginGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

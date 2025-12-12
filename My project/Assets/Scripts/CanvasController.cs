@@ -3,6 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class CanvasController : MonoBehaviour
 {
+    public void BeginGame()
+    {
+        SceneManager.LoadScene(1);
+    }
     public void Retry()
     {
         int lastScene = GameControllerScript.LastLevelSceneIndex;

@@ -7,11 +7,9 @@ public class MenuPause : MonoBehaviour
 {
     GameControllerScript gameControllerScript;
     
-
-    void Start()
+    public void MainMenu()
     {
-        //GameControllerScript.controller.backgroundMenu = this;
-
+        GameControllerScript.ReturnToMenuAndCleanup(); 
     }
 
 }
